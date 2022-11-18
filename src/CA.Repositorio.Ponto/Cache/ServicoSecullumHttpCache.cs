@@ -1,6 +1,7 @@
 ﻿using CA.Core.Configuracoes;
 using CA.Core.Entidades.Ponto;
 using CA.Repositorios.Ponto.Interfaces;
+using CA.Util.Extensions;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace CA.Repositorios.Ponto.Cache

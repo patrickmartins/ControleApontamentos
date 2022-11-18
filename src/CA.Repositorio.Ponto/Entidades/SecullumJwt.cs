@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using CA.Util.Extensions;
+using System.Text.Json.Serialization;
 
 namespace CA.Repositorios.Ponto.Entidades
 {
@@ -18,7 +19,7 @@ namespace CA.Repositorios.Ponto.Entidades
 
         public bool Expirado()
         {
-            return DateTime.Now > DataExpiracao;
+            return DateTime.Now.ConverterParaFusoBrasil() > DataExpiracao;
         }
     }
 }

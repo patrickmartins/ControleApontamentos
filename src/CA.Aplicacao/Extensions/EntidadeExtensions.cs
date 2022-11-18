@@ -13,13 +13,15 @@ namespace CA.Aplicacao.Extensions
 
         public static BatidasPontoDiaModel BatidasPontoParaBatidasPontoModel(this BatidasPontoDia batidaPonto)
         {
-            var totalTotalTrabalhado = batidaPonto.Saida1 > batidaPonto.Entrada1 ? batidaPonto.Saida1 - batidaPonto.Entrada1 : (batidaPonto.Entrada1.TotalMinutes != 0 && batidaPonto.Data.EHoje() ? new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, 0) - batidaPonto.Entrada1 : TimeSpan.Zero);
+            var dataAtual = DateTime.Now.ConverterParaFusoBrasil();
 
-            totalTotalTrabalhado += batidaPonto.Saida2 > batidaPonto.Entrada2 ? batidaPonto.Saida2 - batidaPonto.Entrada2 : (batidaPonto.Entrada2.TotalMinutes != 0 && batidaPonto.Data.EHoje() ? new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, 0) - batidaPonto.Entrada2 : TimeSpan.Zero);
-            totalTotalTrabalhado += batidaPonto.Saida3 > batidaPonto.Entrada3 ? batidaPonto.Saida3 - batidaPonto.Entrada3 : (batidaPonto.Entrada3.TotalMinutes != 0 && batidaPonto.Data.EHoje() ? new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, 0) - batidaPonto.Entrada3 : TimeSpan.Zero);
-            totalTotalTrabalhado += batidaPonto.Saida4 > batidaPonto.Entrada4 ? batidaPonto.Saida4 - batidaPonto.Entrada4 : (batidaPonto.Entrada4.TotalMinutes != 0 && batidaPonto.Data.EHoje() ? new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, 0) - batidaPonto.Entrada4 : TimeSpan.Zero);
-            totalTotalTrabalhado += batidaPonto.Saida5 > batidaPonto.Entrada5 ? batidaPonto.Saida5 - batidaPonto.Entrada5 : (batidaPonto.Entrada5.TotalMinutes != 0 && batidaPonto.Data.EHoje() ? new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, 0) - batidaPonto.Entrada5 : TimeSpan.Zero);
-            totalTotalTrabalhado += batidaPonto.Saida6 > batidaPonto.Entrada6 ? batidaPonto.Saida6 - batidaPonto.Entrada6 : (batidaPonto.Entrada6.TotalMinutes != 0 && batidaPonto.Data.EHoje() ? new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, 0) - batidaPonto.Entrada6 : TimeSpan.Zero);
+            var totalTotalTrabalhado = batidaPonto.Saida1 > batidaPonto.Entrada1 ? batidaPonto.Saida1 - batidaPonto.Entrada1 : (batidaPonto.Entrada1.TotalMinutes != 0 && batidaPonto.Data.EHoje() ? new TimeSpan(dataAtual.Hour, DateTime.Now.Minute, 0) - batidaPonto.Entrada1 : TimeSpan.Zero);
+
+            totalTotalTrabalhado += batidaPonto.Saida2 > batidaPonto.Entrada2 ? batidaPonto.Saida2 - batidaPonto.Entrada2 : (batidaPonto.Entrada2.TotalMinutes != 0 && batidaPonto.Data.EHoje() ? new TimeSpan(dataAtual.Hour, dataAtual.Minute, 0) - batidaPonto.Entrada2 : TimeSpan.Zero);
+            totalTotalTrabalhado += batidaPonto.Saida3 > batidaPonto.Entrada3 ? batidaPonto.Saida3 - batidaPonto.Entrada3 : (batidaPonto.Entrada3.TotalMinutes != 0 && batidaPonto.Data.EHoje() ? new TimeSpan(dataAtual.Hour, dataAtual.Minute, 0) - batidaPonto.Entrada3 : TimeSpan.Zero);
+            totalTotalTrabalhado += batidaPonto.Saida4 > batidaPonto.Entrada4 ? batidaPonto.Saida4 - batidaPonto.Entrada4 : (batidaPonto.Entrada4.TotalMinutes != 0 && batidaPonto.Data.EHoje() ? new TimeSpan(dataAtual.Hour, dataAtual.Minute, 0) - batidaPonto.Entrada4 : TimeSpan.Zero);
+            totalTotalTrabalhado += batidaPonto.Saida5 > batidaPonto.Entrada5 ? batidaPonto.Saida5 - batidaPonto.Entrada5 : (batidaPonto.Entrada5.TotalMinutes != 0 && batidaPonto.Data.EHoje() ? new TimeSpan(dataAtual.Hour, dataAtual.Minute, 0) - batidaPonto.Entrada5 : TimeSpan.Zero);
+            totalTotalTrabalhado += batidaPonto.Saida6 > batidaPonto.Entrada6 ? batidaPonto.Saida6 - batidaPonto.Entrada6 : (batidaPonto.Entrada6.TotalMinutes != 0 && batidaPonto.Data.EHoje() ? new TimeSpan(dataAtual.Hour, dataAtual.Minute, 0) - batidaPonto.Entrada6 : TimeSpan.Zero);
 
             return new BatidasPontoDiaModel
             {

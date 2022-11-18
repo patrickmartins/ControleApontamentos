@@ -3,6 +3,7 @@ using CA.Core.Entidades.Ponto;
 using CA.Core.Interfaces.Ponto;
 using CA.Repositorios.Ponto.Entidades;
 using CA.Repositorios.Ponto.Interfaces;
+using CA.Util.Extensions;
 using Flurl;
 using Flurl.Http;
 using Polly;
@@ -108,7 +109,7 @@ namespace CA.Repositorios.Ponto.ServicosHttp
                                             .ReceiveJson<SecullumJwt>();
             }).Result;
 
-            token.DataExpiracao = DateTime.Now.AddSeconds(token.Validade);
+            token.DataExpiracao = DateTime.Now.ConverterParaFusoBrasil().AddSeconds(token.Validade);
 
             return token;
         }
@@ -129,7 +130,7 @@ namespace CA.Repositorios.Ponto.ServicosHttp
                                     .ReceiveJson<SecullumJwt>();
             }).Result;
 
-            novoToken.DataExpiracao = DateTime.Now.AddSeconds(token.Validade);
+            novoToken.DataExpiracao = DateTime.Now.ConverterParaFusoBrasil().AddSeconds(token.Validade);
 
             return novoToken;
         }

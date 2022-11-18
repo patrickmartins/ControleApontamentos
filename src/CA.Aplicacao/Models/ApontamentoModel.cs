@@ -1,4 +1,5 @@
 ﻿using CA.Core.Entidades.Tfs;
+using CA.Util.Extensions;
 using System.ComponentModel.DataAnnotations;
 
 namespace CA.Aplicacao.Models
@@ -24,7 +25,7 @@ namespace CA.Aplicacao.Models
             {
                 SincronizadoChannel = false,
                 Comentario = viewModel.Comentario,
-                DataApontamento = DateTime.Now.ToString("d"),
+                DataApontamento = DateTime.Now.ConverterParaFusoBrasil().ToString("d"),
                 DataCriacao = DateTime.UtcNow,
                 TempoApontamento = TimeSpan.FromMinutes(viewModel.TempoTotal).ToString("hh\\:mm"),
                 Usuario = viewModel.Usuario
