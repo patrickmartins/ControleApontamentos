@@ -1,0 +1,15 @@
+.tarefa {
+	margin: .8em 0;
+}
+
+.cabecalho {
+	margin-bottom: 1.5em;}
+
+.resultados {
+
+	& > h3 {
+		margin: 2em 0;
+		font-weight: 400;
+		text-align: center;
+	}
+}

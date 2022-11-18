@@ -1,0 +1,120 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "controle-apontamentos": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "inlineTemplate": false,
+          "inlineStyle": false,
+          "style": "scss"
+        }
+      },
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/controle-apontamentos",
+            "index": "src/index.html",
+            "main": "src/main.ts",
+            "polyfills": "src/polyfills.ts",
+            "tsConfig": "tsconfig.app.json",
+            "aot": true,
+            "assets": [
+              "src/favicon.ico",
+              "src/assets"
+            ],
+            "styles": [
+              "src/styles.scss",			  
+              "src/theme.scss",
+			  "src/theme-dark.scss"
+            ],
+            "scripts": [
+              "node_modules/chart.js/dist/chart.js"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "1mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "4kb"
+                }
+              ]
+            },
+			"development": {
+				"optimization": false,
+				"outputHashing": "all",
+				"sourceMap": true,
+				"namedChunks": true,
+				"extractLicenses": false,
+				"vendorChunk": true,
+				"buildOptimizer": false,
+				"budgets": [
+				  {
+					"type": "initial",
+					"maximumWarning": "500kb",
+					"maximumError": "1mb"
+				  },
+				  {
+					"type": "anyComponentStyle",
+					"maximumWarning": "2kb",
+					"maximumError": "4kb"
+				  }
+				]
+			}
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "controle-apontamentos:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "controle-apontamentos:build:production"
+            },
+			"development": {
+				"browserTarget": "controle-apontamentos:build:development"
+			}
+          },
+		  "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "controle-apontamentos:build"
+          }
+        }
+      }
+    }
+  },
+  "defaultProject": "controle-apontamentos",
+  "cli": {
+    "analytics": false
+  }
+}

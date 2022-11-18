@@ -1,0 +1,32 @@
+.container {
+	display: flex;
+    height: 100%;
+	padding: 0 0.5em 0 1.2em;
+	
+	& .contador {
+		align-items: center;
+		display: flex;
+		font-size: 1.25rem!important;
+	}
+
+	& .controles-contador {
+		display: flex;
+		align-items: center;
+		padding-left: 0.1em;
+	}
+
+	& .play .mat-icon {
+		font-size: 2.4em;
+    	display: inline;
+	}
+
+	& .stop .mat-icon {
+		font-size: 2.6em;
+    	display: inline;
+	}
+
+	& .pause .mat-icon {
+		font-size: 2.2em;
+    	display: inline;
+	}
+}

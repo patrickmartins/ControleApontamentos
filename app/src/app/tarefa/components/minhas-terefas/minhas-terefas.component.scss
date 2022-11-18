@@ -1,0 +1,30 @@
+.mat-expansion-panel {	
+	background-color: transparent;	
+	box-shadow: none!important;
+	border-radius: 0;
+}
+
+.mat-expansion-panel-header {
+	box-shadow: 0 .125rem .25rem rgba(0,0,0,.075)!important;
+	margin-bottom: .5em;	
+	height: 54px;
+
+	& h3 {
+		font-weight: 400 !important;
+		font-size: 1rem;
+		margin: 0 !important;
+	}
+}
+
+.tarefa {
+	margin: .8em 0;
+}
+
+.loader {
+	display: block;
+	margin: 0.8em 0;
+}
+
+::ng-deep.painel-tarefas .mat-expansion-panel-body {
+	padding: 0;
+}

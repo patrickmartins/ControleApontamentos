@@ -1,0 +1,37 @@
+@use 'sass:map';
+@use "@angular/material" as mat;
+
+@include mat.core();
+
+$theme-primary: mat.define-palette(mat.$indigo-palette, 500);
+$theme-accent: mat.define-palette(mat.$pink-palette, 500);
+$theme-warn: mat.define-palette(mat.$red-palette);
+
+$theme: mat.define-light-theme(
+	(
+		color: (
+			primary: $theme-primary,
+			accent: $theme-accent,
+			warn: $theme-warn,
+		)
+	)
+);
+
+$foreground: map.get($theme, foreground);
+$background: map.get($theme, background);
+$color-primary: map.get($theme, primary);
+
+.borda-1 {
+	border: 1px solid mat.get-color-from-palette($foreground, divider)!important;
+}
+
+.background-1 {
+	background-color: mat.get-color-from-palette($background, card)!important;
+}
+
+.background-primary-1 {
+	background-color: mat.get-color-from-palette($color-primary)!important;
+}
+
+@include mat.all-component-themes($theme);
+

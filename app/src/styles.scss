@@ -1,0 +1,77 @@
+body {
+	font-family: Roboto, "Helvetica Neue", sans-serif;
+	margin: 0;
+}
+
+html,
+body {
+	height: 100%;
+}
+
+.badge {
+	display: inline-block;
+	padding: 0.3em 0.55em;
+	margin-left: 0.4em;
+	font-size: 0.9em;
+	font-weight: 700;
+	line-height: 1;
+	color: #fff;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: baseline;
+	border-radius: 0.3rem;
+
+	&.info {
+		background-color: #39c0ed;
+	}
+
+	&.error {
+		background-color: #f93154;
+	}
+
+	&.sucess {
+		background-color: #00b74a;
+	}
+}
+
+.mat-dialog-container {
+	border-radius: 0 !important;
+}
+
+@keyframes fade-in-left {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
+}
+
+.fade-in-left {
+	-webkit-animation-name: fade-in-left;
+	animation-name: fade-in-left;
+	animation-duration: 750ms;
+	animation-fill-mode: both;
+}
+
+@keyframes fade-out-left {
+	from {
+		opacity: 1;
+		height: 123.781px;
+	}
+
+	to {
+		opacity: 0;
+		height: 0;
+		margin-top: -11px;
+	}
+}
+
+.fade-out-left,
+.fade-out-left > * {
+	-webkit-animation-name: fade-out-left;
+	animation-name: fade-out-left;
+	animation-duration: 750ms;
+	animation-fill-mode: both;
+}

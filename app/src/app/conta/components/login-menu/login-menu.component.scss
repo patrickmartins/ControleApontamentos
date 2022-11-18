@@ -1,0 +1,18 @@
+.nome-usuario {
+	margin-right: 5px;
+}
+
+.foto-usuario {
+	height: 26px;
+    border-radius: 50%;
+    border: 2px solid;
+	align-self: center;
+}
+
+.menu-usuario {
+	display: flex;
+
+	.foto-usuario {
+		margin-right: .5em;
+	}	
+}

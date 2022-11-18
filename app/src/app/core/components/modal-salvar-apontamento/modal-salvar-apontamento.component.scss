@@ -1,0 +1,62 @@
+.modal {
+
+	& .cabecalho {
+		display: flex;
+
+		& > h4 {
+			margin: 0 0 5px 0;
+			width: 100%;
+			align-items: center;
+    		display: flex;
+		}
+
+		& > .btn-fechar {
+			margin: 0 0 5px 0;
+		}
+	}
+
+	& .corpo {
+		padding: 20px 0;
+
+		& .tempo {
+			& ::ng-deep.mat-form-field-infix {
+				padding: 10px 0;
+				text-align: center;
+			}
+
+			& ::ng-deep.mat-form-field-subscript-wrapper {
+				padding: 0;
+			}
+
+			& ::ng-deep.mat-form-field-flex {
+				width: 120px;
+			}
+		}
+
+		& .comentario {
+			width: 100%;
+
+			& textarea {
+				resize: none;
+			}
+
+			& ::ng-deep.mat-form-field-wrapper {
+				padding-bottom: 0.5em;
+			}
+
+			& ::ng-deep.mat-form-field-subscript-wrapper {
+				margin-top: 20px;
+				padding: 0;				
+			}
+		}
+	}
+
+	& .acoes {
+		margin-top: 15px;
+		float: right;
+
+		& button:nth-child(1) {
+			margin-right: 10px;
+		}
+	}
+}

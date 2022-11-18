@@ -1,0 +1,55 @@
+<div class="quadro-tarefa">
+	<mat-card class="borda-1">
+		<div class="container">
+			<div class="status-tarefa" [class]="tarefa.status">
+			</div>
+			<div class="info-tarefa">
+				<div class="titulo-pai" [title]="tarefa.colecao + ' - ' +  tarefa.tituloPai">
+					<h5 *ngIf="tarefa.tituloPai === ''">{{ tarefa.colecao }}</h5>
+					<h5 *ngIf="tarefa.tituloPai !== ''">{{ tarefa.colecao }} - {{ tarefa.tituloPai }}</h5>
+					<span class="badge info" *ngFor="let tag of tarefa.tags">{{ tag }}</span>
+				</div>
+
+				<div class="titulo" [title]="'TASK ' + tarefa.id + ' - ' +  tarefa.titulo">
+					<strong>
+						<a mat-flat-button target="_blank" [href]="tarefa.obterLinkTfs()">{{ tarefa.tipo == 2 ? "BUG" : "TASK" }} {{ tarefa.id }}</a> - {{tarefa.titulo }}
+					</strong>
+				</div>
+
+				<div class="designado">
+					<designado-tarefa class="nome" [designado]="tarefa.designado"
+													[tempoTotalApontadoSincronizadoChannel]="tarefa.tempoTotalApontadoSincronizadoChannel"
+													[tempoTotalApontadoNaoSincronizadoChannel]="tarefa.tempoTotalApontadoNaoSincronizadoChannel">
+					</designado-tarefa>
+				</div>
+			</div>
+			<div class="fixar" *ngIf="permiteFixar">
+				<button mat-icon-button [title]="tarefa.fixada ? 'Desafixar Tarefa' : 'Fixar Tarefa'" (click)="tarefa.fixada ? desafixarTarefa() : fixarTarefa()">
+					<mat-icon class="nav-toolbar-icon-menu">{{ tarefa.fixada ? 'bookmark' : 'bookmark_outlined' }}</mat-icon>
+				</button>
+			</div>
+			<div *ngIf="tarefa.apontamentoHabilitado && habilitarApontamento" class="contador-container">
+				<contador-tarefa #contador class="contador" [habilitado]="!salvandoApontamento" [idTarefa]="tarefa.id" [colecao]="tarefa.colecao" (onApontamentoSalvo)="onApontamentoSalvo($event)"></contador-tarefa>
+			</div>
+		</div>	
+		<mat-progress-bar mode="indeterminate" *ngIf="salvandoApontamento" class="salvando-progresso"></mat-progress-bar>	
+		<button mat-button [ngStyle]="{'opacity': tarefa.apontamentos.length > 0 ? '1' : '0'}" class="btn-expandir" fxShow="true" (click)="apontamentosExpandido = !apontamentosExpandido" fxHide.gt-xs>
+			<mat-icon class="nav-toolbar-icon-menu">{{ apontamentosExpandido ? 'expand_less' : 'expand_more' }}</mat-icon>
+		</button>		
+	</mat-card>
+
+	<mat-expansion-panel class="lista-apontamentos background-1 borda-1" *ngIf="tarefa.apontamentos.length > 0" [(expanded)]="apontamentosExpandido">
+		<ng-template matExpansionPanelContent>
+			<ul>
+				<li *ngFor="let apontamento of tarefa.apontamentos" class="apontamento">
+					<span [title]="apontamento.sincronizadoChannel ? 'Sincronizado com o Channel' : 'Não sincronizado com o Channel'"
+							class="badge" [ngClass]="{'error': !apontamento.sincronizadoChannel, 'sucess': apontamento.sincronizadoChannel}">Channel</span>
+						
+					<span>
+						<span class="data">{{ apontamento.data | date:'dd/MM/yyyy'}}</span>
+						<b>{{ apontamento.usuario }}</b> - {{ apontamento.tempo | tempo }} - {{ apontamento.comentario }}</span>
+				</li>
+			</ul>
+		</ng-template>
+	</mat-expansion-panel>
+</div>

@@ -1,0 +1,45 @@
+<div *ngIf="!carregando">
+	<div *ngIf="tarefasFixadas && tarefasFixadas.length > 0">	
+		<mat-expansion-panel class="painel-tarefas" [expanded]="true">
+			<mat-expansion-panel-header matRipple class="background-1 borda-1">
+				<h3>Tarefas Fixadas</h3>
+			</mat-expansion-panel-header>
+
+			<ng-template matExpansionPanelContent>
+				<quadro-tarefa class="tarefa"
+								[ngClass]="{ 'fade-in-left': tarefa.fixada, 'fade-out-left': !tarefa.fixada}"
+								[tarefa]="tarefa" 
+								[permiteFixar]="true" 
+								[habilitarApontamento]="tarefa.apontamentoHabilitado"
+								[ngStyle]="{ 'animation-delay': tarefa.fixada ? ((i * 0.1) + 's') : '0s', 'opacity': tarefa.fixada ? 0 : 1 }"						 			
+								*ngFor="let tarefa of tarefasFixadas; let i = index">
+			</quadro-tarefa>
+			</ng-template>
+		</mat-expansion-panel>
+	</div>
+	<div *ngIf="grupos">
+		<div *ngFor="let grupo of grupos">
+			<mat-expansion-panel class="painel-tarefas" *ngIf="grupo.tarefas.length > 0" [expanded]="true">
+				<mat-expansion-panel-header matRipple class="background-1 borda-1">
+					<h3>{{ grupo.nome }}</h3>
+				</mat-expansion-panel-header>
+
+				<ng-template matExpansionPanelContent>
+					<quadro-tarefa class="tarefa fade-in-left" 
+									[tarefa]="tarefa" 
+									[permiteFixar]="false" 
+									[ngStyle]="{'animation-delay': (i * 0.1) + 's', 'opacity': 0}"			
+									*ngFor="let tarefa of grupo.tarefas; let i = index">
+					</quadro-tarefa>
+				</ng-template>
+			</mat-expansion-panel>
+		</div>
+	</div>
+</div>
+
+<div *ngIf="carregando">
+	<card-loader style="height: 54px; display: block; margin-bottom: 1.5em;"></card-loader>
+	<quadro-tarefa-loader class="loader" *ngFor="let index of [].constructor(3)"></quadro-tarefa-loader>
+	<card-loader style="height: 54px; display: block; margin-bottom: 1.5em;"></card-loader>
+	<quadro-tarefa-loader class="loader" *ngFor="let index of [].constructor(3)"></quadro-tarefa-loader>
+</div>

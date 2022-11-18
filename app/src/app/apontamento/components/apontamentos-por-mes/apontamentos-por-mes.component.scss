@@ -1,0 +1,127 @@
+.tarefa {
+	margin: 0.8em 0;
+}
+
+.aviso-dados-ponto {
+	background-color: #f93154;
+	color: white;
+	border-radius: 0;
+	margin-bottom: 1.3em;	
+	box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+
+	& > h4 {
+		color: white;
+		font-weight: 500;
+	}
+}
+
+.boasvindas {
+	box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);	
+	margin-bottom: 1.3em;
+	border-radius: 0;
+
+	::ng-deep.cabecalho {
+		height: 54px;
+		
+		& .nome-usuario {
+			align-self: center;
+			font-weight: 400 !important;
+			font-size: 1.2rem;
+			margin: 0 !important;
+		}
+
+		& .data-apontamento {
+			justify-content: flex-end;
+			width: 0;
+		}
+
+		.data-apontamento {
+
+			.mat-datepicker-toggle-default-icon {
+				width: 1.5em;
+				height: 1.5em;
+			}
+			
+			.mat-form-field-flex {
+				padding: 0;
+			}
+
+			input {
+				display: none;
+			}
+		}
+	}
+
+	::ng-deep.mat-expansion-panel-content {
+		.mat-expansion-panel-body {
+			padding: 0 24px 15px 24px;
+		}
+
+		.corpo {
+
+			& > .mensagem {
+
+				display: flex;
+
+				& > h2 {
+					font-weight: 400;
+					font-size: 1.3rem;
+					margin: 0.39em 0 0.35em 0;
+				}
+
+				.datepicker {
+					visibility: hidden;
+					width: 0;
+					height: 0;
+				}
+
+				.btn-editar-data {
+					width: 34px !important;
+					height: 34px !important;
+					line-height: 34px !important;
+					align-self: center;
+					margin: 0 0.4em;
+
+					.mat-icon {
+					   width: 20px !important;
+					   height: 20px !important;
+					   line-height: 20px !important;
+					}
+
+					.material-icons {
+					   font-size: 20px !important;
+					}
+				 }
+			}
+
+			& .informacoes {
+				& > ul {
+					padding: 1.3em 1.4em 1em 1.3em;
+					margin: 0;	
+				}
+			}
+		}
+	}
+}
+
+.painel-tarefas.mat-expansion-panel {	
+	background-color: transparent;	
+	box-shadow: unset;
+	border-radius: 0;
+}
+
+.painel-tarefas .mat-expansion-panel-header {
+	box-shadow: 0 .125rem .25rem rgba(0,0,0,.075)!important;
+	margin-bottom: .5em;	
+	height: 54px;
+
+	& h3 {
+		font-weight: 400 !important;
+		font-size: 1rem;
+		margin: 0 !important;
+	}
+}
+
+::ng-deep .painel-tarefas .mat-expansion-panel-body {
+	padding: 0;
+}

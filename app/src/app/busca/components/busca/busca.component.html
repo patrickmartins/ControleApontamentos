@@ -1,0 +1,25 @@
+<section *ngIf="pagina" class="cabecalho">
+	<mat-paginator class="borda-1 background-1" [length]="pagina.totalResultados"
+		[pageSize]="pagina.tamanhoPagina"
+		[pageIndex]="pagina.numeroPagina - 1"
+		[pageSizeOptions]="[10,15,20]"
+		(page)="onEventoPagina($event)"></mat-paginator>
+</section>
+
+<section class="resultados" *ngIf="!carregando">
+	<div *ngIf="pagina.totalResultados > 0">
+		<quadro-tarefa class="fade-in-left tarefa"
+						[tarefa]="tarefa" 
+						[permiteFixar]="true" 
+						[habilitarApontamento]="tarefa.apontamentoHabilitado"
+						[ngStyle]="{ 'animation-delay': tarefa.fixada ? ((i * 0.1) + 's') : '0s', 'opacity': tarefa.fixada ? 0 : 1 }"						 			
+						*ngFor="let tarefa of pagina.tarefas; let i = index">
+		</quadro-tarefa>
+	</div>
+
+	<h3 *ngIf="pagina.totalResultados === 0">A busca não retornou resultados</h3>
+</section>
+
+<section *ngIf="carregando">
+	<quadro-tarefa-loader class="tarefa" style="display: block;" *ngFor="let index of [].constructor(8)"></quadro-tarefa-loader>
+</section>

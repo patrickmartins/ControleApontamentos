@@ -1,0 +1,121 @@
+<div class="nav-container">
+	<mat-toolbar color="primary" class="background-primary-1">
+		<mat-toolbar-row class="nav-toolbar-row">
+			<div fxFlex.gt-md="75%" fxFlex.gt-sm="85%" fxFlex.gt-xs="90%" fxFlex="100%" fxLayoutAlign="center center">
+				<div>
+					<button mat-icon-button class="nav-toolbar-btn-menu" (click)="sidenav.toggle()" fxShow="true" fxHide.gt-xs>
+						<mat-icon class="nav-toolbar-icon-menu">menu</mat-icon>
+					</button>
+					<button mat-button class="nav-toolbar-brand" fxHide.xs [routerLink]="['/home']">
+						<span>Controle de Apontamentos</span>
+					</button>
+				</div>
+				<div fxShow="true" fxHide.lt-lg>
+					<button mat-button [routerLink]="['/tarefa/minhas-tarefas']">Minhas Tarefas</button>
+					<button mat-button [matMenuTriggerFor]="menuApontamentos">Meus Apontamentos</button>
+					<mat-menu #menuApontamentos>
+						<button mat-menu-item [routerLink]="['/apontamento/por-dia']">Apontamentos por Dia</button>
+						<button mat-menu-item [routerLink]="['/apontamento/por-mes']">Apontamentos por Mês</button>
+					</mat-menu>
+					<button mat-button *ngIf="usuarioLogado?.possuiRole('administrador')">Administração<div></div></button>
+				</div>
+				<span class="menu-spacer"></span>
+				<div class="nav-busca" *ngIf="usuarioLogado">
+					<mat-form-field appearance="standard">
+						<input matInput name="filtros.palavraChave" (keyup.enter)="buscarTarefas()" placeholder="Buscar" [(ngModel)]="filtros.palavraChave" type="text" [matMenuTriggerFor]="menuFiltroBusca" required>
+						<mat-icon matSuffix>search</mat-icon>
+					</mat-form-field>
+					
+					<mat-menu #menuFiltroBusca yPosition="below" class="menu-filtro-busca">
+						<div class="colecao" *ngIf="usuarioLogado.colecoes.length > 1">
+							<span>Projeto</span>
+							<mat-divider></mat-divider>
+							<div class="lista">		
+								<mat-radio-group>
+									<mat-radio-button *ngFor="let colecao of usuarioLogado.colecoes; let i = index" ngDefaultControl [(ngModel)]="filtros.colecao" [checked]="i == 0"  [value]="colecao" (click)="$event.stopPropagation()">{{ colecao  }}</mat-radio-button>
+								</mat-radio-group>						
+							</div>
+						</div>
+						<div class="status">
+							<span>Status</span>
+							<mat-divider></mat-divider>
+							<div class="lista">		
+								<ul>
+									<li *ngFor="let status of filtros.status">
+										<mat-checkbox [(ngModel)]="status.marcado" value="status.status" (click)="$event.stopPropagation()">{{ status.nome }}</mat-checkbox>
+									</li>
+								</ul>						
+							</div>
+						</div>
+						<button mat-raised-button color="primary" (click)="buscarTarefas()" class="btn-busca">Buscar</button>
+					</mat-menu>
+				</div>
+
+				<login-menu [ngStyle]="{display: !entrando ? 'block' : 'none'}" (onLoginEntrando)="onLoginEntrando()" (onLoginSucesso)="onLoginSucesso()" (onLogout)="onLogout()" (onLoginErro)="onLoginErro()"></login-menu>
+				<login-menu-loader [ngStyle]="{display: entrando ? 'block' : 'none'}"></login-menu-loader>
+				
+				<div class="configuracoes">
+					<button mat-icon-button [matMenuTriggerFor]="menuConfiguracoes">
+						<mat-icon>settings</mat-icon>
+					</button>
+
+					<mat-menu class="menu" #menuConfiguracoes>
+						<section class="titulo">
+							<span>Aparência</span>
+							<mat-divider></mat-divider>
+						</section>
+						<button mat-menu-item (click)="alterarTemaAplicacao(0)">
+							<mat-icon [ngStyle]="{visibility: temaAplicacaoAtual == 0 ? 'visible' : 'hidden' }">done</mat-icon>
+							<span>Usar tema do dispositivo</span>				
+						</button>
+						<button mat-menu-item (click)="alterarTemaAplicacao(2)">
+							<mat-icon [ngStyle]="{visibility: temaAplicacaoAtual == 2 ? 'visible' : 'hidden'}">done</mat-icon>
+							<span>Tema escuro</span>				
+						</button>
+						<button mat-menu-item (click)="alterarTemaAplicacao(1)">
+							<mat-icon [ngStyle]="{visibility: temaAplicacaoAtual == 1 ? 'visible' : 'hidden'}">done</mat-icon>
+							<span>Tema claro</span>				
+						</button>						
+					</mat-menu>
+				</div>
+			</div>
+		</mat-toolbar-row>
+
+		<mat-toolbar-row class="nav-toolbar-row" fxHide.xs fxHide.gt-md>
+			<div fxLayoutAlign="center center">
+				<button mat-button [routerLink]="['/tarefa/minhas-tarefas']">Minhas Tarefas</button>
+				<button mat-button [matMenuTriggerFor]="menuApontamentos">Meus Apontamentos</button>
+				<mat-menu #menuApontamentos>
+					<button mat-menu-item [routerLink]="['/apontamento/por-dia']">Apontamentos por Dia</button>
+					<button mat-menu-item [routerLink]="['/apontamento/por-mes']">Apontamentos por Mês</button>
+				</mat-menu>
+				<button mat-button *ngIf="usuarioLogado?.possuiRole('administrador')">Administração</button>
+			</div>
+		</mat-toolbar-row>
+	</mat-toolbar>
+
+	<mat-sidenav-container fxFlexFill class="sidemenu-container">
+		<mat-sidenav #sidenav>
+			<mat-nav-list class="nav-sidebar-menu">
+				<button mat-button [routerLink]="['/tarefa/minhas-tarefas']" (click)="sidenav.close()">Minhas Tarefas</button>
+				<mat-expansion-panel>
+					<mat-expansion-panel-header matRipple>
+						<mat-panel-title>
+							Meus Apontamentos
+						</mat-panel-title>
+					</mat-expansion-panel-header>
+					<div>
+						<button mat-menu-item [routerLink]="['/apontamento/por-dia']" (click)="sidenav.close()">Apontamentos por Dia</button>
+						<button mat-menu-item [routerLink]="['/apontamento/por-mes']" (click)="sidenav.close()">Apontamentos por Mês</button>
+					</div>
+				</mat-expansion-panel>
+				<button mat-button *ngIf="usuarioLogado?.possuiRole('administrador')">Administração</button>
+			</mat-nav-list>
+		</mat-sidenav>
+		<mat-sidenav-content>
+			<div fxLayoutAlign="center" class="container">
+				<router-outlet></router-outlet>
+			</div>
+		</mat-sidenav-content>
+	</mat-sidenav-container>
+</div>

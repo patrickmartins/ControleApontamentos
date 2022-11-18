@@ -1,0 +1,10 @@
+{{ designado }}
+<span *ngIf="tempoTotalApontadoSincronizadoChannel > 0 || tempoTotalApontadoNaoSincronizadoChannel > 0">	
+	<span>&nbsp;-</span>
+	<span *ngIf="tempoTotalApontadoSincronizadoChannel > 0">&nbsp;{{ (tempoTotalApontadoSincronizadoChannel + tempoTotalApontadoNaoSincronizadoChannel) | tempoApontado: 'sync' }}</span>
+	<span *ngIf="tempoTotalApontadoSincronizadoChannel <= 0 && tempoTotalApontadoNaoSincronizadoChannel > 0">&nbsp;{{ tempoTotalApontadoNaoSincronizadoChannel | tempoApontado: 'nsync' }}</span>
+	<span *ngIf="tempoTotalApontadoSincronizadoChannel > 0 && tempoTotalApontadoNaoSincronizadoChannel > 0">&nbsp;({{ tempoTotalApontadoNaoSincronizadoChannel | tempoApontado: 'nsync' }})</span>
+</span>
+<span *ngIf="tempoTotalApontadoSincronizadoChannel == 0 && tempoTotalApontadoNaoSincronizadoChannel == 0">	
+	<span>&nbsp;-&nbsp;sem apontamentos</span>	
+</span>

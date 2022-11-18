@@ -1,0 +1,22 @@
+:host {
+	height: 100%;
+	display: block;
+}
+
+::ng-deep .erro {
+	background-color:#cf2b23 !important;
+	color:white !important;
+
+	& .mat-button {
+		color: white !important;
+	}
+}
+
+::ng-deep .sucesso {
+	background-color:#51a351 !important;
+	color:white !important;
+
+	& .mat-button {
+		color: white !important;
+	}
+}

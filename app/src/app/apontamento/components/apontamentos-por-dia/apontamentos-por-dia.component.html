@@ -1,0 +1,79 @@
+<mat-card class="aviso-dados-ponto" *ngIf="dadosPontoNaoEncontrado">
+	<h4>Seus dados não foram encontrados no sistema de ponto.</h4>
+</mat-card>
+
+<mat-expansion-panel class="boasvindas borda-1" [expanded]="true">
+	<mat-expansion-panel-header class="cabecalho" matRipple *ngIf="usuarioLogado">		
+			<h2 *ngIf="dataAtual.getHours() >= 6 && dataAtual.getHours() < 12" class="nome-usuario">Bom dia, {{ usuarioLogado.nomeCompleto.split(' ')[0] }}!</h2>	
+			<h2 *ngIf="dataAtual.getHours() >= 12 && dataAtual.getHours() < 18" class="nome-usuario">Boa tarde, {{ usuarioLogado.nomeCompleto.split(' ')[0] }}!</h2>	
+			<h2 *ngIf="dataAtual.getHours() >= 18 || dataAtual.getHours() < 6" class="nome-usuario">Boa noite, {{ usuarioLogado.nomeCompleto.split(' ')[0] }}!</h2>	
+	</mat-expansion-panel-header>
+
+	<ng-template matExpansionPanelContent>
+		<div class="corpo">
+			<section class="mensagem">				
+				<h2 *ngIf="EHoje(dataSelecionada)">Seu resumo de hoje</h2>
+				<h2 *ngIf="!EHoje(dataSelecionada)">Seu resumo do dia {{ dataSelecionada | date : "d 'de' MMMM 'de' yyyy" }}</h2>
+
+				<mat-form-field appearance="fill" class="datepicker">
+					<input matInput [matDatepicker]="picker" [max]="dataAtual" (dateChange)="onDataAlterada($event)">
+					<mat-datepicker #picker></mat-datepicker>
+				</mat-form-field>
+				<button mat-icon-button (click)="picker.open()" class="btn-editar-data">
+					<mat-icon>edit_calendar</mat-icon>
+				</button>
+			</section>
+			<section *ngIf="!carregando" class="informacoes">
+				<ul *ngIf="apontamentos && batidas">
+					<li *ngIf="batidas && batidas.tempoTotalTrabalhadoNoDia == 0">
+						Você não registrou pontos.
+					</li>
+				
+					<li *ngIf="batidas && batidas.tempoTotalTrabalhadoNoDia > 0">
+						<span>{{ batidas.tempoTotalTrabalhadoNoDia | tempoTrabalhado }}</span>	
+					</li>
+				
+					<li *ngIf="apontamentos && apontamentos.tempoTotalApontadoNoDia == 0">
+						Você não fez apontamentos.
+					</li>
+				
+					<li *ngIf="apontamentos && apontamentos.tempoTotalApontadoNaoSincronizadoChannel == 0 && apontamentos.tempoTotalApontadoSincronizadoChannel > 0 ">
+						
+						<span>{{ apontamentos.tempoTotalApontadoNoDia | tempoApontado : 'sync':'apt'  }}&nbsp;</span>
+					</li>
+				
+					<li *ngIf="apontamentos && apontamentos.tempoTotalApontadoSincronizadoChannel == 0  && apontamentos.tempoTotalApontadoNaoSincronizadoChannel > 0">
+					
+						<span>{{ apontamentos.tempoTotalApontadoNaoSincronizadoChannel | tempoApontado : 'nsync':'apt' }}</span>
+					</li>
+				
+					<li *ngIf="apontamentos && apontamentos.tempoTotalApontadoSincronizadoChannel > 0 
+											&& apontamentos.tempoTotalApontadoNaoSincronizadoChannel > 0">
+						
+						<span>{{ apontamentos.tempoTotalApontadoNoDia | tempoApontado : 'sync':'apt'  }} ({{ apontamentos.tempoTotalApontadoNaoSincronizadoChannel | tempoApontado : 'nsync':'napt' }})
+						</span>
+					</li>
+				</ul>
+	
+				<grafico-resumo-dia	*ngIf="apontamentos && batidas && (apontamentos.tempoTotalApontadoNoDia > 0 || batidas.tempoTotalTrabalhadoNoDia > 0)"
+									[apontamentos]="apontamentos"
+									[batidas]="batidas"></grafico-resumo-dia>				
+			</section>			
+			<section *ngIf="carregando">
+				<grafico-resumo-dia-loader style="height: 182px;"></grafico-resumo-dia-loader>
+			</section>			
+		</div>		
+	</ng-template>
+</mat-expansion-panel>
+
+<div *ngIf="!carregando">
+	<quadro-tarefa class="fade-in-left tarefa" 
+					[tarefa]="tarefa" 
+					[permiteFixar]="true"
+					[ngStyle]="{'animation-delay': tarefa.fixada ? ((i * 0.1) + 's') : '0s', 'opacity': tarefa.fixada ? 0 : 1}"
+					*ngFor="let tarefa of apontamentos?.tarefas; let i = index"></quadro-tarefa>
+</div>
+
+<div *ngIf="carregando">	
+	<quadro-tarefa-loader class="tarefa" style="display: block;" *ngFor="let index of [].constructor(4)"></quadro-tarefa-loader>
+</div>

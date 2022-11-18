@@ -1,0 +1,43 @@
+{
+  "name": "controle-apontamentos",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/animations": "^14.2.0",
+    "@angular/cdk": "^14.2.6",
+    "@angular/common": "^14.2.0",
+    "@angular/compiler": "^14.2.0",
+    "@angular/core": "^14.2.0",
+    "@angular/flex-layout": "^14.0.0-beta.41",
+    "@angular/forms": "^14.2.0",
+    "@angular/material": "^14.2.6",
+    "@angular/material-moment-adapter": "^14.2.6",
+    "@angular/platform-browser": "^14.2.0",
+    "@angular/platform-browser-dynamic": "^14.2.0",
+    "@angular/router": "^14.2.0",
+    "@azure/msal-angular": "^2.3.2",
+    "@azure/msal-browser": "^2.26.0",
+    "@fortawesome/fontawesome-free": "^6.0.0",
+    "@ngneat/content-loader": "^7.0.0",
+    "@types/moment-duration-format": "^2.2.3",
+    "angular-cd-timer": "^3.0.0",
+    "chart.js": "^3.1.1",
+    "moment": "^2.29.4",
+    "moment-duration-format": "^2.3.2",
+    "ng2-charts": "^4.0.1",
+    "rxjs": "~7.5.0",
+    "tslib": "^2.3.0",
+    "zone.js": "~0.11.4"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^14.2.7",
+    "@angular/cli": "~14.2.7",
+    "@angular/compiler-cli": "^14.2.0",
+    "typescript": "~4.7.2"
+  }
+}

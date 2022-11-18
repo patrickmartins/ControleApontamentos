@@ -1,0 +1,17 @@
+<div>
+	<div *ngIf="usuarioLogado">
+		<button mat-button [matMenuTriggerFor]="menuConta">
+			<span class="nome-usuario" fxHide.xs>{{ usuarioLogado.nomeCompleto }}</span>
+			<img class="foto-usuario" [src]="fotoUsuarioLogado">
+		</button>
+		<mat-menu #menuConta="matMenu">
+			<button mat-menu-item fxHide.gt-xs class="menu-usuario">
+				<img class="foto-usuario" [src]="fotoUsuarioLogado">
+				<span class="nome-usuario">{{ usuarioLogado.nomeCompleto }}</span>				
+			</button>
+			<button mat-menu-item (click)="logout()">Sair</button>
+		</mat-menu>
+	</div>
+
+	<button mat-button *ngIf="!usuarioLogado" (click)="login()">Entrar</button>
+</div>

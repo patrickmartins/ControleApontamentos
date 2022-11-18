@@ -1,0 +1,109 @@
+.tarefa {
+	margin: 0.8em 0;
+}
+
+.aviso-dados-ponto {
+	background-color: #f93154;
+	color: white;
+	border-radius: 0;
+	margin-bottom: 1.3em;
+	border: 1px solid #e0e0e0 !important;
+	box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+
+	& > h4 {
+		color: white;
+		font-weight: 500;
+	}
+}
+
+.boasvindas {
+	box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);
+	border: 1px solid #e0e0e0;
+	margin-bottom: 1.7em;
+	border-radius: 0;
+
+	::ng-deep.cabecalho {
+		height: 54px;
+		
+		& .nome-usuario {
+			align-self: center;
+			font-weight: 400 !important;
+			font-size: 1.2rem;
+			margin: 0 !important;
+		}
+
+		& .data-apontamento {
+			justify-content: flex-end;
+			width: 0;
+		}
+
+		.data-apontamento {
+
+			.mat-datepicker-toggle-default-icon {
+				width: 1.5em;
+				height: 1.5em;
+			}
+			
+			.mat-form-field-flex {
+				padding: 0;
+			}
+
+			input {
+				display: none;
+			}
+		}
+	}
+
+	::ng-deep.mat-expansion-panel-content {
+		.mat-expansion-panel-body {
+			padding: 0 24px 15px 24px;
+		}
+
+		.corpo {
+
+			& > .mensagem {
+
+				display: flex;
+
+				& > h2 {
+					font-weight: 400;
+					font-size: 1.3rem;
+					margin: 0.39em 0 0.35em 0;
+				}
+
+				.datepicker {
+					visibility: hidden;
+					width: 0;
+					height: 0;
+				}
+
+				.btn-editar-data {
+					width: 34px !important;
+					height: 34px !important;
+					line-height: 34px !important;
+					align-self: center;
+					margin: 0 0.4em;
+
+					.mat-icon {
+					   width: 20px !important;
+					   height: 20px !important;
+					   line-height: 20px !important;
+					}
+
+					.material-icons {
+					   font-size: 20px !important;
+					}
+				 }
+			}
+
+			
+		}
+
+		& .informacoes {
+			& > ul {
+				padding: 1.3em 1.4em 1em 1.3em;
+				margin: 0;	
+			}
+		}
+	}
+}

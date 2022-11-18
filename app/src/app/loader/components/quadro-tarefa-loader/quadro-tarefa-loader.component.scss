@@ -1,0 +1,20 @@
+.loader {
+	.mat-card {
+		z-index: 2;
+		display: block;
+		padding: 0;
+		height: 5.4em;
+		border-radius: 0;
+		box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+	}
+
+	::ng-deep .mat-card { 
+		svg {
+			height: 5.4em;
+		}
+
+		content-loader {
+			overflow: hidden;
+		}
+	}
+}
