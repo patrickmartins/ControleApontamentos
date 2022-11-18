@@ -100,7 +100,7 @@ namespace CA.Core.Servicos.Tfs
             if (string.IsNullOrEmpty(colecao))
                 return Resultado.DeErros<IEnumerable<ItemTrabalho>>(new Erro("A coleção do TFS não foi informada.", nameof(colecao)));
 
-            var filtroPeriodo = string.Join(" or ", data.Select(c => $@"Source.[Custom.Timesheets.TimesheetRawData] contains words 'CreatedBy=\""{usuario.NomeUsuario}\"" TimeSheetDate =\""{c:d}\""'"));
+            var filtroPeriodo = string.Join(" or ", data.Select(c => $@"Source.[Custom.Timesheets.TimesheetRawData] contains words 'CreatedBy=\""{usuario.NomeUsuario}\"" TimeSheetDate =\""{c.ToString("dd/MM/yyyy")}\""'"));
 
             var resultado = await _repositorioItens.ExecutarQueryAsync(colecao, $@"SELECT [System.Id]
                                                                                     FROM WorkItemLinks 
