@@ -8,6 +8,7 @@ using CA.Seguranca.Extensions;
 using CA.Seguranca.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Principal;
@@ -97,7 +98,15 @@ namespace CA.Seguranca.Servicos
                 return Resultado.DeErros<UsuarioApp>(result.Errors.Select(c => new Erro(c.Description, c.Code)).ToArray());
             }
 
-            return Resultado.DeSucesso<UsuarioApp>();            
+            return Resultado.DeValor(new UsuarioApp
+            {
+                Email = usuarioIdentity.Email,
+                NomeUsuario = usuarioIdentity.UserName,
+                NomeCompleto = claims.Any(c => c.Type.Equals(TiposClaims.NomeCompleto)) ? claims.First(c => c.Type.Equals(TiposClaims.NomeCompleto)).Value : string.Empty,
+                Colecoes = claims.Where(c => c.Type.Equals(TiposClaims.ColecoesTfs)).SelectMany(c => c.Value.Split(';')).ToList(),
+                Claims = claims,
+                Roles = new string[0]
+            });
         }
 
         public async Task<Resultado<CaJwt>> LoginAsync(string email)
@@ -128,7 +137,7 @@ namespace CA.Seguranca.Servicos
                 Colecoes = claims.Where(c => c.Type.Equals(TiposClaims.ColecoesTfs)).SelectMany(c => c.Value.Split(';')).ToList(),
                 Claims = claims,
                 Roles = roles
-            }); ;
+            });
         }
 
         private CaJwt GerarTokenJwtPorUsuario(UsuarioApp usuario)
