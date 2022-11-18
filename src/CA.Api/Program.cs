@@ -16,6 +16,8 @@ builder.Services.AdicionarCors();
 
 var app = builder.Build();
 
+app.UsarCulturaBr();
+
 app.UseRouting();
 app.UseCors("default");
 
