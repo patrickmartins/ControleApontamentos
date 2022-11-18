@@ -30,15 +30,22 @@ export class MinhasTerefasComponent implements OnInit {
 		let tarefasAgrupadas = TarefaHelper.agruparTarefasFixadas(tarefasFixadas);
 
 		forkJoin({
-			tarefasFixadas: forkJoin(tarefasAgrupadas.map((tarefasPorColecao: any) => this.servicoTarefa.obterTarefasPorIds(tarefasPorColecao.key, tarefasPorColecao.values.map((c: any) => c.idTarefa)))),
-			tarefasAtivas: this.servicoTarefa.obterTarefasAtivas()
+			tarefasFixadas: forkJoin(tarefasAgrupadas.map((tarefasPorColecao: any) => this.servicoTarefa.obterTarefasPorIds(tarefasPorColecao.key, tarefasPorColecao.values.map((c: any) => c.idTarefa))))			
 		})		
 		.subscribe({ 
 			next: (resultado: any) => {
 				this.tarefasFixadas = resultado.tarefasFixadas.flatMap((c: any) => c);
-				this.grupos = resultado.tarefasAtivas;
 			},
 			complete: () => this.carregando = false
 		});
+
+		this.servicoTarefa
+			.obterTarefasAtivas()	
+				.subscribe({ 
+					next: (tarefas: GrupoTarefas[]) => {
+						this.grupos = tarefas;
+					},
+					complete: () => this.carregando = false
+				});
 	}
 }
