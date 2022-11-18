@@ -13,7 +13,7 @@ import { TarefaHelper } from 'src/app/helpers/tarefa.helper';
 
 export class MinhasTerefasComponent implements OnInit {
 
-	public carregando: boolean = false;
+	public carregando: boolean = true;
 
 	public grupos?: GrupoTarefas[];
 	public tarefasFixadas?: Tarefa[];
@@ -29,16 +29,13 @@ export class MinhasTerefasComponent implements OnInit {
 		let tarefasFixadas = TarefaHelper.obterTarefasFixadas();
 		let tarefasAgrupadas = TarefaHelper.agruparTarefasFixadas(tarefasFixadas);
 
-		this.carregando = true;
-		
 		forkJoin({
 			tarefasFixadas: forkJoin(tarefasAgrupadas.map((tarefasPorColecao: any) => this.servicoTarefa.obterTarefasPorIds(tarefasPorColecao.key, tarefasPorColecao.values.map((c: any) => c.idTarefa))))			
 		})		
 		.subscribe({ 
 			next: (resultado: any) => {
 				this.tarefasFixadas = resultado.tarefasFixadas.flatMap((c: any) => c);
-			},
-			complete: () => this.carregando = false
+			}
 		});
 
 		this.servicoTarefa
