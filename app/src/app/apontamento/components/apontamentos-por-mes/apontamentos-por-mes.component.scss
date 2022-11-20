@@ -125,3 +125,9 @@
 ::ng-deep .painel-tarefas .mat-expansion-panel-body {
 	padding: 0;
 }
+
+::ng-deep card-loader {
+	svg {
+		height: 1.3em
+	}
+}

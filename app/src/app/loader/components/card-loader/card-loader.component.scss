@@ -1,5 +1,5 @@
 .loader {
-	height: inherit;	
+	height: inherit;	    
 
 	.mat-card {
 		display: flex;
@@ -12,5 +12,9 @@
 	content-loader {
 		width: 100%;
 		align-self: center;
+	}
+
+	content-loader {
+		overflow: hidden;
 	}
 }

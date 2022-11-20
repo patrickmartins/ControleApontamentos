@@ -54,7 +54,7 @@ namespace CA.Repositorios.Ponto.ServicosHttp
         {
             var lista = _policy.ExecuteAsync(() =>
             {
-                var token = ObterTokenAcesso();
+                var token = ObterTokenJwt();
 
                 return _configuracoes.UrlIntegracao
                                             .AppendPathSegment("Batidas")

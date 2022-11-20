@@ -1,0 +1,10 @@
+.loader {
+
+	content-loader {
+		overflow: hidden;
+
+		::ng-deep svg {
+			height: 17.54em;
+		}
+	}
+}

@@ -7,7 +7,8 @@ export class TarefaHelper {
 
 	private static _tarefasFixadas?: TarefaFixada[];
 
-	public static obterTarefasFixadas(): TarefaFixada[] {
+	public static obterTarefasFixadas(usuario?: string): TarefaFixada[];
+	public static obterTarefasFixadas(usuario: string): TarefaFixada[] {
 		if (this._tarefasFixadas)
 			return this._tarefasFixadas;
 
@@ -18,17 +19,18 @@ export class TarefaHelper {
 			this._tarefasFixadas = []
 		}
 
-		return this._tarefasFixadas;
+		return usuario ? this._tarefasFixadas.filter(c => c.usuario === usuario) : this._tarefasFixadas;
 	}
 
-	public static fixarTarefa(tarefa: Tarefa) {
-		let tarefasFixadas = this.obterTarefasFixadas();
+	public static fixarTarefa(usuario: string, tarefa: Tarefa) {
+		let tarefasFixadas = this.obterTarefasFixadas(usuario);
 
 		if (!tarefasFixadas.some(c => c.idTarefa == tarefa.id && c.colecao == tarefa.colecao)) {
 
 			tarefasFixadas.push(new TarefaFixada().criarNovo({
 				idTarefa: tarefa.id,
-				colecao: tarefa.colecao
+				colecao: tarefa.colecao,
+				usuario: usuario
 			})!)
 
 			LocalStorageHelper.salvarDados(environment.chaveStorageTarefasFixadas, tarefasFixadas);
@@ -37,8 +39,8 @@ export class TarefaHelper {
 		}
 	}
 
-	public static desafixarTarefa(tarefa: Tarefa) {
-		let tarefasFixadas = this.obterTarefasFixadas().filter(c => c.idTarefa != tarefa.id || c.colecao != tarefa.colecao);
+	public static desafixarTarefa(usuario: string, tarefa: Tarefa) {
+		let tarefasFixadas = this.obterTarefasFixadas(usuario).filter(c => c.idTarefa != tarefa.id || c.colecao != tarefa.colecao);
 
 		LocalStorageHelper.salvarDados(environment.chaveStorageTarefasFixadas, tarefasFixadas);
 

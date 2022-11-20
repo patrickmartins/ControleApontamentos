@@ -23,7 +23,7 @@
 				</button>
 			</section>
 
-			<section *ngIf="!carregando" class="informacoes">
+			<section [ngStyle]="{'display': carregando ? 'none' : 'block'}" class="informacoes">
 				<ul *ngIf="apontamentos && batidas">
 					<li *ngIf="batidas && batidas.tempoTotalTrabalhadoNoMes == 0">
 						Você não registrou pontos.

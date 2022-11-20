@@ -10,6 +10,6 @@ import { TemaService } from './core/services/tema.service';
 export class AppComponent {
 
 	constructor(private temaService: TemaService) {
-		temaService.aplicarTemaAtual();
-	}
+		this.temaService.aplicarTemaAtual();
+	}	
 }

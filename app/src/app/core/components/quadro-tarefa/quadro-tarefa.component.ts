@@ -42,7 +42,7 @@ export class QuadroTarefaComponent extends BaseComponent {
 		if (this.permiteFixar) {
 			this.tarefa.fixada = true;
 
-			TarefaHelper.fixarTarefa(this.tarefa);
+			TarefaHelper.fixarTarefa(this.usuarioLogado!.nomeUsuario, this.tarefa);
 		}
 	}
 
@@ -50,7 +50,7 @@ export class QuadroTarefaComponent extends BaseComponent {
 		if (this.permiteFixar) {
 			this.tarefa.fixada = false;
 
-			TarefaHelper.desafixarTarefa(this.tarefa);
+			TarefaHelper.desafixarTarefa(this.usuarioLogado!.nomeUsuario, this.tarefa);
 		}
 	}
 

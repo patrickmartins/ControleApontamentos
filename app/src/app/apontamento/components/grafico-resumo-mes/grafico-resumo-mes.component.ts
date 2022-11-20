@@ -226,7 +226,7 @@ export class GraficoResumoMesComponent implements OnChanges, OnInit, OnDestroy, 
 	}
 
 	public ngOnChanges(changes: SimpleChanges): void {
-		this.atualizarGrafico();
+		this.atualizarGrafico();		
 	}
 
 	private atualizarGrafico(): void {
@@ -244,7 +244,7 @@ export class GraficoResumoMesComponent implements OnChanges, OnInit, OnDestroy, 
 			this.dadosGrafico.datasets[2].data = this.apontamentos.apontamentosDiarios.map(c => c.tempoTotalApontadoNaoSincronizadoChannel);
 			this.dadosGrafico.datasets[2].hidden = this.apontamentos.tempoTotalApontadoNaoSincronizadoChannel <= 0;
 		}
-		
+
 		this.grafico?.update();				
 	}
 

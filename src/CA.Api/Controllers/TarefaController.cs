@@ -51,7 +51,7 @@ namespace CA.Api.Controllers
                 return Unauthorized();
 
             if (!usuario.PossuiAcessoColecao(colecao))
-                return Unauthorized(new Erro($"Você não possui acesso a coleção '{colecao}'.", "colecao"));
+                return Ok(new List<TarefaModel>());
 
             var resultado = await _servico.ObterTarefasPorIdAsync(usuario, colecao, ids);
 
