@@ -18,11 +18,14 @@
 
 .tarefa {
 	margin: .8em 0;
+
+	&:last-child {
+		margin-bottom: 1.4em;
+	}
 }
 
 .loader {
 	display: block;
-	margin: 0.8em 0;
 }
 
 ::ng-deep.painel-tarefas .mat-expansion-panel-body {

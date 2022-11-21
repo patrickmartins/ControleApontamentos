@@ -45,9 +45,13 @@
 
 		<div *ngIf="carregando">
 			<card-loader style="height: 54px; display: block; margin-bottom: 1.5em;"></card-loader>
-			<quadro-tarefa-loader class="loader" *ngFor="let index of [].constructor(3)"></quadro-tarefa-loader>
+			<div>
+				<quadro-tarefa-loader class="loader tarefa" *ngFor="let index of [].constructor(3)"></quadro-tarefa-loader>
+			</div>
 			<card-loader style="height: 54px; display: block; margin-bottom: 1.5em;"></card-loader>
-			<quadro-tarefa-loader class="loader" *ngFor="let index of [].constructor(3)"></quadro-tarefa-loader>
+			<div>
+				<quadro-tarefa-loader class="loader tarefa" *ngFor="let index of [].constructor(3)"></quadro-tarefa-loader>
+			</div>
 		</div>
 	</div>
 </div>

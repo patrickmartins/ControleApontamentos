@@ -6,10 +6,11 @@ namespace CA.Api.Configuracoes
     {
         public static void UsarCulturaBr(this IApplicationBuilder app)
         {
-            app.UseRequestLocalization(new RequestLocalizationOptions
-            {
-                DefaultRequestCulture = new RequestCulture("pt-br")
-            });
+            var cultura = new RequestLocalizationOptions().SetDefaultCulture("pt-BR")
+                                                            .AddSupportedCultures("pt-BR")
+                                                            .AddSupportedUICultures("pt-BR");
+
+            app.UseRequestLocalization(cultura);
         }
     }
 }

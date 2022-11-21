@@ -31,6 +31,18 @@
 			& ::ng-deep.mat-form-field-flex {
 				width: 120px;
 			}
+
+			input {
+				vertical-align: top;
+
+				&::-webkit-calendar-picker-indicator {
+					display: none;
+				}
+			}
+
+			.mat-icon {
+				font-size: 135%;
+			}
 		}
 
 		& .comentario {
