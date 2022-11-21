@@ -6,7 +6,7 @@ namespace CA.Seguranca.Interfaces
 {
     public interface IServicoIdentidade
     {
-        Task<Resultado<UsuarioApp>> ImportarUsuarioTfsAsync(IPrincipal usuarioLogado);
+        Task<Resultado<UsuarioApp>> ImportarUsuarioAsync(IPrincipal usuarioLogado);
         Task<Resultado<UsuarioApp>> ObterUsuarioPorEmailAsync(string email);
         Task<Resultado<CaJwt>> LoginAsync(string email);
     }

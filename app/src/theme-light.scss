@@ -1,0 +1,100 @@
+@use 'sass:map';
+@use "@angular/material" as mat;
+
+@include mat.core();
+
+$light-palette: (
+	50 : #e0effa,
+    100 : #b3d7f3,
+    200 : #80bceb,
+    300 : #4da1e3,
+    400 : #268cdd,
+    500 : #0078d7,
+    600 : #0070d3,
+    700 : #0065cd,
+    800 : #005bc7,
+    900 : #0048be,
+    A100 : #e6eeff,
+    A200 : #b3cbff,
+    A400 : #80a8ff,
+    A700 : #6796ff,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #ffffff,
+        500 : #ffffff,
+        600 : #ffffff,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #000000,
+    )
+);
+
+$light-theme-foreground: (
+	base:              black,
+	divider:           rgba(black, 0.12),
+	dividers:          rgba(black, 0.12),
+	disabled:          rgba(black, 0.38),
+	disabled-button:   rgba(black, 0.26),
+	disabled-text:     rgba(black, 0.38),
+	elevation:         black,
+	hint-text:         rgba(black, 0.38),
+	secondary-text:    rgba(black, 0.54),
+	icon:              rgba(black, 0.54),
+	icons:             rgba(black, 0.54),
+	text:              #4f4f4f,
+	slider-min:        rgba(black, 0.87),
+	slider-off:        rgba(black, 0.26),
+	slider-off-active: rgba(black, 0.38),
+);
+
+$theme-primary: mat.define-palette($light-palette, 500);
+$theme-accent: mat.define-palette(mat.$pink-palette, 500);
+$theme-warn: mat.define-palette(mat.$red-palette);
+
+$theme: mat.define-light-theme((
+	color: (
+		primary: $theme-primary,
+		accent: $theme-accent,
+		warn: $theme-warn
+	),
+	typography: mat.define-typography-config(),
+));
+
+$foreground: map.get($theme, foreground);
+$background: map.get($theme, background);
+$color-primary: map.get($theme, primary);
+
+$theme: map.set(
+  $theme,
+  color,
+  foreground,
+  $light-theme-foreground
+);
+
+$theme: map.set(
+  $theme,
+  foreground,
+  $light-theme-foreground
+);
+
+.borda-1 {
+	border: 1px solid mat.get-color-from-palette($foreground, divider)!important;
+}
+
+.background-1 {
+	background-color: mat.get-color-from-palette($background, card)!important;
+}
+
+.background-primary-1 {
+	background-color: mat.get-color-from-palette($color-primary)!important;
+}
+
+@include mat.all-component-themes($theme);
+

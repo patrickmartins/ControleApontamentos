@@ -20,21 +20,26 @@ namespace CA.Seguranca.Servicos
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ConfiguracoesJwt _configuracaoJwt;
+        private readonly ConfiguracoesGerais _configuracoesGerais;
         private readonly IRepositorioUsuariosTfs _repositorioTfs;
         private readonly IRepositorioPonto _repositorioPonto;
         private readonly IRepositorioColecoes _repositorioColecoes;
 
-        public ServicoIdentidade(UserManager<IdentityUser> userManager, ConfiguracoesJwt configuracaoJwt, IRepositorioUsuariosTfs repositorioTfs, IRepositorioPonto repositorioPonto, IRepositorioColecoes repositorioColecoes)
+        public ServicoIdentidade(UserManager<IdentityUser> userManager, ConfiguracoesJwt configuracaoJwt, ConfiguracoesGerais configuracoesGerais, IRepositorioUsuariosTfs repositorioTfs, IRepositorioPonto repositorioPonto, IRepositorioColecoes repositorioColecoes)
         {
             _userManager = userManager;
             _configuracaoJwt = configuracaoJwt;
+            _configuracoesGerais = configuracoesGerais;
             _repositorioTfs = repositorioTfs;
             _repositorioPonto = repositorioPonto;
-            _repositorioColecoes = repositorioColecoes;
+            _repositorioColecoes = repositorioColecoes;            
         }
 
-        public async Task<Resultado<UsuarioApp>> ImportarUsuarioTfsAsync(IPrincipal usuarioLogado)
+        public async Task<Resultado<UsuarioApp>> ImportarUsuarioAsync(IPrincipal usuarioLogado)
         {
+            if(!usuarioLogado.ObterEmailUsuario().Contains(_configuracoesGerais.DominioEmailPermitido))
+                return Resultado.DeErros<UsuarioApp>(new Erro("O usuário logado é de um domínio não permitido pela aplicação.", "email"));
+
             var usuarioIdentity = await _userManager.FindByEmailAsync(usuarioLogado.ObterEmailUsuario());
             var colecoes = await _repositorioColecoes.ObterTodasColecoesAsync();
 
@@ -51,15 +56,9 @@ namespace CA.Seguranca.Servicos
                     break;
             }
 
-            if (usuarioTfs is null)
-                return Resultado.DeErros<UsuarioApp>(new Erro("O usuário logado não possui uma conta no TFS.", "email"));
-
-            if (!usuarioTfs.Email.ToLower().Equals(usuarioLogado.ObterEmailUsuario()))
-                return Resultado.DeErros<UsuarioApp>(new Erro("O e-mail do usuário logado é diferente do usuário do TFS.", "email"));
-
             var usuarioPonto = await _repositorioPonto.ObterFuncionarioPorNomeAsync(usuarioLogado.ObterNomeCompleto());
 
-            if(usuarioPonto is not null)
+            if(usuarioPonto is null)
                 usuarioPonto = await _repositorioPonto.ObterFuncionarioPorNomeAsync(usuarioLogado.ObterNomeCompleto().RemoverAcentos());
 
             var claims = new List<Claim>();
@@ -76,12 +75,17 @@ namespace CA.Seguranca.Servicos
             {
                 claims.Add(new Claim(TiposClaims.Email, usuarioLogado.ObterEmailUsuario()));
                 claims.Add(new Claim(TiposClaims.NomeCompleto, usuarioLogado.ObterNomeCompleto()));
-                claims.Add(new Claim(TiposClaims.DominioTfs, usuarioTfs.Dominio));
-                claims.Add(new Claim(TiposClaims.IdentidadeTfs, usuarioTfs.Identidade.Id));
-                claims.Add(new Claim(TiposClaims.TipoIdentidadeTfs, usuarioTfs.Identidade.Tipo));
-                claims.Add(new Claim(TiposClaims.ColecoesTfs, string.Join(";", usuarioTfs.Colecoes)));
 
-                if (usuarioPonto != null)
+                if (usuarioTfs is not null)
+                {
+                    claims.Add(new Claim(TiposClaims.NomeUsuarioTfs, usuarioTfs.NomeUsuario));
+                    claims.Add(new Claim(TiposClaims.DominioTfs, usuarioTfs.Dominio));
+                    claims.Add(new Claim(TiposClaims.IdentidadeTfs, usuarioTfs.Identidade.Id));
+                    claims.Add(new Claim(TiposClaims.TipoIdentidadeTfs, usuarioTfs.Identidade.Tipo));
+                    claims.Add(new Claim(TiposClaims.ColecoesTfs, string.Join(";", usuarioTfs.Colecoes)));
+                }
+
+                if (usuarioPonto is not null)
                     claims.Add(new Claim(TiposClaims.PisFuncionario, usuarioPonto.NumeroPis));
 
                 result = await _userManager.AddClaimsAsync(usuarioIdentity, claims);
@@ -102,8 +106,10 @@ namespace CA.Seguranca.Servicos
             {
                 Email = usuarioIdentity.Email,
                 NomeUsuario = usuarioIdentity.UserName,
-                NomeCompleto = claims.Any(c => c.Type.Equals(TiposClaims.NomeCompleto)) ? claims.First(c => c.Type.Equals(TiposClaims.NomeCompleto)).Value : string.Empty,
-                Colecoes = claims.Where(c => c.Type.Equals(TiposClaims.ColecoesTfs)).SelectMany(c => c.Value.Split(';')).ToList(),
+                NomeCompleto = claims.ObterNomeCompleto(),
+                Colecoes = claims.ObterColecoesTfs(),
+                PossuiContaPonto = usuarioPonto is not null,
+                PossuiContaTfs = usuarioTfs is not null,
                 Claims = claims,
                 Roles = new string[0]
             });
@@ -133,8 +139,10 @@ namespace CA.Seguranca.Servicos
             {
                 Email = usuario.Email,
                 NomeUsuario = usuario.UserName,
-                NomeCompleto = claims.Any(c => c.Type.Equals(TiposClaims.NomeCompleto)) ? claims.First(c => c.Type.Equals(TiposClaims.NomeCompleto)).Value : string.Empty,
-                Colecoes = claims.Where(c => c.Type.Equals(TiposClaims.ColecoesTfs)).SelectMany(c => c.Value.Split(';')).ToList(),
+                NomeCompleto = claims.ObterNomeCompleto(),
+                Colecoes = claims.ObterColecoesTfs(),
+                PossuiContaPonto = claims.ObterPisFuncionario() is not null,
+                PossuiContaTfs = claims.ObterNomeUsuarioTfs() is not null,
                 Claims = claims,
                 Roles = roles
             });

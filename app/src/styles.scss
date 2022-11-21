@@ -38,6 +38,20 @@ body {
 	border-radius: 0 !important;
 }
 
+.quadro-aviso {
+	background-color: #f93154!important;
+	color: white!important;
+	border-radius: 0!important;
+	margin-bottom: 1.3em;
+	box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+
+	& > h4 {
+		color: white;
+		font-weight: 500;
+	}
+}
+
+
 @keyframes fade-in-left {
 	from {
 		opacity: 0;

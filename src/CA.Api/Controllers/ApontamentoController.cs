@@ -19,7 +19,7 @@ namespace CA.Api.Controllers
 
         [HttpGet]
         [Route("por-dia")]
-        public async Task<ActionResult> PorDia(DateTime data)
+        public async Task<ActionResult> PorDiaAsync(DateTime data)
         {
             var usuario = User.ObterUsuarioTfs();
 
@@ -36,7 +36,7 @@ namespace CA.Api.Controllers
 
         [HttpGet]
         [Route("por-mes")]
-        public async Task<ActionResult> PorMes(int mes, int ano)
+        public async Task<ActionResult> PorMesAsync(int mes, int ano)
         {
             var usuario = User.ObterUsuarioTfs();
 

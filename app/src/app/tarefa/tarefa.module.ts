@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { CommonModule } from '@angular/common';
 import {MatButtonModule} from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 
 import { TarefaRoutingModule } from './tarefa-routing.module';
 import { MinhasTerefasComponent } from './components/minhas-terefas/minhas-terefas.component';
@@ -18,6 +19,7 @@ import { LoaderModule } from '../loader/loader.module';
 		TarefaRoutingModule,
 		MatExpansionModule,
 		MatButtonModule,
+		MatCardModule,
 		LoaderModule
 	]
 })

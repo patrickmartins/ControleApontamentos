@@ -29,20 +29,24 @@ export class MinhasTerefasComponent extends BaseComponent implements OnInit {
 	}
 
 	private obterTarefasAtivas(): void {
-
-		let tarefasFixadas = TarefaHelper.obterTarefasFixadas(this.usuarioLogado!.nomeUsuario);
-		let tarefasAgrupadas = TarefaHelper.agruparTarefasFixadas(tarefasFixadas);
-		
-		forkJoin({
-			tarefasFixadas: tarefasAgrupadas.length == 0 ? of([]) : forkJoin(tarefasAgrupadas.map((tarefasPorColecao: any) => this.servicoTarefa.obterTarefasPorIds(tarefasPorColecao.key, tarefasPorColecao.values.map((c: any) => c.idTarefa)))),
-			grupoTarefasAtivas: this.servicoTarefa.obterTarefasAtivas()
-		})		
-		.subscribe({ 
-			next: (resultado: any) => {
-				this.tarefasFixadas = resultado.tarefasFixadas.flatMap((c: any) => c);
-				this.grupos = resultado.grupoTarefasAtivas;
-			},
-			complete: () => this.carregando = false
-		});
+		if(this.usuarioLogado?.possuiContaTfs) {
+			let tarefasFixadas = TarefaHelper.obterTarefasFixadas(this.usuarioLogado!.nomeUsuario);
+			let tarefasAgrupadas = TarefaHelper.agruparTarefasFixadas(tarefasFixadas);
+			
+			forkJoin({
+				tarefasFixadas: tarefasAgrupadas.length == 0 ? of([]) : forkJoin(tarefasAgrupadas.map((tarefasPorColecao: any) => this.servicoTarefa.obterTarefasPorIds(tarefasPorColecao.key, tarefasPorColecao.values.map((c: any) => c.idTarefa)))),
+				grupoTarefasAtivas: this.servicoTarefa.obterTarefasAtivas()
+			})		
+			.subscribe({ 
+				next: (resultado: any) => {
+					this.tarefasFixadas = resultado.tarefasFixadas.flatMap((c: any) => c);
+					this.grupos = resultado.grupoTarefasAtivas;
+				},
+				complete: () => this.carregando = false
+			});
+		}
+		else {
+			this.carregando = false
+		}
 	}
 }

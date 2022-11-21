@@ -26,7 +26,7 @@ namespace CA.Api.Controllers
 
             if(!resultadoUsuario.Sucesso)
             {
-                resultadoUsuario = await _servicoIdentidade.ImportarUsuarioTfsAsync(User);
+                resultadoUsuario = await _servicoIdentidade.ImportarUsuarioAsync(User);
 
                 if (!resultadoUsuario.Sucesso)
                     return BadRequest(resultadoUsuario.Erros);

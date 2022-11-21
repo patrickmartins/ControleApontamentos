@@ -23,7 +23,7 @@ namespace CA.Api.Controllers
 
         [HttpGet]
         [Route("ativas")]
-        public async Task<ActionResult> ObterTarefasAtivas()
+        public async Task<ActionResult> ObterTarefasAtivasAsync()
         {
             var usuario = User.ObterUsuarioTfs();
 
@@ -40,7 +40,7 @@ namespace CA.Api.Controllers
 
         [HttpGet]
         [Route("por-ids")]
-        public async Task<ActionResult> ObterTarefasPorId([FromQuery] string colecao, [FromQuery] int[] ids)
+        public async Task<ActionResult> ObterTarefasPorIdAsync([FromQuery] string colecao, [FromQuery] int[] ids)
         {
             if (ids.Length >= 10)
                 return BadRequest(new Erro("A quantidade máxima de ids consultados é de 10.", nameof(ids)));

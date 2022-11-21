@@ -54,7 +54,10 @@ namespace CA.Container.IoC
                 var config = service.GetService<IOptions<ConfiguracaoCA>>();
 
                 if (config == null)
-                    throw new ArgumentNullException("A configuração da aplicação não foram encontradas.");
+                    throw new ArgumentNullException("As configurações da aplicação não foram encontradas.");
+
+                if (config.Value.Secullum == null)
+                    throw new ArgumentNullException("As configurações da integração com o Secullum não foram encontradas.");
 
                 config.Value.Secullum.Validar();
 
@@ -66,7 +69,10 @@ namespace CA.Container.IoC
                 var config = service.GetService<IOptions<ConfiguracaoCA>>();
 
                 if (config == null)
-                    throw new ArgumentNullException("A configuração da aplicação não foram encontradas.");
+                    throw new ArgumentNullException("As configurações da aplicação não foram encontradas.");
+
+                if (config.Value.Tfs == null)
+                    throw new ArgumentNullException("As configurações da integração com o TFS não foram encontradas.");
 
                 config.Value.Tfs.Validar();
 
@@ -78,11 +84,29 @@ namespace CA.Container.IoC
                 var config = service.GetService<IOptions<ConfiguracaoCA>>();
 
                 if (config == null)
-                    throw new ArgumentNullException("A configuração da aplicação não foram encontradas.");
+                    throw new ArgumentNullException("As configurações da aplicação não foram encontradas.");
+
+                if (config.Value.Jwt == null)
+                    throw new ArgumentNullException("As configurações de segurança da aplicação não foram encontradas.");
 
                 config.Value.Jwt.Validar();
 
                 return config.Value.Jwt;
+            });
+
+            services.AddSingleton((service) =>
+            {
+                var config = service.GetService<IOptions<ConfiguracaoCA>>();
+
+                if (config == null)
+                    throw new ArgumentNullException("As configurações da aplicação não foram encontradas.");
+
+                if (config.Value.Geral == null)
+                    throw new ArgumentNullException("As configurações gerais da aplicação não foram encontradas.");
+
+                config.Value.Geral.Validar();
+
+                return config.Value.Geral;
             });
 
             services.AddMemoryCache();

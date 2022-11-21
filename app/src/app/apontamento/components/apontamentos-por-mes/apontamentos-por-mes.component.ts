@@ -26,8 +26,6 @@ export class ApontamentosPorMesComponent extends BaseComponent implements OnInit
 	public apontamentos?: ApontamentosMes;
 	public batidas?: BatidasPontoMes;
 
-	public dadosPontoNaoEncontrado: boolean = false;
-
 	constructor(servicoConta: ContaService,
 		private servicoApontamento: ApontamentoService,
 		private servicoPonto: PontoService,
@@ -60,38 +58,42 @@ export class ApontamentosPorMesComponent extends BaseComponent implements OnInit
 	public obterBatidasEPontosPorMes(mes: number, ano: number): void {
 		this.carregando = true;
 		
-		this.servicoApontamento
-			.obterApontamentosPorMes(mes, ano).subscribe({
-				next: (apontamentos) => {
-					this.apontamentos = apontamentos;
+		if(this.usuarioLogado?.possuiContaTfs) {
+			this.servicoApontamento
+				.obterApontamentosPorMes(mes, ano).subscribe({
+					next: (apontamentos) => {
+						this.apontamentos = apontamentos;
 
-					if (this.apontamentos) {
-						let diasComApontamento = this.apontamentos.apontamentosDiarios.filter(c => c.tempoTotalApontadoNoDia > 0);
+						if (this.apontamentos) {
+							let diasComApontamento = this.apontamentos.apontamentosDiarios.filter(c => c.tempoTotalApontadoNoDia > 0);
 
-						if (diasComApontamento.length > 0) {
-							this.apontamentosDiaSelecionado = diasComApontamento[diasComApontamento.length - 1];
+							if (diasComApontamento.length > 0) {
+								this.apontamentosDiaSelecionado = diasComApontamento[diasComApontamento.length - 1];
+							}
+							else if (this.apontamentos.apontamentosDiarios.length > 0) {
+								this.apontamentosDiaSelecionado = this.apontamentos.apontamentosDiarios[this.apontamentos.apontamentosDiarios.length - 1];
+							}
 						}
-						else if (this.apontamentos.apontamentosDiarios.length > 0) {
-							this.apontamentosDiaSelecionado = this.apontamentos.apontamentosDiarios[this.apontamentos.apontamentosDiarios.length - 1];
-						}
-					}
-				},
-				complete: () => this.carregando = false
-			});
+					},
+					complete: () => this.carregando = false
+				});
+		}
+		else {
+			this.carregando = this.usuarioLogado?.possuiContaPonto == true;
+		}
 
-		this.servicoPonto
-			.obterBatidasPorMes(mes, ano).subscribe({
-				next: (batidas) => {
-					this.batidas = batidas;
-				},
-				error: (erro: any) => {
-					if (erro.status && erro.status == 404) {
-						this.dadosPontoNaoEncontrado = true;
-
-						this.batidas = new BatidasPontoMes();
-					}
-				}
-			});
+		if(this.usuarioLogado?.possuiContaPonto) {
+			this.servicoPonto
+				.obterBatidasPorMes(mes, ano).subscribe({
+					next: (batidas) => {
+						this.batidas = batidas;
+					},
+					complete: () => this.carregando = this.usuarioLogado?.possuiContaTfs == true
+				});
+		}
+		else {
+			this.carregando = this.usuarioLogado?.possuiContaTfs == true;
+		}
 	}
 
 	public EHoje(data: Date): boolean {

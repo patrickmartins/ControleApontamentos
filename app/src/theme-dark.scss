@@ -14,28 +14,25 @@ $dark-palette: (
 	700:#616161,
 	800:#424242,
 	900:#212121,
-
 	contrast: (
 		50: rgba(black, 0.87),
 		100: rgba(black, 0.87),
 		200: rgba(black, 0.87),
 		300: white,		
-	  )
+	)
 );
 
 $theme-primary: mat.define-palette($dark-palette, 500);
 $theme-accent: mat.define-palette(mat.$pink-palette, 500);
 $theme-warn: mat.define-palette(mat.$red-palette);
 
-$theme: mat.define-dark-theme(
-	(
-		color: (
-			primary: $theme-primary,
-			accent: $theme-primary,
-			warn: $theme-warn,
-		),
+$theme: mat.define-dark-theme((
+	color: (
+		primary: $theme-primary,
+		accent: $theme-primary,
+		warn: $theme-warn
 	)
-);
+));
 
 $foreground: map.get($theme, foreground);
 $background: map.get($theme, background);

@@ -5,6 +5,7 @@ import { BuscaRoutingModule } from './busca-routing.module';
 import { CoreModule } from '../core/core.module';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { LoaderModule } from '../loader/loader.module';
+import { MatCardModule } from '@angular/material/card';
 
 @NgModule({
 	declarations: [
@@ -15,7 +16,8 @@ import { LoaderModule } from '../loader/loader.module';
 		CoreModule,
 		LoaderModule,
 		BuscaRoutingModule,
-		MatPaginatorModule
+		MatPaginatorModule,
+		MatCardModule
 	]
 })
 export class BuscaModule { }

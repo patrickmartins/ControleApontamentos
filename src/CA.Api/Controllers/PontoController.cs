@@ -19,7 +19,7 @@ namespace CA.Api.Controllers
 
         [HttpGet]
         [Route("por-dia")]
-        public async Task<ActionResult> BatidasPorDia(DateTime data)
+        public async Task<ActionResult> BatidasPorDiaAsync(DateTime data)
         {
             var pis = User.ObterPisFuncionario();
 
@@ -36,12 +36,12 @@ namespace CA.Api.Controllers
 
         [HttpGet]
         [Route("por-mes")]
-        public async Task<ActionResult> BatidasPorMes(int mes, int ano)
+        public async Task<ActionResult> BatidasPorMesAsync(int mes, int ano)
         {
             var pis = User.ObterPisFuncionario();
 
             if (string.IsNullOrEmpty(pis))
-                return NotFound();
+                return Unauthorized();
 
             var resultado = await _servico.ObterBatidasPorMesAsync(pis, mes, ano);
 

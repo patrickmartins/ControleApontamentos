@@ -23,8 +23,6 @@ export class ApontamentosPorDiaComponent extends BaseComponent implements OnInit
 	public apontamentos?: ApontamentosDia;
 	public batidas?: BatidasPontoDia;
 
-	public dadosPontoNaoEncontrado: boolean = false;
-
 	constructor(servicoConta: ContaService,
 		private servicoApontamento: ApontamentoService,
 		private servicoPonto: PontoService,
@@ -47,27 +45,31 @@ export class ApontamentosPorDiaComponent extends BaseComponent implements OnInit
 	public obterBatidasEPontosPorDia(data: Date): void {
 		this.carregando = true;
 
-		this.servicoApontamento
-			.obterApontamentosPorDia(data).subscribe({
-				next: (apontamentos) => {
-					this.apontamentos = apontamentos;
-				},
-				complete: () => this.carregando = false
-			});
+		if(this.usuarioLogado?.possuiContaTfs) {
+			this.servicoApontamento
+				.obterApontamentosPorDia(data).subscribe({
+					next: (apontamentos) => {
+						this.apontamentos = apontamentos;
+					},
+					complete: () => this.carregando = false
+				});
+		}
+		else {
+			this.carregando = this.usuarioLogado?.possuiContaPonto == true;
+		}
 
-		this.servicoPonto
-			.obterBatidasPorDia(data).subscribe({
-				next: (batidas) => {
-					this.batidas = batidas;
-				},
-				error: (erro: any) => {
-					if (erro.status && erro.status == 404) {
-						this.dadosPontoNaoEncontrado = true;
-
-						this.batidas = new BatidasPontoDia();
-					}
-				}
-			});
+		if(this.usuarioLogado?.possuiContaPonto) {
+			this.servicoPonto
+				.obterBatidasPorDia(data).subscribe({
+					next: (batidas) => {
+						this.batidas = batidas;
+					},
+					complete: () => this.carregando = this.usuarioLogado?.possuiContaTfs == true
+				});
+		}
+		else {
+			this.carregando = this.usuarioLogado?.possuiContaTfs == true;
+		}		
 	}
 
 	public EHoje(data: Date): boolean {

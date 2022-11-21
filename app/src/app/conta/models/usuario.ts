@@ -9,6 +9,9 @@ export class Usuario implements IModel<Usuario> {
 	public roles: string[] = [];
 	public colecoes: string[] = [];	
 
+	public possuiContaPonto: boolean = false;
+	public possuiContaTfs: boolean = false;
+
 	constructor() {	}
 
 	public criarNovo(params: any): Usuario | undefined {
@@ -20,15 +23,17 @@ export class Usuario implements IModel<Usuario> {
 		if(params) {
 			user.nomeCompleto = params.nomeCompleto;
 			user.nomeUsuario = params.nomeUsuario;
-			user.email = params.email;	
-			user.roles = params.roles;	
-			user.colecoes = params.colecoes;	
+			user.email = params.email;
+			user.roles = params.roles;
+			user.colecoes = params.colecoes;
+			user.possuiContaPonto = params.possuiContaPonto;
+			user.possuiContaTfs = params.possuiContaTfs;
 		}
 
 		return user;
 	}
 
-	public possuiRole(role: string) {
+	public possuiRole(role: string): boolean {
 		return this.roles.some(c => c == role);
 	}
 }

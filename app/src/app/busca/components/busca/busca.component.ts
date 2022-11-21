@@ -2,7 +2,9 @@ import { Component, Injectable, OnInit } from '@angular/core';
 import { MatPaginatorIntl, PageEvent } from '@angular/material/paginator';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
+import { BaseComponent } from 'src/app/common/components/base.component';
 import { PaginaBusca } from 'src/app/core/models/pagina-busca';
+import { ContaService } from 'src/app/core/services/conta.service';
 import { TarefaService } from 'src/app/core/services/tarefa.service';
 import { FiltroBusca } from '../../../core/models/filtro-busca';
 
@@ -36,14 +38,16 @@ export class PaginatorPortugues implements MatPaginatorIntl {
 		useClass: PaginatorPortugues
 	}],
 })
-export class BuscaComponent implements OnInit {
+export class BuscaComponent extends BaseComponent implements OnInit {
 
 	public carregando: boolean = true;
 
 	public filtro: FiltroBusca = new FiltroBusca();
 	public pagina: PaginaBusca = new PaginaBusca();
 
-	constructor(private servicoTarefa: TarefaService, private activeRoute: ActivatedRoute, private router: Router) { }
+	constructor(servicoConta: ContaService, private servicoTarefa: TarefaService, private activeRoute: ActivatedRoute, private router: Router) { 
+		super(servicoConta);
+	}
 
 	public ngOnInit() {
 		this.activeRoute
@@ -65,19 +69,24 @@ export class BuscaComponent implements OnInit {
 	private buscarTarefas() {
 		this.carregando = true;
 
-		if (this.filtro.palavraChave !== "") {
-			this.servicoTarefa
-				.buscarTarefas(this.filtro)
-				.subscribe({
-					next: (pagina) => {
-						this.pagina = pagina;
-					},
-					error: () => this.carregando = false,
-					complete: () => this.carregando = false
-				})
+		if(this.usuarioLogado?.possuiContaTfs) {
+			if (this.filtro.palavraChave !== "") {
+				this.servicoTarefa
+					.buscarTarefas(this.filtro)
+					.subscribe({
+						next: (pagina) => {
+							this.pagina = pagina;
+						},
+						error: () => this.carregando = false,
+						complete: () => this.carregando = false
+					})
+			}
+			else {
+				this.router.navigate(["home"]);
+			}
 		}
 		else {
-			this.router.navigate(["home"]);
+			this.carregando = false
 		}
 	}
 }
