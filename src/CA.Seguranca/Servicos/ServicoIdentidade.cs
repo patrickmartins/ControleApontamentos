@@ -132,6 +132,11 @@ namespace CA.Seguranca.Servicos
             return Resultado.DeValor(GerarTokenJwtPorUsuario(usuario.Valor));
         }
 
+        public Resultado<CaJwt> Login(UsuarioApp usuario)
+        {
+            return Resultado.DeValor(GerarTokenJwtPorUsuario(usuario));
+        }
+
         public async Task<Resultado<UsuarioApp>> ObterUsuarioPorEmailAsync(string email)
         {
             var usuario = await _userManager.FindByEmailAsync(email);
@@ -142,16 +147,20 @@ namespace CA.Seguranca.Servicos
             var claims = await _userManager.GetClaimsAsync(usuario);
             var roles = await _userManager.GetRolesAsync(usuario);
 
+            var usuarioTfs = claims.ObterUsuarioTfs();
+
+            var colecoes = usuarioTfs is not null ? await _repositorioColecoes.ObterColecoesPorUsuarioAsync(usuarioTfs) : new string[0];
+
             return Resultado.DeValor(new UsuarioApp
             {
                 Email = usuario.Email,
                 NomeUsuario = usuario.UserName,
                 NomeCompleto = claims.ObterNomeCompleto(),
-                Colecoes = claims.ObterColecoesTfs(),
-                PossuiContaPonto = claims.ObterPisFuncionario() is not null,
-                PossuiContaTfs = claims.ObterNomeUsuarioTfs() is not null,
+                Colecoes = colecoes,                
                 Claims = claims,
-                Roles = roles
+                Roles = roles,
+                PossuiContaTfs = usuarioTfs is not null,
+                PossuiContaPonto = claims.ObterPisFuncionario() is not null                
             });
         }
 

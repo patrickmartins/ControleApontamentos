@@ -9,5 +9,6 @@ namespace CA.Seguranca.Interfaces
         Task<Resultado<UsuarioApp>> ImportarUsuarioAsync(IPrincipal usuarioLogado);
         Task<Resultado<UsuarioApp>> ObterUsuarioPorEmailAsync(string email);
         Task<Resultado<CaJwt>> LoginAsync(string email);
+        Resultado<CaJwt> Login(UsuarioApp usuario);
     }
 }

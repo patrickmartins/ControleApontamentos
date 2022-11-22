@@ -32,7 +32,7 @@ namespace CA.Api.Controllers
                     return BadRequest(resultadoUsuario.Erros);
             }
             
-            var resultadoLogin = await _servicoIdentidade.LoginAsync(User.ObterEmailUsuario());
+            var resultadoLogin = _servicoIdentidade.Login(resultadoUsuario.Valor);
 
             if (!resultadoLogin.Sucesso)
                 return Unauthorized(resultadoUsuario.Erros);
