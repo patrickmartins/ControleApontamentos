@@ -58,6 +58,8 @@ export class ContadorTarefaComponent implements AfterViewInit {
 		this.timer.stop()
 
 		this.alterarStatus(StatusContador.parado);
+
+		this.salvarApontamento();
 	}
 
 	public salvarApontamento(): void {
