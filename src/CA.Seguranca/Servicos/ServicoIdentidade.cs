@@ -157,7 +157,7 @@ namespace CA.Seguranca.Servicos
                 NomeUsuario = usuario.UserName,
                 NomeCompleto = claims.ObterNomeCompleto(),
                 Colecoes = colecoes,                
-                Claims = claims,
+                Claims = claims.Append(new Claim(TiposClaims.ColecoesTfs, string.Join(";", colecoes))).ToList(),
                 Roles = roles,
                 PossuiContaTfs = usuarioTfs is not null,
                 PossuiContaPonto = claims.ObterPisFuncionario() is not null                
