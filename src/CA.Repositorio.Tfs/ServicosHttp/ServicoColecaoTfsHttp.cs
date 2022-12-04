@@ -31,9 +31,8 @@ namespace CA.Repositorios.Tfs.ServicosHttp
 
             var resultado = await _politicaPolly.ExecuteAsync(() =>
             {
-                return url.AppendPathSegment(_configuracoes.UrlServicoColecao)
-                                    .WithWindowsAuth(_configuracoes.Usuario, _configuracoes.Senha)
-                                    .GetJsonAsync<ArrayColecaoTfs>();
+                return url.WithWindowsAuth(_configuracoes.Usuario, _configuracoes.Senha)
+                           .GetJsonAsync<ArrayColecaoTfs>();
             });
 
             return resultado.Colecoes.Select(c => c.Nome).ToArray();
@@ -45,10 +44,9 @@ namespace CA.Repositorios.Tfs.ServicosHttp
 
             var resultado = await _politicaPolly.ExecuteAsync(() =>
             {
-                return url.AppendPathSegment(_configuracoes.UrlServicoColecao)
-                                    .WithHeader("X-TFS-Impersonate", $"{usuario.Identidade.Tipo};{usuario.Identidade.Id}")
-                                    .WithWindowsAuth(_configuracoes.Usuario, _configuracoes.Senha)
-                                    .GetJsonAsync<ArrayColecaoTfs>();
+                return url.WithHeader("X-TFS-Impersonate", $"{usuario.Identidade.Tipo};{usuario.Identidade.Id}")
+                            .WithWindowsAuth(_configuracoes.Usuario, _configuracoes.Senha)
+                            .GetJsonAsync<ArrayColecaoTfs>();
             });
 
             return resultado.Colecoes.Select(c => c.Nome).ToArray();

@@ -20,7 +20,7 @@
 					<button mat-button *ngIf="usuarioLogado?.possuiRole('administrador')">Administração<div></div></button>
 				</div>
 				<span class="menu-spacer"></span>
-				<div class="nav-busca" *ngIf="usuarioLogado">
+				<div class="nav-busca" *ngIf="usuarioLogado && usuarioLogado.possuiContaTfs">
 					<mat-form-field appearance="standard">
 						<input matInput name="filtros.palavraChave" (keyup.enter)="buscarTarefas()" placeholder="Buscar" [(ngModel)]="filtros.palavraChave" type="text" [matMenuTriggerFor]="menuFiltroBusca" required>
 						<mat-icon matSuffix>search</mat-icon>

@@ -8,6 +8,7 @@ using CA.Seguranca.Extensions;
 using CA.Seguranca.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.VisualBasic;
 using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -21,6 +22,7 @@ namespace CA.Seguranca.Servicos
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ConfiguracoesJwt _configuracaoJwt;
         private readonly ConfiguracoesGerais _configuracoesGerais;
+
         private readonly IRepositorioUsuariosTfs _repositorioTfs;
         private readonly IRepositorioPonto _repositorioPonto;
         private readonly IRepositorioColecoes _repositorioColecoes;
@@ -89,14 +91,16 @@ namespace CA.Seguranca.Servicos
                     claims.Add(new Claim(TiposClaims.DominioTfs, usuarioTfs.Dominio));
                     claims.Add(new Claim(TiposClaims.IdentidadeTfs, usuarioTfs.Identidade.Id));
                     claims.Add(new Claim(TiposClaims.TipoIdentidadeTfs, usuarioTfs.Identidade.Tipo));
-                    claims.Add(new Claim(TiposClaims.ColecoesTfs, string.Join(";", usuarioTfs.Colecoes)));
                 }
 
-                if (usuarioPonto is not null)
+                if (usuarioPonto is not null && !string.IsNullOrEmpty(usuarioPonto.NumeroPis))
                     claims.Add(new Claim(TiposClaims.PisFuncionario, usuarioPonto.NumeroPis));
 
                 result = await _userManager.AddClaimsAsync(usuarioIdentity, claims);
 
+                if (usuarioTfs is not null)                
+                    claims.Add(new Claim(TiposClaims.ColecoesTfs, string.Join(";", usuarioTfs.Colecoes)));
+                
                 if (!result.Succeeded)
                 {
                     await _userManager.DeleteAsync(usuarioIdentity);
@@ -114,11 +118,11 @@ namespace CA.Seguranca.Servicos
                 Email = usuarioIdentity.Email,
                 NomeUsuario = usuarioIdentity.UserName,
                 NomeCompleto = nomeCompletoUsuarioLogado,
-                Colecoes = claims.ObterColecoesTfs(),
+                Colecoes = usuarioTfs is not null ? usuarioTfs.Colecoes : new string[0],
                 PossuiContaPonto = usuarioPonto is not null,
-                PossuiContaTfs = usuarioTfs is not null,
-                Claims = claims,
-                Roles = new string[0]
+                PossuiContaTfs = usuarioTfs is not null,                
+                Roles = new string[0],
+                Claims = claims
             });
         }
 
@@ -156,11 +160,11 @@ namespace CA.Seguranca.Servicos
                 Email = usuario.Email,
                 NomeUsuario = usuario.UserName,
                 NomeCompleto = claims.ObterNomeCompleto(),
-                Colecoes = colecoes,                
                 Claims = claims.Append(new Claim(TiposClaims.ColecoesTfs, string.Join(";", colecoes))).ToList(),
-                Roles = roles,
-                PossuiContaTfs = usuarioTfs is not null,
-                PossuiContaPonto = claims.ObterPisFuncionario() is not null                
+                PossuiContaPonto = claims.ObterPisFuncionario() is not null,
+                PossuiContaTfs = usuarioTfs is not null,                
+                Colecoes = colecoes,                                
+                Roles = roles                
             });
         }
 

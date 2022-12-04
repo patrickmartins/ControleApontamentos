@@ -4,6 +4,7 @@ using CA.Aplicacao.Models;
 using CA.Core.Entidades.Ponto;
 using CA.Core.Interfaces.Ponto;
 using CA.Core.Valores;
+using CA.Util.Extensions;
 
 namespace CA.Aplicacao.Servicos
 {
@@ -36,12 +37,16 @@ namespace CA.Aplicacao.Servicos
             if (ano < 2000 || ano > DateTime.Today.Year)
                 return new Resultado<BatidasPontoMesModel>(new Erro("O ano informado é inválido.", nameof(ano)));
 
-            var resultado = await _servico.ObterBatidasPorPeriodoAsync(pisFuncionario, new DateOnly(ano, mes, 1), new DateOnly(ano, mes, DateTime.DaysInMonth(ano, mes)));
+            var hoje = DateTime.Today.ConverterParaFusoBrasil();
+            var dataInicio = new DateOnly(ano, mes, 1);
+            var dataFim = hoje.Month == mes ? new DateOnly(ano, mes, hoje.Day) : new DateOnly(ano, mes, DateTime.DaysInMonth(ano, mes));
+            
+            var resultado = await _servico.ObterBatidasPorPeriodoAsync(pisFuncionario, dataInicio, dataFim);
 
             if (!resultado.Sucesso)
                 return new Resultado<BatidasPontoMesModel>(resultado.Erros);
 
-            var batidas = resultado.Valor;
+            var batidas = AdequarBatidasPorPeriodo(resultado.Valor, dataInicio, dataFim);
 
             return batidas != null ? Resultado.DeValor(batidas.BatidasPontoParaBatidasPontoMesModel(mes, ano)) : Resultado.DeValor(new BatidasPontoMesModel());
         }
@@ -49,6 +54,24 @@ namespace CA.Aplicacao.Servicos
         public Task<Resultado<Funcionario?>> ObterFuncionarioPorNomeAsync(string nome)
         {
             return _servico.ObterFuncionarioPorNomeAsync(nome);
+        }
+
+        private ICollection<BatidasPontoDia> AdequarBatidasPorPeriodo(ICollection<BatidasPontoDia> batidas, DateOnly dataInicio, DateOnly dataFim)
+        {
+            var batidasPeriodo = batidas.OrderBy(c => c.Data).ToList();
+
+            for (var dia = dataInicio; dia <= dataFim; dia = dia.AddDays(1))
+            {
+                if (!batidasPeriodo.Any(c => c.Data.Day == dia.Day && c.Data.Month == dia.Month && c.Data.Year == dia.Year))
+                {
+                    batidasPeriodo.Add(new BatidasPontoDia
+                    {
+                        Data = dia.ToDateTime(new TimeOnly())
+                    });
+                }
+            }
+
+            return batidasPeriodo.OrderBy(c => c.Data).ToList();
         }
     }
 }
