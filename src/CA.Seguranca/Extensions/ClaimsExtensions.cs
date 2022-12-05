@@ -130,10 +130,10 @@ namespace CA.Seguranca.Extensions
             return identity.Claims.ObterUsuarioTfs();
         }
 
-        public static string ObterNomeUsuario(this IPrincipal principal)
+        public static string? ObterNomeUsuario(this IPrincipal principal)
         {
             if(principal.Identity is null || !principal.Identity.IsAuthenticated)
-                return string.Empty;
+                return null;
 
             return ((ClaimsIdentity)principal.Identity).ObterNomeUsuario();
         }
@@ -141,7 +141,7 @@ namespace CA.Seguranca.Extensions
         public static string? ObterNomeCompleto(this IPrincipal principal)
         {
             if (principal.Identity is null || !principal.Identity.IsAuthenticated)
-                return string.Empty;
+                return null;
 
             return ((ClaimsIdentity)principal.Identity).ObterNomeCompleto();
         }
@@ -149,7 +149,7 @@ namespace CA.Seguranca.Extensions
         public static string? ObterEmailUsuario(this IPrincipal principal)
         {
             if (principal.Identity is null || !principal.Identity.IsAuthenticated)
-                return string.Empty;
+                return null;
 
             return ((ClaimsIdentity)principal.Identity).ObterEmailUsuario();
         }
@@ -157,7 +157,7 @@ namespace CA.Seguranca.Extensions
         public static string? ObterDominioUsuario(this IPrincipal principal)
         {
             if (principal.Identity is null || !principal.Identity.IsAuthenticated)
-                return string.Empty;
+                return null;
 
             return ((ClaimsIdentity)principal.Identity).ObterDominioUsuario();
         }
@@ -165,7 +165,7 @@ namespace CA.Seguranca.Extensions
         public static string? ObterIdentidadeTfs(this IPrincipal principal)
         {
             if (principal.Identity is null || !principal.Identity.IsAuthenticated)
-                return string.Empty;
+                return null;
 
             return ((ClaimsIdentity)principal.Identity).ObterIdentidadeTfs();
         }
@@ -173,7 +173,7 @@ namespace CA.Seguranca.Extensions
         public static string? ObterTipoIdentidadeTfs(this IPrincipal principal)
         {
             if (principal.Identity is null || !principal.Identity.IsAuthenticated)
-                return string.Empty;
+                return null;
 
             return ((ClaimsIdentity)principal.Identity).ObterTipoIdentidadeTfs();
         }
@@ -181,7 +181,7 @@ namespace CA.Seguranca.Extensions
         public static string? ObterPisFuncionario(this IPrincipal principal)
         {
             if (principal.Identity is null || !principal.Identity.IsAuthenticated)
-                return string.Empty;
+                return null;
 
             return ((ClaimsIdentity)principal.Identity).ObterPisFuncionario();
         }

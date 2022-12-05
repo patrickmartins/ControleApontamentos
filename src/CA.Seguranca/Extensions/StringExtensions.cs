@@ -12,5 +12,10 @@ namespace CA.Seguranca.Extensions
                             .Where(ch => char.GetUnicodeCategory(ch) != UnicodeCategory.NonSpacingMark)
                             .ToArray());
         }
+
+        public static string RemoverEspacosDuplicados(this string texto)
+        {
+            return texto.Replace("  ", " ");
+        }
     }
 }

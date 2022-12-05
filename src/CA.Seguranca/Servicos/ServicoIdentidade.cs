@@ -65,10 +65,10 @@ namespace CA.Seguranca.Servicos
                     break;
             }
 
-            var usuarioPonto = await _repositorioPonto.ObterFuncionarioPorNomeAsync(nomeCompletoUsuarioLogado);
+            var usuarioPonto = await _repositorioPonto.ObterFuncionarioPorNomeAsync(nomeCompletoUsuarioLogado.RemoverEspacosDuplicados());
 
             if(usuarioPonto is null)
-                usuarioPonto = await _repositorioPonto.ObterFuncionarioPorNomeAsync(nomeCompletoUsuarioLogado.RemoverAcentos());
+                usuarioPonto = await _repositorioPonto.ObterFuncionarioPorNomeAsync(nomeCompletoUsuarioLogado.RemoverAcentos().RemoverEspacosDuplicados());
 
             var claims = new List<Claim>();
 
