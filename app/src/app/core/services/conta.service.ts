@@ -1,5 +1,5 @@
-import { Injectable, OnDestroy } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -17,6 +17,7 @@ export class ContaService extends BaseService {
 
 	private _usuarioLogadoSubscription : Subject<Usuario | undefined>;
 	private _usuarioLogado : Observable<Usuario | undefined>;
+	private _token?: JwtToken;
 
     constructor(httpClient: HttpClient) {
         super(httpClient);
@@ -27,7 +28,7 @@ export class ContaService extends BaseService {
 
     public estaAutenticado(): boolean {
         return LocalStorageHelper.dadoExiste(environment.chaveStorageToken) &&
-		LocalStorageHelper.obterDados(environment.chaveStorageToken, JwtToken) != null;        
+				LocalStorageHelper.dadoExiste(environment.chaveStorageToken);        
     }
 
     public login(): Observable<LoginSucesso> {
@@ -44,6 +45,7 @@ export class ContaService extends BaseService {
 		}
 
 		this._usuarioLogadoSubscription.next(undefined);
+		this._token = undefined;
     }
 
     public obterUsuarioLogado(): Observable<Usuario | undefined> {
@@ -51,7 +53,10 @@ export class ContaService extends BaseService {
     }
 
     public obterTokenAcesso(): JwtToken | undefined {
-        return LocalStorageHelper.obterDados(environment.chaveStorageToken, JwtToken);
+		if(!this._token)
+			this._token = LocalStorageHelper.obterDados(environment.chaveStorageToken, JwtToken);
+
+        return this._token;
     }
 
 	public obterFotoUsuarioLogado(): any {

@@ -70,10 +70,6 @@ export class MenuComponent extends BaseComponent {
 		this.temaAplicacaoAtual = tema;
 	}
 
-	public addInput() {
-		
-	}
-
 	public onLoginEntrando() {
 		this.entrando = true;
 	}

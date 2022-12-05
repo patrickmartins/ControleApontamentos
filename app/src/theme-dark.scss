@@ -40,6 +40,10 @@ $color-primary: mat.define-palette($dark-palette, 800);
 
 .dark-mode {
 
+	.icon-acesso-negado {
+		filter: invert(100%) sepia(84%) saturate(2%) hue-rotate(223deg) brightness(113%) contrast(101%);
+	}
+
 	.borda-1 {
 		border: 1px solid mat.get-color-from-palette($foreground, divider)!important;
 	}

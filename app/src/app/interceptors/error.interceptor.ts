@@ -15,7 +15,7 @@ export class ErrorInterceptor implements HttpInterceptor {
 
     public intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
         return next.handle(request)
-                    .pipe(catchError((response: HttpErrorResponse) => {
+                    .pipe(catchError((response: HttpErrorResponse) => {								
                                 let error = new Erro();
                         
                                 if (response.status === 0) {
@@ -33,9 +33,15 @@ export class ErrorInterceptor implements HttpInterceptor {
                                 }
 
 								if (response.status === 401) {
-                                    this.contaService.logout();
-
-									this.router.navigate(["/home"]);
+									const token = this.contaService.obterTokenAcesso();
+									
+									if(!this.contaService.estaAutenticado() || token?.Expirou()) {
+										this.contaService.logout();
+										this.router.navigate(["/home"]);
+									}
+									else {
+										this.router.navigate(["/acesso-negado"]);
+									}
 
                                     return throwError([response]);
                                 }

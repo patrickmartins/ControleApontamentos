@@ -21,7 +21,7 @@ export class AuthorizeGuard implements CanActivate {
 		const roles = Array.isArray(route.data.roles) ? route.data.roles : [];
 
 		if (roles.length > 0 && !roles.some(c => this._usuarioLogado?.possuiRole(c)))
-			this.router.navigate(["/home"]);
+			this.router.navigate(["/acesso-negado"]);
 
 		return true;
 	}

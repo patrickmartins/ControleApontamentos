@@ -84,6 +84,10 @@ $theme: map.set(
   $light-theme-foreground
 );
 
+.icon-acesso-negado {
+	filter: none;
+}
+
 .borda-1 {
 	border: 1px solid mat.get-color-from-palette($foreground, divider)!important;
 }

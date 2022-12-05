@@ -27,13 +27,15 @@ import { CoreModule } from './core/core.module';
 import { DefaultInterceptor } from './interceptors/default.interceptor';
 import { ErrorInterceptor } from './interceptors/error.interceptor';
 import { NgChartsModule } from 'ng2-charts';
+import { AcessoNegadoComponent } from './acesso-negado/acesso-negado.component';
 
 registerLocaleData(localePT);
 
 @NgModule({
 	declarations: [
 		AppComponent,
-		HomeComponent
+		HomeComponent,
+  		AcessoNegadoComponent
 	],
 	imports: [
 		NavegacaoModule,
