@@ -37,7 +37,7 @@ namespace CA.Aplicacao.Servicos
             if (ano < 2000 || ano > DateTime.Today.Year)
                 return new Resultado<BatidasPontoMesModel>(new Erro("O ano informado é inválido.", nameof(ano)));
 
-            var hoje = DateTime.Today.ConverterParaFusoBrasil();
+            var hoje = DateTime.Now.ConverterParaFusoBrasil();
             var dataInicio = new DateOnly(ano, mes, 1);
             var dataFim = hoje.Month == mes ? new DateOnly(ano, mes, hoje.Day) : new DateOnly(ano, mes, DateTime.DaysInMonth(ano, mes));
             
