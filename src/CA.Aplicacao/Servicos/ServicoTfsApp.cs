@@ -49,7 +49,7 @@ namespace CA.Aplicacao.Servicos
 
             foreach (var colecao in usuario.Colecoes)
             {
-                var resultado = await _servico.ObterItensTrabalhoApontadosPorDataAsync(usuario, colecao, data);
+                var resultado = await _servico.ObterItensTrabalhoApontadosPorDatasAsync(usuario, colecao, data);
 
                 if (!resultado.Sucesso)
                     return Resultado.DeErros<ApontamentosDiaModel>(resultado.Erros);

@@ -73,25 +73,6 @@ namespace CA.Core.Servicos.Tfs
             return await ObterItemTrabalhoPorLinkAsync(colecao, links);
         }
 
-        public async Task<Resultado<IEnumerable<ItemTrabalho>>> ObterItensTrabalhoApontadosPorDataAsync(UsuarioTfs usuario, string colecao, DateOnly data)
-        {
-            if (usuario is null)
-                return Resultado.DeErros<IEnumerable<ItemTrabalho>>(new Erro("O usuário não foi informado.", nameof(usuario)));
-
-            if (string.IsNullOrEmpty(colecao))
-                return Resultado.DeErros<IEnumerable<ItemTrabalho>>(new Erro("A coleção do TFS não foi informada.", nameof(colecao)));
-
-            var resultado = await _repositorioItens.ExecutarQueryAsync(colecao, $@"SELECT [System.Id]
-                                                                                    FROM WorkItemLinks 
-                                                                                    WHERE (Source.[System.WorkItemType] In ('Task','Bug')                     
-                                                                                        and Source.[Custom.Timesheets.TimesheetRawData] contains words 'CreatedBy=\""{usuario.NomeUsuario}\"" TimeSheetDate=\""{data:d}\""')" +
-                                                                                    "ORDER BY [System.Id] mode(MayContain)");
-
-            var links = resultado.ToArray();
-
-            return await ObterItemTrabalhoPorLinkAsync(colecao, links);
-        }
-
         public async Task<Resultado<IEnumerable<ItemTrabalho>>> ObterItensTrabalhoApontadosPorDatasAsync(UsuarioTfs usuario, string colecao, params DateOnly[] data)
         {
             if (usuario is null)
@@ -100,7 +81,7 @@ namespace CA.Core.Servicos.Tfs
             if (string.IsNullOrEmpty(colecao))
                 return Resultado.DeErros<IEnumerable<ItemTrabalho>>(new Erro("A coleção do TFS não foi informada.", nameof(colecao)));
 
-            var filtroPeriodo = string.Join(" or ", data.Select(c => $@"Source.[Custom.Timesheets.TimesheetRawData] contains words 'TimeSheetDate =\""{c.ToString("dd/MM/yyyy")}\""'"));
+            var filtroPeriodo = string.Join(" or ", data.Select(c => $@"Source.[Custom.Timesheets.TimesheetRawData] contains words 'CreatedBy=\""{usuario.NomeUsuario}\"" TimeSheetDate=\""{c:d}\""'"));
 
             var resultado = await _repositorioItens.ExecutarQueryAsync(colecao, $@"SELECT [System.Id]
                                                                                     FROM WorkItemLinks 
