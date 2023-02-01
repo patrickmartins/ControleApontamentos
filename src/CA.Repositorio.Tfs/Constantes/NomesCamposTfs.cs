@@ -15,7 +15,7 @@
         public const string IterationPath = "System.IterationPath";
         public const string Projeto = "System.TeamProject";
         public const string DataCriacao = "System.CreatedDate";
-        public const string AlteradoPor = "System.ChangedBy";        
+        public const string AlteradoPor = "System.ChangedBy";
         public const string Bloqueado = "Microsoft.VSTS.CMMI.Blocked";
         public const string Apontamentos = "Custom.Timesheets.TimesheetRawData";
         public const string CampoLongo = "Words";

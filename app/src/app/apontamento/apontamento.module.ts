@@ -22,7 +22,7 @@ import { LoaderModule } from '../loader/loader.module';
 		ApontamentosPorDiaComponent,
 		ApontamentosPorMesComponent,
 		GraficoResumoDiaComponent,
-		GraficoResumoMesComponent
+		GraficoResumoMesComponent		
 	],
 	imports: [
 		CoreModule,

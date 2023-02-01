@@ -11,6 +11,7 @@ export class Usuario implements IModel<Usuario> {
 
 	public possuiContaPonto: boolean = false;
 	public possuiContaTfs: boolean = false;
+	public possuiContaChannel: boolean = false;
 
 	constructor() {	}
 
@@ -28,6 +29,7 @@ export class Usuario implements IModel<Usuario> {
 			user.colecoes = params.colecoes;
 			user.possuiContaPonto = params.possuiContaPonto;
 			user.possuiContaTfs = params.possuiContaTfs;
+			user.possuiContaChannel = params.possuiContaChannel;
 		}
 
 		return user;

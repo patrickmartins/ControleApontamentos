@@ -16,6 +16,7 @@
     <ProjectReference Include="..\CA.Aplicacao\CA.Aplicacao.csproj" />
     <ProjectReference Include="..\CA.Container.IoC\CA.Container.IoC.csproj" />
     <ProjectReference Include="..\CA.Polly\CA.Polly.csproj" />
+    <ProjectReference Include="..\CA.Servicos.Channel\CA.Servicos.Channel.csproj" />
   </ItemGroup>
 
 </Project>

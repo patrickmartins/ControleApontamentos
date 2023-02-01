@@ -18,7 +18,7 @@ namespace CA.Aplicacao.Models
         public TimeSpan TempoTotalApontadoSincronizadoChannel { get; set; }
         public TimeSpan TempoTotalApontadoNaoSincronizadoChannel { get; set; }
 
-        public ICollection<ApontamentoModel> Apontamentos { get; set; }
+        public IEnumerable<ApontamentoModel> Apontamentos { get; set; }
 
         public TarefaModel()
         {

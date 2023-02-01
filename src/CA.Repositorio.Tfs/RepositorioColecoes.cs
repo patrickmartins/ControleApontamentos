@@ -1,6 +1,6 @@
 ﻿using CA.Core.Entidades.Tfs;
 using CA.Core.Interfaces.Tfs;
-using CA.Repositorios.Tfs.Interfaces;
+using CA.Servicos.Tfs.Interfaces;
 
 namespace CA.Repositorios.Tfs
 {

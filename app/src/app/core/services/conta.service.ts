@@ -60,7 +60,7 @@ export class ContaService extends BaseService {
     }
 
 	public obterFotoUsuarioLogado(): any {
-		return this.getAny(`${environment.urlGraphAzure}/photo/$value`, { observe: 'response', responseType: 'blob' });
+		return this.getAny(`${environment.urlGraphAzure}photo/$value`, { observe: 'response', responseType: 'blob' });
 	}
 
     private onLoginSucesso(sucess: LoginSucesso): LoginSucesso {

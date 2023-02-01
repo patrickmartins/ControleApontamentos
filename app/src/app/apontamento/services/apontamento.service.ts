@@ -4,8 +4,10 @@ import { map, Observable } from 'rxjs';
 import { BaseService } from 'src/app/common/services/base.service';
 import { TarefaHelper } from 'src/app/helpers/tarefa.helper';
 import { environment } from 'src/environments/environment';
-import { ApontamentosDia } from '../models/apontamentos-dia';
-import { ApontamentosMes } from '../models/apontamentos-mes';
+import { ApontamentosChannelDia } from '../models/apontamentos-channel-dia';
+import { ApontamentosChannelMes } from '../models/apontamentos-channel-mes';
+import { ApontamentosTfsDia } from '../models/apontamentos-tfs-dia';
+import { ApontamentosTfsMes } from '../models/apontamentos-tfs-mes';
 
 @Injectable({
 	providedIn: 'root'
@@ -16,19 +18,27 @@ export class ApontamentoService extends BaseService {
 		super(httpClient);
 	}
 
-	public obterApontamentosPorDia(data: Date): Observable<ApontamentosDia> {
-        return this.get<any>(`${environment.urlApiBase}apontamento/por-dia`, ApontamentosDia, { }, { data: `${data.getFullYear()}-${data.getMonth()+1}-${data.getDate()}` }).pipe(
-			map(apontamento => this.configurarApontamentosPorDia(apontamento))
+	public obterApontamentosTfsPorDia(data: Date): Observable<ApontamentosTfsDia> {
+        return this.get<any>(`${environment.urlApiBase}apontamento/tfs/por-dia`, ApontamentosTfsDia, { }, { data: `${data.getFullYear()}-${data.getMonth()+1}-${data.getDate()}` }).pipe(
+			map(apontamento => this.configurarApontamentosTfsPorDia(apontamento))
 		);
     }
 
-	public obterApontamentosPorMes(mes: number, ano: number): Observable<ApontamentosMes> {
-        return this.get<any>(`${environment.urlApiBase}apontamento/por-mes`, ApontamentosMes, { }, { mes: mes, ano: ano }).pipe(
-			map(apontamento => this.configurarApontamentosPorMes(apontamento))
+	public obterApontamentosTfsPorMes(mes: number, ano: number): Observable<ApontamentosTfsMes> {
+        return this.get<any>(`${environment.urlApiBase}apontamento/tfs/por-mes`, ApontamentosTfsMes, { }, { mes: mes, ano: ano }).pipe(
+			map(apontamento => this.configurarApontamentosTfsPorMes(apontamento))
 		);
     }
+
+	public obterApontamentosChannelPorDia(data: Date): Observable<ApontamentosChannelDia> {
+        return this.get<any>(`${environment.urlApiBase}apontamento/channel/por-dia`, ApontamentosChannelDia, { }, { data: `${data.getFullYear()}-${data.getMonth()+1}-${data.getDate()}` });
+    }
+
+	public obterApontamentosChannelPorMes(mes: number, ano: number): Observable<ApontamentosChannelMes> {
+        return this.get<any>(`${environment.urlApiBase}apontamento/channel/por-mes`, ApontamentosChannelMes, { }, { mes: mes, ano: ano });
+    }
 	
-	private configurarApontamentosPorDia(apontamento: ApontamentosDia): ApontamentosDia {
+	private configurarApontamentosTfsPorDia(apontamento: ApontamentosTfsDia): ApontamentosTfsDia {
 		const tarefasFixadas = TarefaHelper.obterTarefasFixadas();
 
 		apontamento.tarefas.forEach(tarefa => {
@@ -38,7 +48,7 @@ export class ApontamentoService extends BaseService {
 		return apontamento;
 	}
 
-	private configurarApontamentosPorMes(apontamento: ApontamentosMes): ApontamentosMes {
+	private configurarApontamentosTfsPorMes(apontamento: ApontamentosTfsMes): ApontamentosTfsMes {
 		const tarefasFixadas = TarefaHelper.obterTarefasFixadas();
 
 		apontamento.apontamentosDiarios.forEach(apontamentos => {

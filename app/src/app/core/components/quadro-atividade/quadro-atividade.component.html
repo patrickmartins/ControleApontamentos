@@ -1,0 +1,44 @@
+<div class="quadro-atividade">
+	<mat-card class="borda-1">
+		<div class="container">
+			<div class="status-atividade">
+			</div>
+			<div class="info-atividade">
+				<div class="titulo-pai" [title]="atividade.nomeProjeto">
+					<h5>{{ atividade.nomeProjeto }}</h5>
+				</div>
+
+				<div class="titulo" [title]="'ATIVIDADE ' + atividade.codigo + ' - ' +  atividade.nome">
+					<strong>
+						<a mat-flat-button target="_blank" [href]="atividade.obterLinkChannel()">ATIVIDADE {{ atividade.codigo }}</a> - {{ atividade.nome }}
+					</strong>
+				</div>
+
+				<div class="designado">
+					<designado-tarefa class="nome" [designado]="usuarioLogado!.nomeCompleto"
+													[tempoTotalApontadoSincronizadoChannel]="atividade.tempoTotalApontado"
+													[tempoTotalApontadoNaoSincronizadoChannel]="0">
+					</designado-tarefa>
+				</div>
+			</div>
+		</div>
+		<button mat-button [ngStyle]="{'opacity': atividade.apontamentos.length > 0 ? '1' : '0'}" class="btn-expandir" fxShow="true" (click)="apontamentosExpandido = !apontamentosExpandido" fxHide.gt-xs>
+			<mat-icon class="nav-toolbar-icon-menu">{{ apontamentosExpandido ? 'expand_less' : 'expand_more' }}</mat-icon>
+		</button>		
+	</mat-card>
+
+	<mat-expansion-panel class="lista-apontamentos background-1 borda-1" *ngIf="atividade.apontamentos.length > 0" [(expanded)]="apontamentosExpandido">
+		<ng-template matExpansionPanelContent>
+			<ul>
+				<li *ngFor="let apontamento of atividade.apontamentos" class="apontamento">
+					<span [title]="apontamento.sincronizadoChannel ? 'Sincronizado com o Channel' : 'Não sincronizado com o Channel'"
+							class="badge" [ngClass]="{'error': !apontamento.sincronizadoChannel, 'sucess': apontamento.sincronizadoChannel}">Channel</span>
+						
+					<span>
+						<span class="data">{{ apontamento.data | date:'dd/MM/yyyy'}}</span>
+						<b>{{ apontamento.usuario }}</b> - {{ apontamento.tempo | tempo }} - {{ apontamento.comentario != "" ? apontamento.comentario : "Nenhum comentário adicionado." }}</span>
+				</li>
+			</ul>
+		</ng-template>
+	</mat-expansion-panel>
+</div>

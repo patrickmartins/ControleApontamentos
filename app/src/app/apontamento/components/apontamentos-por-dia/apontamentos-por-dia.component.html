@@ -18,52 +18,56 @@
 			<ng-template matExpansionPanelContent>
 				<div class="corpo">
 					<section class="mensagem">				
-						<h2 *ngIf="EHoje(dataSelecionada)">Seu resumo de hoje</h2>
-						<h2 *ngIf="!EHoje(dataSelecionada)">Seu resumo do dia {{ dataSelecionada | date : "d 'de' MMMM 'de' yyyy" }}</h2>
+						<h2 *ngIf="eHoje(dataSelecionada)">Seu resumo de hoje</h2>
+						<h2 *ngIf="!eHoje(dataSelecionada)">Seu resumo do dia {{ dataSelecionada | date : "d 'de' MMMM 'de' yyyy" }}</h2>
 
 						<mat-form-field appearance="fill" class="datepicker">
-							<input matInput [matDatepicker]="picker" [max]="dataAtual" (dateChange)="onDataAlterada($event)">
+							<input matInput [matDatepicker]="picker" [max]="dataAtual" (dateChange)="onDataAlterada($event.value)">
 							<mat-datepicker #picker></mat-datepicker>
 						</mat-form-field>
 						<button mat-icon-button (click)="picker.open()" class="btn-editar-data">
 							<mat-icon>edit_calendar</mat-icon>
 						</button>
+						<button mat-icon-button (click)="obterBatidasEApontamentosPorDia(this.dataSelecionada)" title="Atualizar" class="btn-refresh">
+							<mat-icon>refresh</mat-icon>
+						</button>
 					</section>
 					<section *ngIf="!carregando" class="informacoes">
 						<ul>
-							<li *ngIf="batidas && batidas.tempoTotalTrabalhadoNoDia == 0">
+							<li *ngIf="tempoTotalTrabalhadoNoDia == 0 && usuarioLogado.possuiContaPonto">
 								Você não registrou pontos.
 							</li>
 						
-							<li *ngIf="batidas && batidas.tempoTotalTrabalhadoNoDia > 0">
-								<span>{{ batidas.tempoTotalTrabalhadoNoDia | tempoTrabalhado }}</span>	
+							<li *ngIf="tempoTotalTrabalhadoNoDia > 0 && usuarioLogado.possuiContaPonto">
+								<span>{{ tempoTotalTrabalhadoNoDia | tempoTrabalhado }}</span>	
 							</li>
 						
-							<li *ngIf="apontamentos && apontamentos.tempoTotalApontadoNoDia == 0">
+							<li *ngIf="tempoTotalApontadoNoDia == 0">
 								Você não fez apontamentos.
 							</li>
 						
-							<li *ngIf="apontamentos && apontamentos.tempoTotalApontadoNaoSincronizadoChannel == 0 && apontamentos.tempoTotalApontadoSincronizadoChannel > 0 ">
-								
-								<span>{{ apontamentos.tempoTotalApontadoNoDia | tempoApontado : 'sync':'apt'  }}&nbsp;</span>
+							<li *ngIf="tempoTotalApontadoNaoSincronizadoNoDia == 0 && tempoTotalApontadoSincronizadoNoDia > 0 ">								
+								<span>{{ tempoTotalApontadoNoDia | tempoApontado : 'sync':'apt'  }}&nbsp;</span>
 							</li>
 						
-							<li *ngIf="apontamentos && apontamentos.tempoTotalApontadoSincronizadoChannel == 0  && apontamentos.tempoTotalApontadoNaoSincronizadoChannel > 0">
-							
-								<span>{{ apontamentos.tempoTotalApontadoNaoSincronizadoChannel | tempoApontado : 'nsync':'apt' }}</span>
+							<li *ngIf="tempoTotalApontadoSincronizadoNoDia == 0  && tempoTotalApontadoNaoSincronizadoNoDia > 0">							
+								<span>{{ tempoTotalApontadoNaoSincronizadoNoDia | tempoApontado : 'nsync':'apt' }}</span>
 							</li>
 						
-							<li *ngIf="apontamentos && apontamentos.tempoTotalApontadoSincronizadoChannel > 0 
-													&& apontamentos.tempoTotalApontadoNaoSincronizadoChannel > 0">
-								
+							<li *ngIf="tempoTotalApontadoSincronizadoNoDia > 0 && tempoTotalApontadoNaoSincronizadoNoDia > 0">								
 								<span>
-									{{ apontamentos.tempoTotalApontadoNoDia | tempoApontado : 'sync':'apt'  }} ({{ apontamentos.tempoTotalApontadoNaoSincronizadoChannel | tempoApontado : 'nsync':'napt' }})
+									{{ tempoTotalApontadoNoDia | tempoApontado : 'sync':'apt'  }} ({{ tempoTotalApontadoNaoSincronizadoNoDia | tempoApontado : 'nsync':'napt' }})
 								</span>
+							</li>
+
+							<li *ngIf="tempoTotalApontadoNoDia > 0 && tempoTotalApontadoSincronizadoNoDia === 0 && tempoTotalApontadoNaoSincronizadoNoDia == 0">							
+								<span>{{ tempoTotalApontadoNoDia | tempoApontado : 'sync':'apt' }}</span>
 							</li>
 						</ul>
 			
-						<grafico-resumo-dia	*ngIf="(apontamentos && apontamentos.tempoTotalApontadoNoDia > 0) ||  (batidas && batidas.tempoTotalTrabalhadoNoDia > 0)"
-											[apontamentos]="apontamentos"
+						<grafico-resumo-dia	*ngIf="(tempoTotalApontadoNoDia > 0 ||  tempoTotalTrabalhadoNoDia > 0)"
+											[apontamentosTfs]="apontamentosTfsDia"
+											[apontamentosChannel]="apontamentosChannelDia"
 											[batidas]="batidas"></grafico-resumo-dia>				
 					</section>			
 					<section *ngIf="carregando">
@@ -74,11 +78,18 @@
 		</mat-expansion-panel>
 
 		<div *ngIf="!carregando">
-			<quadro-tarefa class="fade-in-left tarefa" 
-							[tarefa]="tarefa" 
-							[permiteFixar]="true"
-							[ngStyle]="{'animation-delay': tarefa.fixada ? ((i * 0.1) + 's') : '0s', 'opacity': tarefa.fixada ? 0 : 1}"
-							*ngFor="let tarefa of apontamentos?.tarefas; let i = index"></quadro-tarefa>
+			<div *ngIf="apontamentosChannelDia">
+				<quadro-atividade *ngFor="let atividade of apontamentosChannelDia.atividades"
+								class="fade-in-left tarefa"
+								[atividade]="atividade"></quadro-atividade>
+			</div>
+
+			<div *ngIf="apontamentosTfsDia">
+				<quadro-tarefa *ngFor="let tarefa of apontamentosTfsDia.tarefas"
+								class="fade-in-left tarefa"
+								[tarefa]="tarefa" 
+								[permiteFixar]="true"></quadro-tarefa>
+			</div>
 		</div>
 
 		<div *ngIf="carregando">	

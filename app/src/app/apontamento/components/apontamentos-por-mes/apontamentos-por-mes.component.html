@@ -7,6 +7,10 @@
 		<h4>Seus dados não foram encontrados no TFS.</h4>
 	</mat-card>
 
+	<mat-card class="quadro-aviso" *ngIf="!usuarioLogado.possuiContaChannel">
+		<h4>Seus dados não foram encontrados no Channel.</h4>
+	</mat-card>
+
 	<div *ngIf="usuarioLogado.possuiContaTfs || usuarioLogado.possuiContaPonto">
 		<mat-expansion-panel class="boasvindas borda-1" [expanded]="true">
 			<mat-expansion-panel-header class="cabecalho" matRipple>		
@@ -22,46 +26,53 @@
 
 						<mat-form-field appearance="fill" class="datepicker">
 							<input matInput [matDatepicker]="picker" [max]="dataAtual">
-							<mat-datepicker startView="year" (monthSelected)="onDataAlterada($event, picker)" #picker></mat-datepicker>
+							<mat-datepicker [startAt]="mesSelecionado" startView="year" (monthSelected)="onDataAlterada($event, picker)" #picker></mat-datepicker>
 						</mat-form-field>
-						<button mat-icon-button (click)="picker.open()" class="btn-editar-data">
+						<button mat-icon-button (click)="picker.open()" title="Alterar o mês" class="btn-editar-data">
 							<mat-icon>edit_calendar</mat-icon>
+						</button>						
+						<button mat-icon-button (click)="obterBatidasEApontamentosPorMes(mesSelecionado)" title="Atualizar" class="btn-refresh">
+							<mat-icon>refresh</mat-icon>
 						</button>
 					</section>
 
 					<section [ngStyle]="{'display': carregando ? 'none' : 'block'}" class="informacoes">
 						<ul>
-							<li *ngIf="batidas && batidas.tempoTotalTrabalhadoNoMes == 0">
+							<li *ngIf="tempoTotalTrabalhadoNoMes == 0 && usuarioLogado.possuiContaPonto">
 								Você não registrou pontos.
 							</li>
 						
-							<li *ngIf="batidas && batidas.tempoTotalTrabalhadoNoMes > 0">
-								<span>{{ batidas.tempoTotalTrabalhadoNoMes | tempoTrabalhado }}</span>	
+							<li *ngIf="tempoTotalTrabalhadoNoMes > 0 && usuarioLogado.possuiContaPonto">
+								<span>{{ tempoTotalTrabalhadoNoMes | tempoTrabalhado }}</span>	
 							</li>
 						
-							<li *ngIf="apontamentos && apontamentos.tempoTotalApontadoNoMes == 0">
+							<li *ngIf="tempoTotalApontadoNoMes == 0">
 								Você não fez apontamentos.
 							</li>
 						
-							<li *ngIf="apontamentos && apontamentos.tempoTotalApontadoNaoSincronizadoChannel == 0 && apontamentos.tempoTotalApontadoSincronizadoChannel > 0 ">
-								<span>{{ apontamentos.tempoTotalApontadoNoMes | tempoApontado : 'sync':'apt'  }}</span>
+							<li *ngIf="tempoTotalApontadoNaoSincronizadoNoMes == 0 && tempoTotalApontadoSincronizadoNoMes > 0 ">
+								<span>{{ tempoTotalApontadoNoMes | tempoApontado : 'sync':'apt'  }}</span>
 							</li>
 						
-							<li *ngIf="apontamentos && apontamentos.tempoTotalApontadoSincronizadoChannel == 0  && apontamentos.tempoTotalApontadoNaoSincronizadoChannel > 0">
-								<span>{{ apontamentos.tempoTotalApontadoNaoSincronizadoChannel | tempoApontado : 'nsync':'apt' }}</span>
+							<li *ngIf="tempoTotalApontadoSincronizadoNoMes == 0  && tempoTotalApontadoNaoSincronizadoNoMes > 0">
+								<span>{{ tempoTotalApontadoNaoSincronizadoNoMes | tempoApontado : 'nsync':'apt' }}</span>
 							</li>
 						
-							<li *ngIf="apontamentos && apontamentos.tempoTotalApontadoSincronizadoChannel > 0 
-													&& apontamentos.tempoTotalApontadoNaoSincronizadoChannel > 0">
-								<span>{{ apontamentos.tempoTotalApontadoNoMes | tempoApontado : 'sync':'apt'  }} ({{ apontamentos.tempoTotalApontadoNaoSincronizadoChannel | tempoApontado : 'nsync':'napt' }})
+							<li *ngIf="tempoTotalApontadoSincronizadoNoMes > 0 && tempoTotalApontadoNaoSincronizadoNoMes > 0">
+								<span>{{ tempoTotalApontadoNoMes | tempoApontado : 'sync':'apt'  }} ({{ tempoTotalApontadoNaoSincronizadoNoMes | tempoApontado : 'nsync':'napt' }})
 								</span>
+							</li>
+
+							<li *ngIf="tempoTotalApontadoNoMes > 0 && tempoTotalApontadoSincronizadoNoMes === 0 && tempoTotalApontadoNaoSincronizadoNoMes == 0">							
+								<span>{{ tempoTotalApontadoNoMes | tempoApontado : 'sync':'apt' }}</span>
 							</li>
 						</ul>
 
-						<grafico-resumo-mes	*ngIf="(apontamentos && apontamentos.tempoTotalApontadoNoMes > 0) || (batidas && batidas.tempoTotalTrabalhadoNoMes > 0)"
+						<grafico-resumo-mes	*ngIf="tempoTotalApontadoNoMes > 0 || tempoTotalTrabalhadoNoMes > 0"
 												(onDiaClicado)="onDiaClicado($event)"
 												[dataReferencia]="mesSelecionado"
-												[apontamentos]="apontamentos"
+												[apontamentosTfs]="apontamentosTfsMes"
+												[apontamentosChannel]="apontamentosChannelMes"
 												[batidas]="batidas"></grafico-resumo-mes>
 					</section>
 
@@ -73,20 +84,27 @@
 		</mat-expansion-panel>
 
 		<section *ngIf="!carregando">
-			<mat-expansion-panel [expanded]="true" *ngIf="apontamentosDiaSelecionado" class="painel-tarefas">
+			<mat-expansion-panel [expanded]="true" *ngIf="(apontamentosTfsDiaSelecionado && apontamentosTfsDiaSelecionado.tempoTotalApontadoNoDia > 0) || (apontamentosChannelDiaSelecionado && apontamentosChannelDiaSelecionado.tempoTotalApontadoNoDia > 0)" class="painel-tarefas">
 				<mat-expansion-panel-header matRipple class="background-1 borda-1">
-					<h3 *ngIf="EHoje(apontamentosDiaSelecionado.dataReferencia) && apontamentosDiaSelecionado.tarefas.length == 0">Você não fez apontamentos hoje</h3>
-					<h3 *ngIf="EHoje(apontamentosDiaSelecionado.dataReferencia) && apontamentosDiaSelecionado.tarefas.length > 0">Apontamentos de hoje</h3>
-					<h3 *ngIf="!EHoje(apontamentosDiaSelecionado.dataReferencia) && apontamentosDiaSelecionado.tarefas.length == 0">Você não fez apontamentos no dia {{ apontamentosDiaSelecionado.dataReferencia | date : "d 'de' MMMM 'de' yyyy" }}</h3>
-					<h3 *ngIf="!EHoje(apontamentosDiaSelecionado.dataReferencia) && apontamentosDiaSelecionado.tarefas.length > 0">Apontamentos do dia {{ apontamentosDiaSelecionado.dataReferencia | date : "d 'de' MMMM 'de' yyyy" }}</h3>		
+					<h3 *ngIf="eHoje(diaSelecionado) && ((apontamentosChannelDiaSelecionado && apontamentosChannelDiaSelecionado.atividades.length == 0) && (apontamentosTfsDiaSelecionado && apontamentosTfsDiaSelecionado.tarefas.length == 0))">Você não fez apontamentos hoje</h3>
+					<h3 *ngIf="eHoje(diaSelecionado) && ((apontamentosChannelDiaSelecionado && apontamentosChannelDiaSelecionado.atividades.length > 0) || (apontamentosTfsDiaSelecionado && apontamentosTfsDiaSelecionado.tarefas.length > 0))">Apontamentos de hoje</h3>
+					<h3 *ngIf="!eHoje(diaSelecionado) && ((apontamentosChannelDiaSelecionado && apontamentosChannelDiaSelecionado.atividades.length == 0) && (apontamentosTfsDiaSelecionado && apontamentosTfsDiaSelecionado.tarefas.length == 0))">Você não fez apontamentos no dia {{ diaSelecionado | date : "d 'de' MMMM 'de' yyyy" }}</h3>
+					<h3 *ngIf="!eHoje(diaSelecionado) && ((apontamentosChannelDiaSelecionado && apontamentosChannelDiaSelecionado.atividades.length > 0) || (apontamentosTfsDiaSelecionado && apontamentosTfsDiaSelecionado.tarefas.length > 0))">Apontamentos do dia {{ diaSelecionado | date : "d 'de' MMMM 'de' yyyy" }}</h3>		
 				</mat-expansion-panel-header>
 
 				<ng-template matExpansionPanelContent>
-					<quadro-tarefa *ngFor="let tarefa of apontamentosDiaSelecionado.tarefas; let i = index;"
-									class="fade-in-left tarefa" 					
-									[ngStyle]="{'animation-delay': tarefa.fixada ? ((i * 0.1) + 's') : '0s', 'opacity': tarefa.fixada ? 0 : 1}"
-									[tarefa]="tarefa" 
-									[permiteFixar]="true"></quadro-tarefa>
+					<div *ngIf="apontamentosChannelDiaSelecionado">
+						<quadro-atividade *ngFor="let atividade of apontamentosChannelDiaSelecionado.atividades"
+										class="fade-in-left tarefa"
+										[atividade]="atividade"></quadro-atividade>
+					</div>
+
+					<div *ngIf="apontamentosTfsDiaSelecionado">
+						<quadro-tarefa *ngFor="let tarefa of apontamentosTfsDiaSelecionado.tarefas"
+										class="fade-in-left tarefa"
+										[tarefa]="tarefa" 
+										[permiteFixar]="true"></quadro-tarefa>
+					</div>
 				</ng-template>
 			</mat-expansion-panel>
 		</section>

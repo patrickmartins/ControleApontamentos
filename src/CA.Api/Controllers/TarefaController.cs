@@ -84,7 +84,7 @@ namespace CA.Api.Controllers
 
         [HttpPost]
         [Route("adicionar-apontamento")]
-        public async Task<ActionResult> AdicionarApontamento(ApontamentoNovoModel apontamento)
+        public async Task<ActionResult> AdicionarApontamento(ApontamentoTfsNovoModel apontamento)
         {
             var usuario = User.ObterUsuarioTfs();
 

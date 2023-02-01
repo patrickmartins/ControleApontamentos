@@ -164,7 +164,7 @@ namespace CA.Core.Servicos.Tfs
             });
         }
 
-        public async Task<Resultado> AdicionarNovoApontamentoAsync(UsuarioTfs usuario, string colecao, int idItemTrabalho, Apontamento apontamento)
+        public async Task<Resultado> AdicionarNovoApontamentoAsync(UsuarioTfs usuario, string colecao, int idItemTrabalho, ApontamentoTfs apontamento)
         {
             if (string.IsNullOrEmpty(colecao))
                 return Resultado.DeErros<Resultado>(new Erro("A coleção do TFS não foi informada.", nameof(colecao)));

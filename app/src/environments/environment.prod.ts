@@ -2,6 +2,7 @@ export const environment = {
 	production: false,
 	urlApiBase: "https://apontamento-api.azurewebsites.net/api/",
 	urlTfs: "http://tfs.vixteam.com.br:8080/tfs/",
+	urlChannel: "https://vixteam.jexperts.com.br/channel",
 	urlGraphAzure: "https://graph.microsoft.com/v1.0/me/",
 	chaveStorageToken: "8e294461-b28a-4221-a1c6-f1a246df5cb6",
 	chaveStorageUsuario: "20c919d4-37ad-4311-9a54-c262ba5c146e",

@@ -1,0 +1,15 @@
+{
+  "profiles": {
+    "CA.Jobs.ConsoleApp (local)": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "jsWebView2Debugging": false
+    },
+    "CA.Jobs.ConsoleApp": {
+      "commandName": "Project",
+      "jsWebView2Debugging": false
+    }
+  }
+}

@@ -2,6 +2,7 @@ using CA.Api.Configuracoes;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AdicionarContextoDeDados(builder.Configuration);
 builder.Services.AdicionarServicosCA(builder.Configuration);
 builder.Services.AdicionarIdentity(builder.Configuration);
 builder.Services.AdicionarPoliticasPolly();

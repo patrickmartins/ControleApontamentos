@@ -15,6 +15,7 @@ import { CdTimerModule } from 'angular-cd-timer';
 import { ContadorTarefaComponent } from './components/contador-tarefa/contador-tarefa.component';
 import { DesignadoTarefaComponent } from './components/designado-tarefa/designado-tarefa.component';
 import { ModalSalvarApontamentoComponent } from './components/modal-salvar-apontamento/modal-salvar-apontamento.component';
+import { QuadroAtividadeComponent } from './components/quadro-atividade/quadro-atividade.component';
 import { QuadroTarefaComponent } from './components/quadro-tarefa/quadro-tarefa.component';
 import { TempoApontadoPipe } from './pipes/tempo-apontado.pipe';
 import { TempoTrabalhadoPipe } from './pipes/tempo-trabalhado.pipe';
@@ -25,6 +26,7 @@ import { TempoPipe } from './pipes/tempo.pipe';
 		ModalSalvarApontamentoComponent,
 		ContadorTarefaComponent,
 		QuadroTarefaComponent,
+		QuadroAtividadeComponent,
 		DesignadoTarefaComponent,		
 		TempoApontadoPipe,
 		TempoTrabalhadoPipe,
@@ -50,6 +52,7 @@ import { TempoPipe } from './pipes/tempo.pipe';
 		ModalSalvarApontamentoComponent,
 		ContadorTarefaComponent,
 		QuadroTarefaComponent,
+		QuadroAtividadeComponent,
 		DesignadoTarefaComponent,			
 		TempoApontadoPipe,
 		TempoTrabalhadoPipe,

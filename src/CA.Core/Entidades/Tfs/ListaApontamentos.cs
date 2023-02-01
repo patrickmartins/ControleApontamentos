@@ -9,11 +9,11 @@ namespace CA.Core.Entidades.Tfs
     public class ListaApontamentos
     {
         [XmlElement("TimeSheetEntry")]
-        public List<Apontamento> Apontamentos { get; set; }
+        public List<ApontamentoTfs> Apontamentos { get; set; }
 
         public ListaApontamentos()
         {
-            Apontamentos = new List<Apontamento>();
+            Apontamentos = new List<ApontamentoTfs>();
         }
 
         public TimeSpan ObterTempoTotalApontado()

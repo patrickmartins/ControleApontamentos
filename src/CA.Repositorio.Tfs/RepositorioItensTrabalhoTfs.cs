@@ -5,9 +5,9 @@ using CA.Repositorios.Tfs.Constantes;
 using CA.Repositorios.Tfs.Entidades;
 using CA.Repositorios.Tfs.Extensions;
 using CA.Repositorios.Tfs.Helpers;
-using CA.Repositorios.Tfs.Interfaces;
-using CA.Repositorios.Tfs.ServicosSoap.Models;
-using CA.Repositorios.Tfs.ServicosSoap.Models.Requests;
+using CA.Servicos.Tfs.Interfaces;
+using CA.Servicos.Tfs.Models;
+using CA.Servicos.Tfs.Models.Requests;
 using CA.Util.Helpers;
 
 namespace CA.Repositorios.Tfs
@@ -19,8 +19,6 @@ namespace CA.Repositorios.Tfs
 
         public RepositorioItensTrabalhoTfs(ConfiguracaoClienteTfs configuracoes, IServicoWorkitemTfsSoap servicoSoap)
         {
-            configuracoes.Validar();
-
             _configuracoes = configuracoes;
             _servicoSoap = servicoSoap;            
         }

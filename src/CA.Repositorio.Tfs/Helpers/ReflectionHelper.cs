@@ -6,10 +6,10 @@ namespace CA.Repositorios.Tfs.Helpers
     {
         public static void AlterarPropriedade<TType>(TType objeto, string nomePropriedade, object valorPropriedade)
         {
-            if (objeto == null) 
-                return; 
-            
-            var propriedadeInfo = objeto.GetType().GetProperty(nomePropriedade, BindingFlags.Instance | BindingFlags.Public | BindingFlags.GetProperty | BindingFlags.SetProperty); 
+            if (objeto == null)
+                return;
+
+            var propriedadeInfo = objeto.GetType().GetProperty(nomePropriedade, BindingFlags.Instance | BindingFlags.Public | BindingFlags.GetProperty | BindingFlags.SetProperty);
             var valorConvertido = valorPropriedade;
 
             if (valorPropriedade != null && valorPropriedade.GetType() != propriedadeInfo.PropertyType)

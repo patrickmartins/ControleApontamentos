@@ -1,5 +1,5 @@
 ﻿using CA.Api.Configuracoes.Json;
-using CA.Repositorios.Ponto.Serializador;
+using CA.Util.Serializador;
 using Flurl.Http;
 
 namespace CA.Api.Configuracoes
@@ -12,7 +12,7 @@ namespace CA.Api.Configuracoes
             {
                 config.JsonSerializerOptions.Converters.Add(new DateOnlyConverter("yyyy-MM-dd"));
                 config.JsonSerializerOptions.Converters.Add(new TimeSpanConverter());
-
+                
                 FlurlHttp.Configure(configFlurl =>
                 {
                     configFlurl.JsonSerializer = new SerializadorJsonFlurl(config.JsonSerializerOptions);

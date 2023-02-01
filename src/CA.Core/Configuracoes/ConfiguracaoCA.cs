@@ -7,6 +7,7 @@
         public ConfiguracoesJwt Jwt { get; set; }
         public ConfiguracaoClienteTfs Tfs { get; set; }
         public ConfiguracaoClienteSecullum Secullum { get; set; }
+        public ConfiguracaoClienteChannel Channel { get; set; }
         public ConfiguracoesGerais Geral { get; set; }
 
     }

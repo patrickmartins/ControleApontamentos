@@ -12,7 +12,7 @@ namespace CA.Seguranca.Identity
         {
             services.AddDbContext<IdentityDbContext>(options =>
             {
-                options.UseSqlServer(configuration.GetConnectionString("UsuariosCAConnection"), options => options.MigrationsAssembly("CA.Seguranca"));
+                options.UseSqlServer(configuration.GetConnectionString("ConexaoBd"), options => options.MigrationsAssembly("CA.Seguranca"));
             });
 
             services.AddIdentityCore<IdentityUser>()
