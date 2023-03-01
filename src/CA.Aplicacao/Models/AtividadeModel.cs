@@ -1,4 +1,6 @@
-﻿namespace CA.Aplicacao.Models
+﻿using CA.Core.Entidades.Channel;
+
+namespace CA.Aplicacao.Models
 {
     public record AtividadeModel
     {
@@ -8,12 +10,13 @@
         public int IdProjeto { get; set; }
         public string NomeProjeto { get; set; }
         public TimeSpan TempoTotalApontado { get; set; }
+        public TipoApontamento TipoApontamentos { get; set; }
 
-        public IEnumerable<ApontamentoModel> Apontamentos { get; set; }
+        public IEnumerable<ApontamentoChannelModel> Apontamentos { get; set; }
 
         public AtividadeModel()
         {
-            Apontamentos = new HashSet<ApontamentoModel>();
+            Apontamentos = new HashSet<ApontamentoChannelModel>();
         }
     }
 }

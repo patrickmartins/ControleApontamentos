@@ -1,8 +1,10 @@
 import { IModel } from "src/app/common/models/model";
+import { Tarefa } from "src/app/core/models/tarefa";
 import { ApontamentosTfsDia } from "./apontamentos-tfs-dia";
 
 export class ApontamentosTfsMes implements IModel<ApontamentosTfsMes> {
 
+	public usuarioReferencia: string = "";
 	public mesReferencia: number = 0;
 	public anoReferencia: number = 0;
 	public tempoTotalApontadoNoMes: number = 0;
@@ -17,6 +19,7 @@ export class ApontamentosTfsMes implements IModel<ApontamentosTfsMes> {
 		let apontamentos = new ApontamentosTfsMes();
 
 		if (params) {
+			apontamentos.usuarioReferencia = params.usuarioReferencia;
 			apontamentos.mesReferencia = params.mesReferencia;
 			apontamentos.anoReferencia = params.anoReferencia;
 			apontamentos.tempoTotalApontadoNoMes = params.tempoTotalApontadoNoMes;
@@ -41,5 +44,50 @@ export class ApontamentosTfsMes implements IModel<ApontamentosTfsMes> {
 		}
 
 		return undefined;
+	}
+	
+	public obterTarefasPorId(id: number): Tarefa[] {		
+		var tarefas: Tarefa[] = [];
+
+		this.apontamentosDiarios.forEach(apontamentosDia => {			
+			apontamentosDia.obterTarefasPorId(id).forEach(tarefa => {
+				tarefas.push(tarefa);
+			});
+		});
+
+		return tarefas;
+	}
+
+	public recalcularTempoTotalApontado(): void {
+		this.recalcularTempoTotalApontadoSincronizadoChannel();
+		this.recalcularTempoTotalApontadoNaoSincronizadoChannel();
+
+		this.tempoTotalApontadoNoMes = this.tempoTotalApontadoNaoSincronizadoChannel + this.tempoTotalApontadoSincronizadoChannel;
+	}
+
+	public recalcularTempoTotalApontadoSincronizadoChannel(): void {
+		this.tempoTotalApontadoSincronizadoChannel = 0;
+
+		this.apontamentosDiarios?.forEach(apontamentoDia => {
+			apontamentoDia.recalcularTempoTotalApontadoNaoSincronizadoChannel();
+			apontamentoDia.recalcularTempoTotalApontadoSincronizadoChannel();
+
+			this.tempoTotalApontadoSincronizadoChannel += apontamentoDia.tempoTotalApontadoSincronizadoChannel;
+		});
+	}
+
+	public recalcularTempoTotalApontadoNaoSincronizadoChannel(): void {
+		this.tempoTotalApontadoNaoSincronizadoChannel = 0;
+
+		this.apontamentosDiarios?.forEach(apontamentoDia => {
+			apontamentoDia.recalcularTempoTotalApontadoNaoSincronizadoChannel();
+			apontamentoDia.recalcularTempoTotalApontadoSincronizadoChannel();
+
+			this.tempoTotalApontadoNaoSincronizadoChannel += apontamentoDia.tempoTotalApontadoNaoSincronizadoChannel;
+		});
+	}
+
+	public removerTarefasSemApontamentos(): void {
+		this.apontamentosDiarios.forEach(c => c.removerTarefasSemApontamentos());
 	}
 }

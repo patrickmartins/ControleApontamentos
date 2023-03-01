@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DateAdapter } from '@angular/material/core';
+import { tap } from 'rxjs';
+import * as moment from 'moment';
 
 import { ApontamentoService } from '../../services/apontamento.service';
 import { ApontamentosTfsDia } from '../../models/apontamentos-tfs-dia';
@@ -8,8 +11,6 @@ import { BatidasPontoDia } from '../../models/batidas-ponto-dia';
 import { ContaService } from 'src/app/core/services/conta.service';
 import { BaseComponent } from 'src/app/common/components/base.component';
 import { ApontamentosChannelDia } from '../../models/apontamentos-channel-dia';
-import { ActivatedRoute, Router } from '@angular/router';
-import * as moment from 'moment';
 
 @Component({
 	selector: 'app-apontamentos-por-dia',
@@ -93,7 +94,9 @@ export class ApontamentosPorDiaComponent extends BaseComponent implements OnInit
 
 		if(this.usuarioLogado?.possuiContaTfs) {
 			this.servicoApontamento
-				.obterApontamentosTfsPorDia(data).subscribe({
+				.obterApontamentosTfsPorDia(data)
+				.pipe(tap((apontamentosTfsDia: ApontamentosTfsDia) => this.consolidarTarefasPorAtividades(apontamentosTfsDia, this.apontamentosChannelDia)))
+				.subscribe({
 					next: (apontamentos) => {
 						this.apontamentosTfsDia = apontamentos;
 					},
@@ -106,7 +109,9 @@ export class ApontamentosPorDiaComponent extends BaseComponent implements OnInit
 
 		if(this.usuarioLogado?.possuiContaChannel) {
 			this.servicoApontamento
-				.obterApontamentosChannelPorDia(data).subscribe({
+				.obterApontamentosChannelPorDia(data)
+				.pipe(tap((apontamentosChannelDia: ApontamentosChannelDia) => this.consolidarTarefasPorAtividades(this.apontamentosTfsDia, apontamentosChannelDia)))
+				.subscribe({
 					next: (apontamentos) => {
 						this.apontamentosChannelDia = apontamentos;
 					},
@@ -119,7 +124,8 @@ export class ApontamentosPorDiaComponent extends BaseComponent implements OnInit
 
 		if(this.usuarioLogado?.possuiContaPonto) {
 			this.servicoPonto
-				.obterBatidasPorDia(data).subscribe({
+				.obterBatidasPorDia(data)
+				.subscribe({
 					next: (batidas) => {
 						this.batidas = batidas;
 					},
@@ -137,5 +143,29 @@ export class ApontamentosPorDiaComponent extends BaseComponent implements OnInit
 		return data.getDate() == hoje.getDate() &&
 			data.getMonth() == hoje.getMonth() &&
 			data.getFullYear() == hoje.getFullYear()
+	}
+
+	private consolidarTarefasPorAtividades(apontamentosTfs: ApontamentosTfsDia | undefined, apontamentosChannel: ApontamentosChannelDia | undefined): ApontamentosTfsDia | undefined {
+		if(!apontamentosTfs || !apontamentosChannel)
+			return apontamentosTfs;
+
+		var apontamentosChannelTfs = apontamentosChannel.obterApontamentosTfs();
+		
+		apontamentosChannelTfs.forEach(apontamento => {
+			var tarefas = apontamentosTfs.obterTarefasPorId(apontamento.idTarefaTfs);
+
+			tarefas.forEach(tarefa => {
+				tarefa.removerApontamentoPorHash(apontamento.hash);
+			});
+		})
+		
+		apontamentosChannel.removerApontamentosExcluidos();
+		apontamentosChannel.removerTarefasSemApontamentos();
+		apontamentosChannel.recalcularTempoTotalApontado();
+
+		apontamentosTfs.removerTarefasSemApontamentos();
+		apontamentosTfs.recalcularTempoTotalApontado();	
+		
+		return apontamentosTfs;
 	}
 }

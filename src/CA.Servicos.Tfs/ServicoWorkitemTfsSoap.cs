@@ -37,11 +37,24 @@ namespace CA.Servicos.Tfs
         {
             var url = $"{_configuracoes.UrlTfs}{colecao}{_configuracoes.UrlServicoItemTrabalho}";
 
-            return _politicaPolly.ExecuteAsync(() =>
+            return _politicaPolly.ExecuteAsync(async () =>
             {
-                return url.WithWindowsAuth(_configuracoes.Usuario, _configuracoes.Senha)
-                            .SendXmlSoapAsync(ActionsServicoTfsSoap.QueryWorkitems, request, request.RequestHeader)
-                            .ReceiveXmlSoapAsync<QueryWorkitemsResponse>();
+                try
+                {
+                    return await url.WithWindowsAuth(_configuracoes.Usuario, _configuracoes.Senha)
+                                .SendXmlSoapAsync(ActionsServicoTfsSoap.QueryWorkitems, request, request.RequestHeader)
+                                .ReceiveXmlSoapAsync<QueryWorkitemsResponse>();
+                }
+                catch (FlurlHttpException ex)
+                {
+                    var msg = await ex.Call.Response.ResponseMessage.Content.ReadAsStringAsync();
+
+                    throw ex;
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
             });
         }
 

@@ -12,6 +12,7 @@ namespace CA.Repositorios.Tfs.Helpers
                 case "requirement": return TipoItemTrabalho.Requisito;
                 case "bug": return TipoItemTrabalho.Bug;
                 case "user story": return TipoItemTrabalho.HistoriaUsuario;
+                case "new": return TipoItemTrabalho.Novo;
                 default: return TipoItemTrabalho.NaoReconhecido;
             }
         }

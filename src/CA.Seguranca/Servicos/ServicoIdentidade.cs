@@ -130,7 +130,7 @@ namespace CA.Seguranca.Servicos
                 NomeUsuario = usuarioIdentity.UserName,
                 NomeCompleto = nomeCompletoUsuarioLogado,
                 Colecoes = usuarioTfs is not null ? usuarioTfs.Colecoes : new string[0],
-                PossuiContaPonto = funcionarioPonto is not null,
+                PossuiContaPonto = funcionarioPonto is not null && !string.IsNullOrEmpty(funcionarioPonto.NumeroPis),
                 PossuiContaTfs = usuarioTfs is not null,    
                 PossuiContaChannel = usuarioChannel is not null,
                 Roles = new string[0],

@@ -1,6 +1,8 @@
 ﻿using CA.Core.Entidades.Channel;
 using CA.Servicos.Channel.Models.Responses;
 using CA.Util.Extensions;
+using CA.Util.Helpers;
+using System.Globalization;
 using System.Net;
 
 namespace CA.Jobs.Channel.Extensions
@@ -24,12 +26,16 @@ namespace CA.Jobs.Channel.Extensions
 
         public static ProjetoChannel ParaProjetoChannel(this ProjetoResponse response)
         {
-            return new ProjetoChannel
+            var projeto = new ProjetoChannel
             {
                 Id = response.Id,
                 Status = response.Status,
-                Nome = response.Nome.DecodificarHtml().Trim().Truncar(200).ParaUTF8().RemoverCaracteresNaoReconhecidos().RemoverQuebrasDeLinha()
+                Nome = response.Nome.DecodificarHtml().Trim().Truncar(200).ParaUTF8().RemoverCaracteresNaoReconhecidos().RemoverQuebrasDeLinha()                
             };
+
+            projeto.Atividades = response.Atividades.ParaAtividadesChannel(projeto).ToList();
+
+            return projeto;
         }
 
         public static IEnumerable<ProjetoChannel> ParaProjetosChannel(this IEnumerable<ProjetoResponse> response)
@@ -61,30 +67,39 @@ namespace CA.Jobs.Channel.Extensions
             .ToList();
         }
 
-        public static ApontamentoChannel ParaApontamentoChannel(this ApontamentoResponse response, AtividadeChannel atividade, UsuarioChannel usuario)
+        public static ApontamentoChannel ParaApontamentoChannel(this ApontamentoResponse response, ProjetoChannel projeto, UsuarioChannel usuario)
         {
+            var atividade = projeto != null ? projeto.Atividades.FirstOrDefault(a => response.CodigoAtividade == a.Codigo && response.IdProjeto == a.Projeto.Id) : null;
+
             return new ApontamentoChannel
             {
+                Hash = Sha1Helper.GerarHashPorString($"{response.ObterIdDaTarefaTfs()} - {response.ObterComentarioDoApontamentoTfs()} - {DateOnly.FromDateTime(response.Data)} - {response.TempoApontado}"),
+                ApontamentoTfs = response.EhApontamentoTfs(),
+                IdTarefaTfs = response.ObterIdDaTarefaTfs(),
+                Tipo = response.ObterTipoDoApontamento(),
                 Id = response.Id,
                 Data = response.Data,
                 Usuario = usuario,
+                Projeto = projeto,
                 Atividade = atividade,
-                Comentario = response.Comentario.Truncar(1000).ParaUTF8().RemoverCaracteresNaoReconhecidos().RemoverQuebrasDeLinha(),
+                Comentario = response.Comentario,                
                 TempoApontado = response.TempoApontado
             };
         }
 
-        public static IEnumerable<ApontamentoChannel> ParaApontamentosChannel(this IEnumerable<ApontamentoResponse> response, IEnumerable<AtividadeChannel> atividades, IEnumerable<UsuarioChannel> usuarios)
+        public static IEnumerable<ApontamentoChannel> ParaApontamentosChannel(this IEnumerable<ApontamentoResponse> response, IEnumerable<ProjetoChannel> projetos, IEnumerable<UsuarioChannel> usuarios)
         {
             return response.Select(c =>
             {
-                var atividade = atividades.FirstOrDefault(a => c.CodigoAtividade == a.Codigo && c.IdProjeto == a.Projeto.Id);
-                var usuario = usuarios.FirstOrDefault(a => a.NomeCompleto.Equals(c.NomeUsuario.Trim()));
+                var usuario = usuarios.FirstOrDefault(a => a.Id == c.IdUsuario);
+                var projeto = projetos.FirstOrDefault(p => c.IdProjeto == p.Id);
 
-                if (usuario is null || atividade is null)
+                if (usuario is null)
                     return new ApontamentoChannel();
 
-                return c.ParaApontamentoChannel(atividade, usuario);
+                var apontamento = c.ParaApontamentoChannel(projeto, usuario);
+
+                return apontamento;
             })
             .Where(c => c.Id > 0)
             .ToList();

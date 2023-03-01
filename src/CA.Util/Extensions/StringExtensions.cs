@@ -41,7 +41,12 @@ namespace CA.Util.Extensions
 
         public static string RemoverQuebrasDeLinha(this string str)
         {
-            return Regex.Replace(str, @"\\n", string.Empty);
+            return Regex.Replace(str, @"\n|\r|\r\n", " ");
+        }
+
+        public static string RemoverTabulacoes(this string str)
+        {
+            return Regex.Replace(str, @"\t", " ");
         }
 
         public static string RemoverAcentos(this string texto)

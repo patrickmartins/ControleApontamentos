@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { Designado } from '../../models/designado';
 
 @Component({
 	selector: 'designado-tarefa',
@@ -8,7 +9,7 @@ import { Component, Input } from '@angular/core';
 export class DesignadoTarefaComponent {
 
 	@Input()
-	public designado: string = "";
+	public designado: Designado | undefined;
 	
 	@Input()
 	public tempoTotalApontadoSincronizadoChannel: number = 0;

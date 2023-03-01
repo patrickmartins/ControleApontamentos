@@ -1,6 +1,6 @@
-﻿namespace CA.Repositorios.Tfs.Constantes
+﻿namespace CA.Core.Constantes
 {
-    internal static class NomesCamposTfs
+    public static class NomesCamposTfs
     {
         public const string Id = "System.Id";
         public const string TipoWorkitem = "System.WorkItemType";

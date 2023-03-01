@@ -2,6 +2,7 @@
 {
     public record ApontamentosTfsMesModel
     {
+        public string UsuarioReferencia { get; set; }
         public int MesReferencia { get; set; }
         public int AnoReferencia { get; set; }
         public TimeSpan TempoTotalApontadoNoMes { get; set; }

@@ -1,6 +1,6 @@
-﻿namespace CA.Repositorios.Tfs.Entidades
+﻿namespace CA.Core.Valores
 {
-    internal class CampoTfs
+    public class CampoTfs
     {
         public int Id { get; set; }
         public string NomeReferencia { get; set; }

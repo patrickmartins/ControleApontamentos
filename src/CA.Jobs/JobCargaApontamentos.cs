@@ -4,10 +4,12 @@ using CA.Core.Valores;
 using CA.Jobs.Channel.Extensions;
 using CA.Jobs.Channel.Interfaces;
 using CA.Servicos.Channel.Interfaces;
+using CA.Servicos.Channel.Models.Responses;
+using Microsoft.Extensions.Logging;
 
 namespace CA.Jobs.Channel
 {
-    public class JobCargaApontamentos : IJobChannel<ApontamentoChannel>
+    public class JobCargaApontamentos : JobChannel<ApontamentoChannel>
     {
         private readonly IRepositorioApontamentos _repositorioApontamentos;
         private readonly IRepositorioUsuariosChannel _repositorioUsuarios;
@@ -18,7 +20,8 @@ namespace CA.Jobs.Channel
         public JobCargaApontamentos(IRepositorioApontamentos repositorioApontamentos, 
                                     IRepositorioUsuariosChannel repositorioUsuarios, 
                                     IRepositorioProjetos repositorioProjetos, 
-                                    IServicoChannelHttp servico)
+                                    IServicoChannelHttp servico,
+                                    ILogger<ApontamentoChannel> logger) : base(logger)
         {
             _repositorioApontamentos = repositorioApontamentos;
             _repositorioUsuarios = repositorioUsuarios;
@@ -27,61 +30,97 @@ namespace CA.Jobs.Channel
             _servico = servico;
         }
 
-        public async Task ExecutarAsync()
+        public override async Task ExecutarAsync()
         {
+            LogarInformacao("Iniciando a execução do Job de Carga de Apontamentos.");
+
             var resultado = Resultado.DeSucesso();
 
-            //var dataFim = DateOnly.FromDateTime(DateTime.Now);
-            //var dataInicio = new DateOnly(dataFim.Year, dataFim.Month, 1);
-
-            var ano = 2023;
-            var mes = 1;
-
-            var dataFim = new DateOnly(ano, mes, DateTime.DaysInMonth(ano, mes));
+            var dataFim = DateOnly.FromDateTime(DateTime.Now);
             var dataInicio = new DateOnly(dataFim.Year, dataFim.Month, 1);
 
+            LogarInformacao("Obtendo apontamentos no Channel.");
+
             var apontamentosServico = await _servico.ObterApontamentosPorPeriodoAsync(dataInicio, dataFim);
+            var apontamentosBanco = await _repositorioApontamentos.ObterTodosApontamentosPorPeriodoAsync(dataInicio, dataFim);
 
-            var usuariosBanco = await _repositorioUsuarios.ObterTodosUsuariosAsync();            
-            var apontamentosBanco = await _repositorioApontamentos.ObterTodosApontamentosPorPeriodoAsync(dataInicio, dataFim);            
-            var atividadesBanco = await _repositorioProjetos.ObterAtividadesPorProjetoAsync(apontamentosServico.Select(c => c.IdProjeto).Distinct().ToArray());
+            LogarInformacao($"{apontamentosServico.Count()} apontamentos obtidos no Channel.");
 
-            var novosApontamentos = apontamentosServico.Where(c => c.IdProjeto > 0 && !c.EhApontamentoTfs() && !apontamentosBanco.Any(x => x.Id == c.Id)).ParaApontamentosChannel(atividadesBanco, usuariosBanco);
+            var usuarios = await _repositorioUsuarios.ObterTodosUsuariosAsync();
+            var projetos = await _repositorioProjetos.ObterProjetosPorIdsAsync(apontamentosServico.Select(c => c.IdProjeto).Distinct().ToArray());
+                        
+            var apontamentosInseridos = ExtrairApontamentosInseridos(apontamentosServico, apontamentosBanco, projetos, usuarios);
+            var apontamentoAtualizados = ExtrairApontamentosAtualizados(apontamentosServico, apontamentosBanco, projetos, usuarios);
+            var apontamentosExcluidos = ExtrairApontamentosExcluidos(apontamentosServico, apontamentosBanco);
 
-            var apontamentosServicoAtualizados = apontamentosServico.Where(c => apontamentosBanco.Any(x => x.Id == c.Id))
-                                                                    .ParaApontamentosChannel(atividadesBanco, usuariosBanco)
-                                                                    .Where(apontamentoServico => apontamentosBanco.Any(apontamentoBanco => apontamentoBanco.Id == apontamentoServico.Id 
-                                                                                                                                                && apontamentoBanco != apontamentoServico)).ToList();
+            LogarInformacao($@"{apontamentosInseridos.Count()} apontamentos serão inseridos.");
+            LogarInformacao(@$"{apontamentoAtualizados.Count()} apontamentos serão atualizados.");
+            LogarInformacao($@"{apontamentosExcluidos.Count()} apontamentos serão excluídos.");
 
-            var apontamentosExcluidos = apontamentosBanco.Where(c => !apontamentosServico.Any(x => x.Id == c.Id)).ToList();
+            foreach (var apontamento in apontamentosExcluidos)
+            {
+                apontamento.Excluir();
+            }
 
-            var apontamentosBancoAtualizados = apontamentosBanco.Where(c => apontamentosServicoAtualizados.Any(x => x.Id == c.Id)).ToList();
+            _repositorioApontamentos.AtualizarApontamentos(apontamentosExcluidos);
 
-            foreach (var apontamento in novosApontamentos)
+            foreach (var apontamento in apontamentosInseridos)
             {
                 resultado = apontamento.Validar();
 
-                if (!resultado.Sucesso)
-                    return;
-            }
+                if (resultado.Sucesso)
+                {
+                    await _repositorioApontamentos.InserirApontamentoAsync(apontamento);
+                }
+                else
+                {
+                    LogarInformacao(@$"Não foi possível inserir o apontamento {apontamento.Id}. Devido aos erros abaixo:");
 
-            foreach (var apontamentoServico in apontamentosServicoAtualizados)
+                    LogarErros(resultado.Erros.ToArray());
+                }
+            }
+                        
+            foreach (var apontamentoServico in apontamentoAtualizados)
             {
-                var apontamentoBanco = apontamentosBancoAtualizados.First(c => c.Id == apontamentoServico.Id);
+                var apontamentoBanco = apontamentosBanco.First(c => c.Id == apontamentoServico.Id);
 
-                apontamentoBanco.Atualizar(apontamentoServico);
+                resultado = apontamentoServico.Validar();
 
-                resultado = apontamentoBanco.Validar();
+                if (resultado.Sucesso)
+                {
+                    apontamentoBanco.Atualizar(apontamentoServico);
 
-                if (!resultado.Sucesso)
-                    return;
+                    _repositorioApontamentos.AtualizarApontamento(apontamentoBanco);
+                }
+                else
+                {
+                    LogarErros(@$"Não foi possível atualizar o apontamento {apontamentoServico.Id}. Devido aos erros abaixo:");
+
+                    LogarErros(resultado.Erros.ToArray());
+                }
             }
 
-            _repositorioApontamentos.AtualizarApontamentos(apontamentosBancoAtualizados);
-            _repositorioApontamentos.RemoverApontamentos(apontamentosExcluidos);
-
-            await _repositorioApontamentos.InserirApontamentosAsync(novosApontamentos);
             await _repositorioApontamentos.SalvarAlteracoesAsync();
+
+            LogarInformacao("Finalizando a execução do Job de Carga de Apontamentos.");
+        }
+
+        private IEnumerable<ApontamentoChannel> ExtrairApontamentosInseridos(IEnumerable<ApontamentoResponse> apontamentosServico, IEnumerable<ApontamentoChannel> apontamentosBanco, IEnumerable<ProjetoChannel> projetos, IEnumerable<UsuarioChannel> usuarios)
+        {
+            return apontamentosServico.Where(c => !apontamentosBanco.Any(x => x.Id == c.Id)).ParaApontamentosChannel(projetos, usuarios);
+        }
+
+        private IEnumerable<ApontamentoChannel> ExtrairApontamentosAtualizados(IEnumerable<ApontamentoResponse> apontamentosServico, IEnumerable<ApontamentoChannel> apontamentosBanco, IEnumerable<ProjetoChannel> projetos, IEnumerable<UsuarioChannel> usuarios)
+        {
+            return apontamentosServico.Where(c => apontamentosBanco.Any(x => x.Id == c.Id))
+                                                                .ParaApontamentosChannel(projetos, usuarios)
+                                                                .Where(apontamentoServico => apontamentosBanco.Any(apontamentoBanco => apontamentoBanco.Id == apontamentoServico.Id && apontamentoBanco != apontamentoServico))
+                                                                .ToList();
+        }
+
+        private IEnumerable<ApontamentoChannel> ExtrairApontamentosExcluidos(IEnumerable<ApontamentoResponse> apontamentosServico, IEnumerable<ApontamentoChannel> apontamentosBanco)
+        {
+            return apontamentosBanco.Where(c => !apontamentosServico.Any(x => x.Id == c.Id)).ToList();
         }
     }
 }

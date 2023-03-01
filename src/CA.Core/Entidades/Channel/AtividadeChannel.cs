@@ -11,6 +11,11 @@ namespace CA.Core.Entidades.Channel
 
         public IEnumerable<ApontamentoChannel> Apontamentos { get; set; }
 
+        public void AlterarProjeto(ProjetoChannel projeto)
+        {
+            Projeto = projeto;
+        }
+
         public Resultado Validar()
         {
             var erros = new List<Erro>();
@@ -40,9 +45,13 @@ namespace CA.Core.Entidades.Channel
 
             var atividade = (AtividadeChannel)obj;
 
+            if (ReferenceEquals(this, atividade))
+                return true;
+
             return atividade.Id == Id &&
                     atividade.Codigo == Codigo &&
-                    atividade.Nome == Nome;
+                    atividade.Nome == Nome &&
+                    atividade.Projeto == Projeto;
         }
 
         public override int GetHashCode()
@@ -52,11 +61,23 @@ namespace CA.Core.Entidades.Channel
 
         public static bool operator ==(AtividadeChannel atividade1, AtividadeChannel atividade2)
         {
+            if (atividade1 is null && atividade2 is null)
+                return true;
+
+            if ((atividade1 is null && atividade2 is not null) || (atividade1 is not null && atividade2 is null))
+                return false;
+
             return atividade1.Equals(atividade2);
         }
 
         public static bool operator !=(AtividadeChannel atividade1, AtividadeChannel atividade2)
         {
+            if (atividade1 is null && atividade2 is null)
+                return true;
+
+            if ((atividade1 is null && atividade2 is not null) || (atividade1 is not null && atividade2 is null))
+                return false;
+
             return !atividade1.Equals(atividade2);
         }
     }

@@ -1,8 +1,8 @@
 ﻿using CA.Core.Configuracoes;
+using CA.Core.Constantes;
 using CA.Core.Entidades.Tfs;
 using CA.Core.Interfaces.Tfs;
-using CA.Repositorios.Tfs.Constantes;
-using CA.Repositorios.Tfs.Entidades;
+using CA.Core.Valores;
 using CA.Repositorios.Tfs.Extensions;
 using CA.Repositorios.Tfs.Helpers;
 using CA.Servicos.Tfs.Interfaces;
@@ -90,7 +90,7 @@ namespace CA.Repositorios.Tfs
             return links;
         }
 
-        private async Task<IEnumerable<CampoTfs>> ObterCamposSuportadosPorColecaoAsync(string colecao)
+        public async Task<IEnumerable<CampoTfs>> ObterCamposSuportadosPorColecaoAsync(string colecao)
         {
             var resultado = await _servicoSoap.ObterMetadadosPorColecaoAsync(new GetMetadataEx2Request
             {

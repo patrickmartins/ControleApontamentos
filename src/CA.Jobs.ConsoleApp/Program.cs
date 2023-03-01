@@ -21,6 +21,7 @@ CaContainer.RegistrarServicos(servicos, configuracoes);
 ConfiguracaoPolly.RegistrarPoliticasPolly(servicos);
 ConfiguracaoFlurl.ConfigurarFlurl();
 
+servicos.AdicionarConsoleLogger(configuracoes);
 servicos.AdicionarContextoDeDados(configuracoes);
 servicos.AdicionarJobsChannel();
 
@@ -28,10 +29,11 @@ var provider = servicos.BuildServiceProvider();
 
 var jobUsuarios = provider.GetService<IJobChannel<UsuarioChannel>>();
 var jobProjetos = provider.GetService<IJobChannel<ProjetoChannel>>();
-var jobAtividades = provider.GetService<IJobChannel<AtividadeChannel>>();
 var jobApontamentos = provider.GetService<IJobChannel<ApontamentoChannel>>();
 
 await jobUsuarios.ExecutarAsync();
 await jobProjetos.ExecutarAsync();
-await jobAtividades.ExecutarAsync();
 await jobApontamentos.ExecutarAsync();
+
+Console.WriteLine("Digite qualquer tecla para finalizar...");
+Console.ReadKey();

@@ -18,12 +18,12 @@ namespace CA.Aplicacao.Servicos
 
         public async Task<Resultado<ApontamentosChannelDiaModel>> ObterApontamentosPorDiaAsync(int idUsuario, DateOnly data)
         {
-            var resultado = await _servico.ObterAtividadesApontadasPorUsuarioPorDiaAsync(idUsuario, data);
+            var resultado = await _servico.ObterApontamentosPorDataAsync(idUsuario, data);
 
             if (!resultado.Sucesso)
                 return Resultado.DeErros<ApontamentosChannelDiaModel>(resultado.Erros);
 
-            var apontamentos = resultado.Valor.AtividadeParaApontamentoChannelDiaModel(data);
+            var apontamentos = resultado.Valor.ApontamentosChannelParaApontamentoChannelDiaModel(data);
 
             return Resultado.DeValor(apontamentos);
         }
@@ -36,12 +36,12 @@ namespace CA.Aplicacao.Servicos
             if (ano < 2000 || ano > DateTime.Today.Year)
                 return Resultado.DeErros<ApontamentosChannelMesModel>(new Erro("O ano informado é inválido.", nameof(ano)));
 
-            var resultado = await _servico.ObterAtividadesApontadasPorUsuarioPorPeriodoAsync(idUsuario, new DateOnly(ano, mes, 1), new DateOnly(ano, mes, (DateTime.Today.Month == mes && DateTime.Today.Year == ano) ? DateTime.Today.Day : DateTime.DaysInMonth(ano, mes)));
+            var resultado = await _servico.ObterApontamentosPorPeriodoAsync(idUsuario, new DateOnly(ano, mes, 1), new DateOnly(ano, mes, (DateTime.Today.Month == mes && DateTime.Today.Year == ano) ? DateTime.Today.Day : DateTime.DaysInMonth(ano, mes)));
 
             if (!resultado.Sucesso)
                 return Resultado.DeErros<ApontamentosChannelMesModel>(resultado.Erros);
 
-            var apontamentos = resultado.Valor.AtividadeParaApontamentoChannelMesModel(mes, ano);
+            var apontamentos = resultado.Valor.ApontamentosChannelParaApontamentoChannelMesModel(mes, ano);
 
             return Resultado.DeValor(apontamentos);
         }

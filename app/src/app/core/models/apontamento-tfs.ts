@@ -3,8 +3,9 @@ import 'moment/locale/pt-br';
 
 import { IModel } from "src/app/common/models/model";
 
-export class Apontamento implements IModel<Apontamento> {
+export class ApontamentoTfs implements IModel<ApontamentoTfs> {
 
+	public hash: string = "";
 	public usuario: string = "";
 	public comentario: string = "";
 	public data: Date = new Date();
@@ -13,13 +14,14 @@ export class Apontamento implements IModel<Apontamento> {
 
 	constructor() { }
 
-	public criarNovo(params: any): Apontamento | undefined {
+	public criarNovo(params: any): ApontamentoTfs | undefined {
 		if(!params)
 			return undefined;
 
-		let apontamento = new Apontamento();
+		let apontamento = new ApontamentoTfs();
 
 		if(params) {
+			apontamento.hash = params.hash;
 			apontamento.usuario = params.usuario;
 			apontamento.comentario = params.comentario;
 			apontamento.data = moment(params.data).toDate();	

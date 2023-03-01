@@ -4,21 +4,38 @@
 			<div class="status-atividade">
 			</div>
 			<div class="info-atividade">
-				<div class="titulo-pai" [title]="atividade.nomeProjeto">
-					<h5>{{ atividade.nomeProjeto }}</h5>
+				<div>
+					<div *ngIf="atividade.tipoApontamentos == 0" class="titulo-pai" title="APONTAMENTOS ESPECIAIS">
+						<h5>APONTAMENTOS ESPECIAIS</h5>
+					</div>
+
+					<div *ngIf="atividade.tipoApontamentos == 1 || atividade.tipoApontamentos == 2" class="titulo-pai" title="atividade.nomeProjeto">
+						<h5>{{ atividade.nomeProjeto }}</h5>
+					</div>
 				</div>
 
-				<div class="titulo" [title]="'ATIVIDADE ' + atividade.codigo + ' - ' +  atividade.nome">
-					<strong>
-						<a mat-flat-button target="_blank" [href]="atividade.obterLinkChannel()">ATIVIDADE {{ atividade.codigo }}</a> - {{ atividade.nome }}
-					</strong>
+				<div [ngSwitch]="atividade.tipoApontamentos">
+					<div *ngSwitchCase="0" class="titulo" title="APONTAMENTOS AVULSOS">
+						<strong>AVULSOS</strong>
+					</div>
+
+					<div *ngSwitchCase="1" class="titulo" [title]="'ATIVIDADE ' + atividade.codigo + ' - ' +  atividade.nome">
+						<strong>
+							<a mat-flat-button target="_blank" [href]="atividade.obterLinkChannel()">ATIVIDADE {{ atividade.codigo }}</a> - {{ atividade.nome }}
+						</strong>
+					</div>
+
+					<div *ngSwitchCase="2" class="titulo" [title]="atividade.nomeProjeto">
+						<strong>
+							PROJETO {{ atividade.idProjeto }} - {{ atividade.nomeProjeto }}
+						</strong>
+					</div>
 				</div>
 
 				<div class="designado">
-					<designado-tarefa class="nome" [designado]="usuarioLogado!.nomeCompleto"
-													[tempoTotalApontadoSincronizadoChannel]="atividade.tempoTotalApontado"
-													[tempoTotalApontadoNaoSincronizadoChannel]="0">
-					</designado-tarefa>
+					<span>
+						{{ atividade.tempoTotalApontado | tempoApontado: 'sync' }}
+					</span>
 				</div>
 			</div>
 		</div>
@@ -31,9 +48,7 @@
 		<ng-template matExpansionPanelContent>
 			<ul>
 				<li *ngFor="let apontamento of atividade.apontamentos" class="apontamento">
-					<span [title]="apontamento.sincronizadoChannel ? 'Sincronizado com o Channel' : 'Não sincronizado com o Channel'"
-							class="badge" [ngClass]="{'error': !apontamento.sincronizadoChannel, 'sucess': apontamento.sincronizadoChannel}">Channel</span>
-						
+					<span title="Sincronizado com o Channel" class="badge sucess">Channel</span>						
 					<span>
 						<span class="data">{{ apontamento.data | date:'dd/MM/yyyy'}}</span>
 						<b>{{ apontamento.usuario }}</b> - {{ apontamento.tempo | tempo }} - {{ apontamento.comentario != "" ? apontamento.comentario : "Nenhum comentário adicionado." }}</span>

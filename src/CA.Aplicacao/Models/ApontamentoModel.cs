@@ -1,4 +1,5 @@
-﻿using CA.Core.Entidades.Tfs;
+﻿using CA.Core.Entidades.Channel;
+using CA.Core.Entidades.Tfs;
 using CA.Util.Extensions;
 using System.ComponentModel.DataAnnotations;
 
@@ -33,12 +34,24 @@ namespace CA.Aplicacao.Models
         }
     }
 
-    public record ApontamentoModel
+    public abstract record ApontamentoModel
     {
+        public string Hash { get; set; }
         public string Usuario { get; set; } = string.Empty;
         public string Comentario { get; set; } = string.Empty;
         public DateOnly Data { get; set; }
-        public TimeSpan Tempo { get; set; }
+        public TimeSpan Tempo { get; set; }        
+    }
+
+    public record ApontamentoTfsModel : ApontamentoModel 
+    {
         public bool SincronizadoChannel { get; set; }
+    }
+
+    public record ApontamentoChannelModel : ApontamentoModel
+    {
+        public int IdTarefaTfs { get; set; }
+        public StatusApontamento Status { get; set; }
+        public bool ApontamentoTfs { get; set; }
     }
 }

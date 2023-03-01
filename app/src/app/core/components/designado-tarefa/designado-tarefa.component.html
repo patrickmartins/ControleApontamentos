@@ -1,4 +1,4 @@
-{{ designado }}
+{{ designado?.nome }}
 <span *ngIf="tempoTotalApontadoSincronizadoChannel > 0 || tempoTotalApontadoNaoSincronizadoChannel > 0">	
 	<span>-</span>
 	<span *ngIf="tempoTotalApontadoSincronizadoChannel > 0">&nbsp;{{ (tempoTotalApontadoSincronizadoChannel + tempoTotalApontadoNaoSincronizadoChannel) | tempoApontado: 'sync' }}</span>

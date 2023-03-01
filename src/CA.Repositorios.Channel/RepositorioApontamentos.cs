@@ -51,17 +51,23 @@ namespace CA.Repositorios.Channel
 
         public Task<IEnumerable<ApontamentoChannel>> ObterTodosApontamentosPorPeriodoAsync(DateOnly inicio, DateOnly fim)
         {
-            return _set.Where(c => c.Data >= inicio.ToDateTime(new TimeOnly(0)) && c.Data <= fim.ToDateTime(new TimeOnly(0))).ToIListAsync();
+            return _set.IgnoreQueryFilters().Where(c => c.Data >= inicio.ToDateTime(new TimeOnly(0)) && c.Data <= fim.ToDateTime(new TimeOnly(0))).ToIListAsync();
         }
 
         public Task<IEnumerable<ApontamentoChannel>> ObterApontamentosPorDataAsync(int idUsuario, DateOnly data)
         {
-            return _set.Where(c => c.Usuario.Id == idUsuario && c.Data == data.ToDateTime(new TimeOnly(0))).ToIListAsync();
+            return _set.Include(c => c.Atividade)
+                        .Include(c => c.Projeto)
+                        .Include(c => c.Usuario)
+                        .Where(c => c.Usuario.Id == idUsuario && c.Data == data.ToDateTime(new TimeOnly(0))).ToIListAsync();
         }
 
         public Task<IEnumerable<ApontamentoChannel>> ObterApontamentosPorPeriodoAsync(int idUsuario, DateOnly inicio, DateOnly fim)
         {
-            return _set.Where(c => c.Usuario.Id == idUsuario && c.Data >= inicio.ToDateTime(new TimeOnly(0)) && c.Data <= fim.ToDateTime(new TimeOnly(0))).ToIListAsync();
+            return _set.Include(c => c.Atividade)
+                        .Include(c => c.Projeto)
+                        .Include(c => c.Usuario)
+                        .Where(c => c.Usuario.Id == idUsuario && c.Data >= inicio.ToDateTime(new TimeOnly(0)) && c.Data <= fim.ToDateTime(new TimeOnly(0))).ToIListAsync();
         }
 
         public Task<int> SalvarAlteracoesAsync()

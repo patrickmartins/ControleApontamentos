@@ -10,7 +10,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { CdTimerModule } from 'angular-cd-timer';
+import { TimerModule } from 'src/libs/timer/timer.module';
 
 import { ContadorTarefaComponent } from './components/contador-tarefa/contador-tarefa.component';
 import { DesignadoTarefaComponent } from './components/designado-tarefa/designado-tarefa.component';
@@ -41,7 +41,7 @@ import { TempoPipe } from './pipes/tempo.pipe';
 		MatCardModule,		
 		MatButtonModule,		
 		MatIconModule,
-		CdTimerModule,
+		TimerModule,
 		MatDialogModule,
 		MatInputModule,
 		MatDividerModule,

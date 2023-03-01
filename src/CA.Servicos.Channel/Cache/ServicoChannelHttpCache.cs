@@ -58,5 +58,15 @@ namespace CA.Servicos.Channel.Cache
                 return _servico.ObterUsuariosAtivosAsync();
             });
         }
+
+        public Task<ProjetoResponse?> ObterProjetoPorIdAsync(int idProjeto)
+        {
+            return _cache.GetOrCreateAsync($"usuarios_channel_{idProjeto}", (e) =>
+            {
+                e.AbsoluteExpiration = DateTime.Now.AddMinutes(_configuracoes.TempoCacheProjetos);
+
+                return _servico.ObterProjetoPorIdAsync(idProjeto);
+            });
+        }
     }
 }

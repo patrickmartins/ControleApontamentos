@@ -1,5 +1,7 @@
 import * as moment from "moment";
 import { IModel } from "src/app/common/models/model";
+import { ApontamentoChannel } from "src/app/core/models/apontamento-channel";
+
 import { Atividade } from "../../core/models/atividade";
 
 export class ApontamentosChannelDia implements IModel<ApontamentosChannelDia> {
@@ -22,5 +24,38 @@ export class ApontamentosChannelDia implements IModel<ApontamentosChannelDia> {
 		}
 
 		return apontamento;
+	}
+
+	public obterApontamentosTfs(): ApontamentoChannel[] {		
+		var apontamentos: ApontamentoChannel[] = [];
+
+		this.atividades.forEach(atividade => {			
+			atividade.obterApontamentosTfs().forEach(tarefa => {
+				apontamentos.push(tarefa);
+			});
+		});
+
+		return apontamentos;
+	}
+
+	public recalcularTempoTotalApontado(): void {
+		this.tempoTotalApontadoNoDia = 0;
+
+		this.atividades?.forEach(atividade => {
+			atividade.recalcularTempoTotalApontado(this.dataReferencia);
+
+			this.tempoTotalApontadoNoDia += atividade.obterTempoApontadoPorData(this.dataReferencia);
+		});
+	}
+
+	public removerApontamentosExcluidos(): void {
+		this.atividades.forEach(atividade => {			
+			atividade.removerApontamentosExcluidos();
+		});
+	}
+
+	public removerTarefasSemApontamentos(): void {
+		this.atividades = this.atividades.filter(c => c.apontamentos.length > 0 
+												&& c.apontamentos.some(a => a.data.getTime() == this.dataReferencia.getTime()));
 	}
 }

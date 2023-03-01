@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CA.Repositorios.Channel.Migrations
 {
     [DbContext(typeof(ContextoDadosChannel))]
-    [Migration("20230201021042_inicial")]
+    [Migration("20230228233744_inicial")]
     partial class inicial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -29,18 +29,37 @@ namespace CA.Repositorios.Channel.Migrations
                     b.Property<int>("Id")
                         .HasColumnType("int");
 
-                    b.Property<int>("AtividadeId")
+                    b.Property<bool>("ApontamentoTfs")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("AtividadeId")
                         .HasColumnType("int");
 
                     b.Property<string>("Comentario")
                         .IsRequired()
-                        .HasColumnType("varchar(1000)");
+                        .HasColumnType("varchar(2000)");
 
                     b.Property<DateTime>("Data")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Hash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("IdTarefaTfs")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ProjetoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.Property<TimeSpan>("TempoApontado")
                         .HasColumnType("time");
+
+                    b.Property<int>("Tipo")
+                        .HasColumnType("int");
 
                     b.Property<int>("UsuarioId")
                         .HasColumnType("int");
@@ -48,6 +67,8 @@ namespace CA.Repositorios.Channel.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AtividadeId");
+
+                    b.HasIndex("ProjetoId");
 
                     b.HasIndex("UsuarioId");
 
@@ -116,9 +137,11 @@ namespace CA.Repositorios.Channel.Migrations
                 {
                     b.HasOne("CA.Core.Entidades.Channel.AtividadeChannel", "Atividade")
                         .WithMany("Apontamentos")
-                        .HasForeignKey("AtividadeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AtividadeId");
+
+                    b.HasOne("CA.Core.Entidades.Channel.ProjetoChannel", "Projeto")
+                        .WithMany("Apontamentos")
+                        .HasForeignKey("ProjetoId");
 
                     b.HasOne("CA.Core.Entidades.Channel.UsuarioChannel", "Usuario")
                         .WithMany("Apontamentos")
@@ -127,6 +150,8 @@ namespace CA.Repositorios.Channel.Migrations
                         .IsRequired();
 
                     b.Navigation("Atividade");
+
+                    b.Navigation("Projeto");
 
                     b.Navigation("Usuario");
                 });
@@ -149,6 +174,8 @@ namespace CA.Repositorios.Channel.Migrations
 
             modelBuilder.Entity("CA.Core.Entidades.Channel.ProjetoChannel", b =>
                 {
+                    b.Navigation("Apontamentos");
+
                     b.Navigation("Atividades");
                 });
 

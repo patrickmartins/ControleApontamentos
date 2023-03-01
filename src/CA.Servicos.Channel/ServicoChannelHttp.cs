@@ -176,6 +176,25 @@ namespace CA.Servicos.Channel
             return ChannelStringResponseHelper.DesserializarResultado<ProjetoResponse>(resultado);
         }
 
+        public async Task<ProjetoResponse?> ObterProjetoPorIdAsync(int idProjeto)
+        {
+            var token = ObterTokenJwt();
+            var cookies = ObterCookies(token).ParaCookieJar();
+
+            var resultado = await _policy.ExecuteAsync(() =>
+            {
+                return _configuracoes.UrlBase
+                                    .AppendPathSegment($"api/escopo/{idProjeto}")
+                                    .WithCookies(cookies)
+                                    .GetJsonAsync<EscopoResponse>();
+            });
+
+            if (resultado is null || resultado.Projeto is null)
+                return null;
+
+            return resultado.Projeto;
+        }
+
         public async Task<IEnumerable<AtividadeResponse>> ObterAtividadesPorProjetoAsync(int idProjeto)
         {
             var token = ObterTokenJwt();

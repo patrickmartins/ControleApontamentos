@@ -51,11 +51,23 @@ namespace CA.Core.Entidades.Channel
 
         public static bool operator ==(UsuarioChannel usuario1, UsuarioChannel usuario2)
         {
+            if (usuario1 is null && usuario2 is null)
+                return true;
+
+            if ((usuario1 is null && usuario2 is not null) || (usuario1 is not null && usuario2 is null))
+                return false;
+
             return usuario1.Equals(usuario2);
         }
 
         public static bool operator !=(UsuarioChannel usuario1, UsuarioChannel usuario2)
         {
+            if (usuario1 is null && usuario2 is null)
+                return true;
+
+            if ((usuario1 is null && usuario2 is not null) || (usuario1 is not null && usuario2 is null))
+                return false;
+
             return !usuario1.Equals(usuario2);
         }
     }

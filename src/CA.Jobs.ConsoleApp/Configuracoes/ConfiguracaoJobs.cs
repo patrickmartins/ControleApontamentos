@@ -12,7 +12,6 @@ namespace CA.Jobs.ConsoleApp.Configuracoes
             services.AddScoped<IJobChannel<UsuarioChannel>, JobCargaUsuarios>();
             services.AddScoped<IJobChannel<ApontamentoChannel>, JobCargaApontamentos>();
             services.AddScoped<IJobChannel<ProjetoChannel>, JobCargaProjetos>();
-            services.AddScoped<IJobChannel<AtividadeChannel>, JobCargaAtividades>();
         }
     }
 }

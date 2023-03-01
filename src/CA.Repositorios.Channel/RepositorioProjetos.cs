@@ -3,7 +3,6 @@ using CA.Core.Interfaces.Channel;
 using CA.Repositorios.Channel.Contexto;
 using CA.Util.Extensions;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 
 namespace CA.Repositorios.Channel
 {
@@ -66,7 +65,12 @@ namespace CA.Repositorios.Channel
 
         public Task<IEnumerable<ProjetoChannel>> ObterTodosProjetosAsync()
         {
-            return _setProjetos.ToIListAsync();
+            return _setProjetos.Include(c => c.Atividades).ToIListAsync();
+        }
+
+        public Task<IEnumerable<ProjetoChannel>> ObterProjetosPorIdsAsync(params int[] idsProjetos)
+        {
+            return _setProjetos.Include(c => c.Atividades).Where(c => idsProjetos.Contains(c.Id)).ToIListAsync();
         }
 
         public Task<IEnumerable<ProjetoChannel>> ObterTodosProjetosAtivosAsync()
@@ -77,6 +81,11 @@ namespace CA.Repositorios.Channel
         public Task<IEnumerable<AtividadeChannel>> ObterTodasAtividadesAsync()
         {
             return _setAtividades.ToIListAsync();
+        }
+
+        public Task<IEnumerable<AtividadeChannel>> ObterAtividadesPorIdsAsync(params int[] ids)
+        {
+            return _setAtividades.Where(c => ids.Contains(c.Id)).Include(c => c.Projeto).ToIListAsync();
         }
 
         public Task<IEnumerable<AtividadeChannel>> ObterAtividadesPorCodigoAsync(string codigo)

@@ -13,6 +13,7 @@ import { ApontamentosChannelDia } from '../../models/apontamentos-channel-dia';
 import { ApontamentosChannelMes } from '../../models/apontamentos-channel-mes';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
+import { tap } from 'rxjs';
 
 @Component({
 	selector: 'app-apontamentos-por-mes',
@@ -42,7 +43,8 @@ export class ApontamentosPorMesComponent extends BaseComponent implements OnInit
 	}
 
 	public get tempoTotalApontadoSincronizadoNoMes() : number {
-		return this.apontamentosTfsMes ? this.apontamentosTfsMes.tempoTotalApontadoSincronizadoChannel : 0;
+		return (this.apontamentosTfsMes ? this.apontamentosTfsMes.tempoTotalApontadoSincronizadoChannel : 0) + 
+				(this.apontamentosChannelMes ? this.apontamentosChannelMes.tempoTotalApontadoNoMes : 0);
 	}
 
 	public get tempoTotalApontadoNaoSincronizadoNoMes() : number {
@@ -123,7 +125,9 @@ export class ApontamentosPorMesComponent extends BaseComponent implements OnInit
 
 		if(this.usuarioLogado?.possuiContaTfs) {
 			this.servicoApontamento
-				.obterApontamentosTfsPorMes(mes, ano).subscribe({
+				.obterApontamentosTfsPorMes(mes, ano)
+				.pipe(tap((apontamentosTfsMes: ApontamentosTfsMes) => this.consolidarTarefasPorAtividades(apontamentosTfsMes, this.apontamentosChannelMes)))
+				.subscribe({
 					next: (apontamentos) => {
 						this.apontamentosTfsMes = apontamentos;
 
@@ -138,7 +142,9 @@ export class ApontamentosPorMesComponent extends BaseComponent implements OnInit
 
 		if(this.usuarioLogado?.possuiContaChannel) {
 			this.servicoApontamento
-				.obterApontamentosChannelPorMes(mes, ano).subscribe({
+				.obterApontamentosChannelPorMes(mes, ano)
+				.pipe(tap((apontamentosChannelMes: ApontamentosChannelMes) => this.consolidarTarefasPorAtividades(this.apontamentosTfsMes, apontamentosChannelMes)))
+				.subscribe({
 					next: (apontamentos) => {
 						this.apontamentosChannelMes = apontamentos;
 
@@ -203,5 +209,29 @@ export class ApontamentosPorMesComponent extends BaseComponent implements OnInit
 		
 		if(this.diaSelecionado)
 			this.onDiaClicado(this.diaSelecionado.getDate());
+	}
+
+	private consolidarTarefasPorAtividades(apontamentosTfs: ApontamentosTfsMes | undefined, apontamentosChannel: ApontamentosChannelMes | undefined): ApontamentosTfsMes | undefined {
+		if(!apontamentosTfs || !apontamentosChannel)
+			return apontamentosTfs;
+
+		var apontamentosChannelTfs = apontamentosChannel.obterApontamentosTfs();
+		
+		apontamentosChannelTfs.forEach(apontamento => {
+			var tarefas = apontamentosTfs.obterTarefasPorId(apontamento.idTarefaTfs);
+
+			tarefas.forEach(tarefa => {
+				tarefa.removerApontamentoPorHash(apontamento.hash);
+			});
+		})
+
+		apontamentosChannel.removerApontamentosExcluidos();
+		apontamentosChannel.removerTarefasSemApontamentos();
+		apontamentosChannel.recalcularTempoTotalApontado();
+
+		apontamentosTfs.removerTarefasSemApontamentos();
+		apontamentosTfs.recalcularTempoTotalApontado();		
+
+		return apontamentosTfs;
 	}
 }

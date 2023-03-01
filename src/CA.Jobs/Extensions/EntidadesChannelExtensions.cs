@@ -19,17 +19,23 @@ namespace CA.Jobs.Channel.Extensions
                 return;
 
             atividade1.Nome = atividade2.Nome;
-            atividade1.Codigo = atividade2.Codigo;            
+            atividade1.Codigo = atividade2.Codigo; 
+            atividade1.Projeto = atividade2.Projeto;
         }
 
         public static void Atualizar(this ApontamentoChannel apontamento1, ApontamentoChannel apontamento2)
         {
             if (apontamento1 is null || apontamento1 is null)
                 return;
+
+            if (apontamento1.ApontamentoTfs)
+                apontamento1.Status = StatusApontamento.Alterado;
                         
             apontamento1.Data = apontamento2.Data;
             apontamento1.Comentario = apontamento2.Comentario;
             apontamento1.TempoApontado = apontamento2.TempoApontado;
+            apontamento1.Tipo = apontamento2.Tipo;
+            apontamento1.Projeto = apontamento2.Projeto;
             apontamento1.Atividade= apontamento2.Atividade;
         }
     }

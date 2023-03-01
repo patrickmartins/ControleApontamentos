@@ -13,5 +13,8 @@ namespace CA.Servicos.Channel.Models.Responses
 
         [JsonProperty("status")]
         public StatusProjeto Status { get; set; }
+
+        [JsonProperty("atividades")]
+        public IEnumerable<AtividadeResponse> Atividades { get; set; }
     }
 }

@@ -20,7 +20,13 @@ namespace CA.Core.Entidades.Channel
         public string Nome { get; set; }
         public StatusProjeto Status { get; set; }
 
-        public IEnumerable<AtividadeChannel> Atividades { get; set; }
+        public ICollection<AtividadeChannel> Atividades { get; set; }
+        public ICollection<ApontamentoChannel> Apontamentos { get; set; }
+
+        public void AdicionarAtividade(AtividadeChannel atividade)
+        {
+            Atividades.Add(atividade);
+        }
 
         public Resultado Validar()
         {
@@ -42,6 +48,9 @@ namespace CA.Core.Entidades.Channel
 
             var projeto = (ProjetoChannel)obj;
 
+            if(ReferenceEquals(this, projeto)) 
+                return true;
+
             return projeto.Id == Id &&
                     projeto.Nome == Nome &&
                     projeto.Status == Status;
@@ -54,11 +63,23 @@ namespace CA.Core.Entidades.Channel
 
         public static bool operator ==(ProjetoChannel projeto1, ProjetoChannel projeto2)
         {
+            if (projeto1 is null && projeto2 is null)
+                return true;
+
+            if ((projeto1 is null && projeto2 is not null) || (projeto1 is not null && projeto2 is null))
+                return false;
+
             return projeto1.Equals(projeto2);
         }
 
         public static bool operator !=(ProjetoChannel projeto1, ProjetoChannel projeto2)
         {
+            if (projeto1 is null && projeto2 is null)
+                return false;
+
+            if ((projeto1 is null && projeto2 is not null) || (projeto1 is not null && projeto2 is null))
+                return true;
+
             return !projeto1.Equals(projeto2);
         }
     }

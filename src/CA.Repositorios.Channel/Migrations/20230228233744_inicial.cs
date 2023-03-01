@@ -60,11 +60,17 @@ namespace CA.Repositorios.Channel.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
+                    IdTarefaTfs = table.Column<int>(type: "int", nullable: false),
+                    Tipo = table.Column<int>(type: "int", nullable: false),
+                    ApontamentoTfs = table.Column<bool>(type: "bit", nullable: false),
                     Data = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Comentario = table.Column<string>(type: "varchar(1000)", nullable: false),
+                    Comentario = table.Column<string>(type: "varchar(2000)", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
                     TempoApontado = table.Column<TimeSpan>(type: "time", nullable: false),
                     UsuarioId = table.Column<int>(type: "int", nullable: false),
-                    AtividadeId = table.Column<int>(type: "int", nullable: false)
+                    ProjetoId = table.Column<int>(type: "int", nullable: true),
+                    AtividadeId = table.Column<int>(type: "int", nullable: true),
+                    Hash = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -73,8 +79,12 @@ namespace CA.Repositorios.Channel.Migrations
                         name: "FK_ApontamentoChannel_AtividadeChannel_AtividadeId",
                         column: x => x.AtividadeId,
                         principalTable: "AtividadeChannel",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ApontamentoChannel_ProjetoChannel_ProjetoId",
+                        column: x => x.ProjetoId,
+                        principalTable: "ProjetoChannel",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_ApontamentoChannel_UsuarioChannel_UsuarioId",
                         column: x => x.UsuarioId,
@@ -87,6 +97,11 @@ namespace CA.Repositorios.Channel.Migrations
                 name: "IX_ApontamentoChannel_AtividadeId",
                 table: "ApontamentoChannel",
                 column: "AtividadeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ApontamentoChannel_ProjetoId",
+                table: "ApontamentoChannel",
+                column: "ProjetoId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ApontamentoChannel_UsuarioId",

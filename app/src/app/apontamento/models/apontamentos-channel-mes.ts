@@ -1,4 +1,5 @@
 import { IModel } from "src/app/common/models/model";
+import { ApontamentoChannel } from "src/app/core/models/apontamento-channel";
 import { ApontamentosChannelDia } from "./apontamentos-channel-dia";
 
 export class ApontamentosChannelMes implements IModel<ApontamentosChannelMes> {
@@ -37,5 +38,37 @@ export class ApontamentosChannelMes implements IModel<ApontamentosChannelMes> {
 		}
 
 		return undefined;
+	}
+
+	public obterApontamentosTfs(): ApontamentoChannel[] {		
+		var apontamentos: ApontamentoChannel[] = [];
+
+		this.apontamentosDiarios.forEach(apontamentosDia => {			
+			apontamentosDia.obterApontamentosTfs().forEach(apontamento => {
+				apontamentos.push(apontamento);
+			});
+		});
+
+		return apontamentos;
+	}
+
+	public removerApontamentosExcluidos(): void {
+		this.apontamentosDiarios.forEach(apontamentosDia => {			
+			apontamentosDia.removerApontamentosExcluidos();
+		});
+	}
+
+	public recalcularTempoTotalApontado(): void {
+		this.tempoTotalApontadoNoMes = 0;
+
+		this.apontamentosDiarios?.forEach(apontamentoDia => {
+			apontamentoDia.recalcularTempoTotalApontado();
+
+			this.tempoTotalApontadoNoMes += apontamentoDia.tempoTotalApontadoNoDia;
+		});
+	}
+
+	public removerTarefasSemApontamentos(): void {
+		this.apontamentosDiarios.forEach(c => c.removerTarefasSemApontamentos());
 	}
 }

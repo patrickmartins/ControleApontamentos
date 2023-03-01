@@ -1,6 +1,6 @@
-﻿using CA.Core.Entidades.Tfs;
-using CA.Repositorios.Tfs.Constantes;
-using CA.Repositorios.Tfs.Entidades;
+﻿using CA.Core.Constantes;
+using CA.Core.Entidades.Tfs;
+using CA.Core.Valores;
 using CA.Repositorios.Tfs.Extensions;
 using CA.Repositorios.Tfs.Models;
 using CA.Servicos.Tfs.Entidades;

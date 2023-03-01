@@ -4,7 +4,8 @@ namespace CA.Aplicacao.Models
 {
     public record ApontamentosTfsDiaModel
     {
-        public DateOnly DataReferencia { get; set; }
+        public string UsuarioReferencia { get; set; }
+        public DateOnly DataReferencia { get; set; }        
         public TimeSpan TempoTotalApontadoNoDia { get; set; }
         public TimeSpan TempoTotalApontadoSincronizadoChannel { get; set; }
         public TimeSpan TempoTotalApontadoNaoSincronizadoChannel { get; set; }

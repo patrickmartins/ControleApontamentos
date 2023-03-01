@@ -9,6 +9,52 @@ namespace CA.Repositorios.Channel.Contexto
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<ApontamentoChannel>().HasQueryFilter(c => !c.ApontamentoTfs || (c.ApontamentoTfs && c.Status != StatusApontamento.Inserido));
+
+            modelBuilder.Entity<ApontamentoChannel>()
+                        .HasKey(c => c.Id);
+
+            modelBuilder.Entity<ApontamentoChannel>()
+                        .Property(c => c.Id)
+                        .ValueGeneratedNever();
+
+            modelBuilder.Entity<ApontamentoChannel>()
+                        .Property(c => c.Data)
+                        .IsRequired();
+
+            modelBuilder.Entity<ApontamentoChannel>()
+                        .Property(c => c.IdTarefaTfs)
+                        .IsRequired();
+
+            modelBuilder.Entity<ApontamentoChannel>()
+                        .Property(c => c.Tipo)
+                        .IsRequired();
+
+            modelBuilder.Entity<ApontamentoChannel>()
+                        .Property(c => c.Status)
+                        .IsRequired();
+
+            modelBuilder.Entity<ApontamentoChannel>()
+                        .Property(c => c.ApontamentoTfs)
+                        .IsRequired();
+
+            modelBuilder.Entity<ApontamentoChannel>()
+                        .Property(c => c.Hash)
+                        .IsRequired();
+
+            modelBuilder.Entity<ApontamentoChannel>()
+                        .Property(c => c.Comentario)
+                        .HasColumnType("varchar(2000)")
+                        .IsRequired();
+
+            modelBuilder.Entity<ApontamentoChannel>()
+                        .Property(c => c.TempoApontado)
+                        .IsRequired();
+
+            modelBuilder.Entity<ApontamentoChannel>()
+                        .HasOne(c => c.Usuario)
+                        .WithMany(c => c.Apontamentos);
+
             modelBuilder.Entity<UsuarioChannel>()
                         .HasKey(c => c.Id);
 
@@ -25,30 +71,6 @@ namespace CA.Repositorios.Channel.Contexto
                         .Property(c => c.NomeCompleto)
                         .HasColumnType("varchar(200)")
                         .IsRequired();
-
-            modelBuilder.Entity<ApontamentoChannel>()
-                        .HasKey(c => c.Id);
-
-            modelBuilder.Entity<ApontamentoChannel>()
-                        .Property(c => c.Id)
-                        .ValueGeneratedNever();
-
-            modelBuilder.Entity<ApontamentoChannel>()
-                        .Property(c => c.Data)
-                        .IsRequired();
-
-            modelBuilder.Entity<ApontamentoChannel>()
-                        .Property(c => c.Comentario)
-                        .HasColumnType("varchar(1000)")
-                        .IsRequired();
-
-            modelBuilder.Entity<ApontamentoChannel>()
-                        .Property(c => c.TempoApontado)
-                        .IsRequired();
-
-            modelBuilder.Entity<ApontamentoChannel>()
-                        .HasOne(c => c.Usuario)
-                        .WithMany(c => c.Apontamentos);
 
             modelBuilder.Entity<ProjetoChannel>()
                         .HasKey(c => c.Id);
@@ -68,6 +90,10 @@ namespace CA.Repositorios.Channel.Contexto
 
             modelBuilder.Entity<ProjetoChannel>()
                         .HasMany(c => c.Atividades)
+                        .WithOne(c => c.Projeto);
+
+            modelBuilder.Entity<ProjetoChannel>()
+                        .HasMany(c => c.Apontamentos)
                         .WithOne(c => c.Projeto);
 
             modelBuilder.Entity<AtividadeChannel>()
