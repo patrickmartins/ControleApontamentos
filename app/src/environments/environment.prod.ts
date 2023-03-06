@@ -1,7 +1,7 @@
 export const environment = {
 	production: false,
 	intervaloExecucaoJob: 30,
-	urlApiBase: "https://apontamento-api.azurewebsites.net/api/",
+	urlApiBase: "https://apontamento-vixteam-api.azurewebsites.net/api/",
 	urlTfs: "http://tfs.vixteam.com.br:8080/tfs/",
 	urlChannel: "https://vixteam.jexperts.com.br/channel",
 	urlGraphAzure: "https://graph.microsoft.com/v1.0/me/",
