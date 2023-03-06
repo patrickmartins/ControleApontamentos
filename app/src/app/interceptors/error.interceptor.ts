@@ -40,7 +40,8 @@ export class ErrorInterceptor implements HttpInterceptor {
 										this.router.navigate(["/login"]);
 									}
 									else {
-										this.router.navigate(["/acesso-negado"]);
+                                        this.contaService.logout();
+										this.router.navigate(["/login"]);
 									}
 
                                     return throwError([response]);
