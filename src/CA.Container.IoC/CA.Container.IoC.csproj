@@ -7,8 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="6.0.0" />
     <PackageReference Include="Scrutor" Version="4.2.0" />
   </ItemGroup>
@@ -18,7 +16,9 @@
     <ProjectReference Include="..\CA.Core\CA.Core.csproj" />
     <ProjectReference Include="..\CA.Repositorio.Ponto\CA.Repositorios.Ponto.csproj" />
     <ProjectReference Include="..\CA.Repositorio.Tfs\CA.Repositorios.Tfs.csproj" />
+    <ProjectReference Include="..\CA.Repositorios.Channel\CA.Repositorios.Channel.csproj" />
     <ProjectReference Include="..\CA.Seguranca\CA.Seguranca.csproj" />
+    <ProjectReference Include="..\CA.Servicos.Channel\CA.Servicos.Channel.csproj" />
   </ItemGroup>
 
 </Project>

@@ -82,7 +82,7 @@ export class BuscaComponent extends BaseComponent implements OnInit {
 					})
 			}
 			else {
-				this.router.navigate(["home"]);
+				this.router.navigate(["tarefas"]);
 			}
 		}
 		else {

@@ -16,12 +16,12 @@ namespace CA.Aplicacao.Servicos
             _servico = servico;
         }
 
-        public Task<Resultado> AdicionarNovoApontamentoAsync(UsuarioTfs usuario, ApontamentoNovoModel apontamento)
+        public Task<Resultado> AdicionarNovoApontamentoAsync(UsuarioTfs usuario, ApontamentoTfsNovoModel apontamento)
         {
             if (apontamento is null)
                 return Task.FromResult(Resultado.DeErros(new Erro("O apontamento não foi informado.", nameof(apontamento))));
 
-            return _servico.AdicionarNovoApontamentoAsync(usuario, apontamento.Colecao, apontamento.IdTarefa, ApontamentoNovoModel.ViewModelParaApontamento(apontamento));
+            return _servico.AdicionarNovoApontamentoAsync(usuario, apontamento.Colecao, apontamento.IdTarefa, ApontamentoTfsNovoModel.ViewModelParaApontamento(apontamento));
         }
 
         public async Task<Resultado<Pagina<TarefaModel>>> BuscarTarefasAsync(UsuarioTfs usuario, string colecao, string palavraChave, StatusItemTrabalho[] status, int pagina = 1, int tamanhoPagina = 10)
@@ -43,7 +43,7 @@ namespace CA.Aplicacao.Servicos
             });
         }
 
-        public async Task<Resultado<ApontamentosDiaModel>> ObterApontamentosPorDiaAsync(UsuarioTfs usuario, DateOnly data)
+        public async Task<Resultado<ApontamentosTfsDiaModel>> ObterApontamentosPorDiaAsync(UsuarioTfs usuario, DateOnly data)
         {
             var itensTrabalho = new List<ItemTrabalho>();
 
@@ -52,42 +52,42 @@ namespace CA.Aplicacao.Servicos
                 var resultado = await _servico.ObterItensTrabalhoApontadosPorDatasAsync(usuario, colecao, data);
 
                 if (!resultado.Sucesso)
-                    return Resultado.DeErros<ApontamentosDiaModel>(resultado.Erros);
+                    return Resultado.DeErros<ApontamentosTfsDiaModel>(resultado.Erros);
 
                 itensTrabalho.AddRange(resultado.Valor);
             }
 
-            var apontamentos = ConsolidarTarefas(itensTrabalho).ItemTrabalhoParaApontamentoDiaModel(usuario.NomeUsuario, data);
+            var apontamentos = ConsolidarTarefas(itensTrabalho).ItemTrabalhoParaApontamentoTfsDiaModel(usuario.NomeUsuario, data);
 
             return Resultado.DeValor(apontamentos);
         }
 
-        public async Task<Resultado<ApontamentosMesModel>> ObterApontamentosPorMesAsync(UsuarioTfs usuario, int mes, int ano)
+        public async Task<Resultado<ApontamentosTfsMesModel>> ObterApontamentosPorMesAsync(UsuarioTfs usuario, int mes, int ano)
         {
             var itensTrabalho = new List<ItemTrabalho>();
 
             if (mes < 1 || mes > 12)
-                return Resultado.DeErros<ApontamentosMesModel>(new Erro("O mês informado é inválido.", nameof(mes)));
+                return Resultado.DeErros<ApontamentosTfsMesModel>(new Erro("O mês informado é inválido.", nameof(mes)));
 
             if (ano < 2000 || ano > DateTime.Today.Year)
-                return Resultado.DeErros<ApontamentosMesModel>(new Erro("O ano informado é inválido.", nameof(ano)));
+                return Resultado.DeErros<ApontamentosTfsMesModel>(new Erro("O ano informado é inválido.", nameof(ano)));
 
             foreach (var colecao in usuario.Colecoes)
             {
                 var resultado = await _servico.ObterItensTrabalhoApontadosPorPeriodoAsync(usuario, colecao, new DateOnly(ano, mes, 1), new DateOnly(ano, mes, (DateTime.Today.Month == mes && DateTime.Today.Year == ano) ? DateTime.Today.Day : DateTime.DaysInMonth(ano, mes)));
 
                 if (!resultado.Sucesso)
-                    return Resultado.DeErros<ApontamentosMesModel>(resultado.Erros);
+                    return Resultado.DeErros<ApontamentosTfsMesModel>(resultado.Erros);
 
                 itensTrabalho.AddRange(resultado.Valor);
             }
 
-            var apontamentos = ConsolidarTarefas(itensTrabalho).ItemTrabalhoParaApontamentoMesModel(usuario.NomeUsuario, mes, ano);
+            var apontamentos = ConsolidarTarefas(itensTrabalho).ItemTrabalhoParaApontamentoTfsMesModel(usuario.NomeUsuario, mes, ano);
 
             return Resultado.DeValor(apontamentos);
         }
 
-        public async Task<Resultado<ICollection<GrupoTarefasModel>>> ObterTarefasAtivasPorUsuarioAsync(UsuarioTfs usuario)
+        public async Task<Resultado<IEnumerable<GrupoTarefasModel>>> ObterTarefasAtivasPorUsuarioAsync(UsuarioTfs usuario)
         {
             var itensTrabalho = new List<ItemTrabalho>();
 
@@ -96,7 +96,7 @@ namespace CA.Aplicacao.Servicos
                 var resultado = await _servico.ObterItensTrabalhoPorUsuarioAsync(usuario, colecao);
 
                 if (!resultado.Sucesso)
-                    return Resultado.DeErros<ICollection<GrupoTarefasModel>>(resultado.Erros);
+                    return Resultado.DeErros<IEnumerable<GrupoTarefasModel>>(resultado.Erros);
 
                 itensTrabalho.AddRange(resultado.Valor);
             }
@@ -106,14 +106,14 @@ namespace CA.Aplicacao.Servicos
             return Resultado.DeValor(tarefas);
         }
 
-        public async Task<Resultado<ICollection<TarefaModel>>> ObterTarefasPorIdAsync(UsuarioTfs usuario, string colecao, params int[] ids)
+        public async Task<Resultado<IEnumerable<TarefaModel>>> ObterTarefasPorIdAsync(UsuarioTfs usuario, string colecao, params int[] ids)
         {
             var itensTrabalho = new List<ItemTrabalho>();
 
             var resultado = await _servico.ObterItensTrabalhoPorIdAsync(colecao, ids);
 
             if (!resultado.Sucesso)
-                return Resultado.DeErros<ICollection<TarefaModel>>(resultado.Erros);
+                return Resultado.DeErros<IEnumerable<TarefaModel>>(resultado.Erros);
 
             itensTrabalho.AddRange(resultado.Valor);           
 
@@ -127,7 +127,7 @@ namespace CA.Aplicacao.Servicos
             return _servico.ObterUsuarioPorNomeAsync(colecao, nomeUsuario);
         }
 
-        private ICollection<ItemTrabalho> ConsolidarTarefas(IEnumerable<ItemTrabalho> itens)
+        private IEnumerable<ItemTrabalho> ConsolidarTarefas(IEnumerable<ItemTrabalho> itens)
         {
             return itens.Where(c => c.Tipo == TipoItemTrabalho.Tarefa || c.Tipo == TipoItemTrabalho.Bug).Select(item =>
             {

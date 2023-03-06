@@ -1,4 +1,4 @@
-﻿using CA.Repositorios.Tfs.ServicosSoap.Models;
+﻿using CA.Servicos.Tfs.Models;
 
 namespace CA.Repositorios.Tfs.Extensions
 {

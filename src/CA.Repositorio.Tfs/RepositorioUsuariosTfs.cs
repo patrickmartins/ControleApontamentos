@@ -2,9 +2,9 @@
 using CA.Core.Entidades.Tfs;
 using CA.Core.Interfaces.Tfs;
 using CA.Repositorios.Tfs.Extensions;
-using CA.Repositorios.Tfs.Interfaces;
-using CA.Repositorios.Tfs.ServicosSoap.Models;
-using CA.Repositorios.Tfs.ServicosSoap.Models.Requests;
+using CA.Servicos.Tfs.Interfaces;
+using CA.Servicos.Tfs.Models;
+using CA.Servicos.Tfs.Models.Requests;
 using Polly;
 using Polly.Registry;
 
@@ -18,8 +18,6 @@ namespace CA.Repositorios.Tfs
 
         public RepositorioUsuariosTfs(ConfiguracaoClienteTfs configuracoes, IServicoIdentidadeTfsSoap servicoIdentidade, IServicoColecaoTfsHttp servicoColecao, IPolicyRegistry<string> registry)
         {
-            configuracoes.Validar();
-
             _servicoIdentidade = servicoIdentidade;
             _servicoColecao = servicoColecao;
 

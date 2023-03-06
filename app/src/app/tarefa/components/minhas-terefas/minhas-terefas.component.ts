@@ -16,10 +16,14 @@ import { ContaService } from 'src/app/core/services/conta.service';
 export class MinhasTerefasComponent extends BaseComponent implements OnInit {
 
 	public carregando: boolean = true;
-
-	public grupos?: GrupoTarefas[];
-	public tarefasFixadas?: Tarefa[];
 	
+	public grupos: GrupoTarefas[] = [];
+	public tarefasFixadas: Tarefa[] = [];
+	
+	public get possuiTarefas(): boolean {
+		return this.grupos.some(c => c.tarefas.length > 0);
+	}
+
 	constructor(servicoConta: ContaService, private servicoTarefa: TarefaService) { 
 		super(servicoConta);
 	}

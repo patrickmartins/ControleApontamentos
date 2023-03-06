@@ -5,8 +5,8 @@ import { ApontamentosPorDiaComponent } from './components/apontamentos-por-dia/a
 import { ApontamentosPorMesComponent } from './components/apontamentos-por-mes/apontamentos-por-mes.component';
 
 const routes: Routes = [	
-	{ path: 'por-dia', component: ApontamentosPorDiaComponent, canActivate: [AuthorizeGuard] },
-	{ path: 'por-mes', component: ApontamentosPorMesComponent, canActivate: [AuthorizeGuard] },
+	{ path: 'por-dia', component: ApontamentosPorDiaComponent, canActivate: [AuthorizeGuard], data: { autorizado: true, anonimo: false } },
+	{ path: 'por-mes', component: ApontamentosPorMesComponent, canActivate: [AuthorizeGuard], data: { autorizado: true, anonimo: false } },
 	{ path: '', redirectTo: '', pathMatch: 'full'}
 ];
 

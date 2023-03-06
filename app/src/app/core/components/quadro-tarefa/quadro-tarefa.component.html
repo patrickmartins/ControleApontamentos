@@ -10,12 +10,12 @@
 					<span class="badge info" *ngFor="let tag of tarefa.tags">{{ tag }}</span>
 				</div>
 
-				<div class="titulo" [title]="'TASK ' + tarefa.id + ' - ' +  tarefa.titulo">
+				<div class="titulo" [title]="(tarefa.tipo == 2 ? 'BUG ' : 'TASK ') + tarefa.id + ' - ' +  tarefa.titulo">
 					<strong>
 						<a mat-flat-button target="_blank" [href]="tarefa.obterLinkTfs()">{{ tarefa.tipo == 2 ? "BUG" : "TASK" }} {{ tarefa.id }}</a> - {{tarefa.titulo }}
 					</strong>
 				</div>
-
+				
 				<div class="designado">
 					<designado-tarefa class="nome" [designado]="tarefa.designado"
 													[tempoTotalApontadoSincronizadoChannel]="tarefa.tempoTotalApontadoSincronizadoChannel"

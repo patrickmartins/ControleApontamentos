@@ -4,7 +4,7 @@ import { AuthorizeGuard } from '../core/guards/authorize.guard';
 import { MinhasTerefasComponent } from './components/minhas-terefas/minhas-terefas.component';
 
 const routes: Routes = [	
-	{ path: 'minhas-tarefas', component: MinhasTerefasComponent, canActivate: [AuthorizeGuard] },
+	{ path: 'minhas-tarefas', component: MinhasTerefasComponent, canActivate: [AuthorizeGuard], data: { autorizado: true, anonimo: false } },
 	{ path: '', redirectTo: 'minhas-tarefas', pathMatch: 'full'}
 ];
 

@@ -1,13 +1,13 @@
 ﻿using CA.Core.Configuracoes;
+using CA.Core.Constantes;
 using CA.Core.Entidades.Tfs;
 using CA.Core.Interfaces.Tfs;
-using CA.Repositorios.Tfs.Constantes;
-using CA.Repositorios.Tfs.Entidades;
+using CA.Core.Valores;
 using CA.Repositorios.Tfs.Extensions;
 using CA.Repositorios.Tfs.Helpers;
-using CA.Repositorios.Tfs.Interfaces;
-using CA.Repositorios.Tfs.ServicosSoap.Models;
-using CA.Repositorios.Tfs.ServicosSoap.Models.Requests;
+using CA.Servicos.Tfs.Interfaces;
+using CA.Servicos.Tfs.Models;
+using CA.Servicos.Tfs.Models.Requests;
 using CA.Util.Helpers;
 
 namespace CA.Repositorios.Tfs
@@ -19,8 +19,6 @@ namespace CA.Repositorios.Tfs
 
         public RepositorioItensTrabalhoTfs(ConfiguracaoClienteTfs configuracoes, IServicoWorkitemTfsSoap servicoSoap)
         {
-            configuracoes.Validar();
-
             _configuracoes = configuracoes;
             _servicoSoap = servicoSoap;            
         }
@@ -92,7 +90,7 @@ namespace CA.Repositorios.Tfs
             return links;
         }
 
-        private async Task<IEnumerable<CampoTfs>> ObterCamposSuportadosPorColecaoAsync(string colecao)
+        public async Task<IEnumerable<CampoTfs>> ObterCamposSuportadosPorColecaoAsync(string colecao)
         {
             var resultado = await _servicoSoap.ObterMetadadosPorColecaoAsync(new GetMetadataEx2Request
             {

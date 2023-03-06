@@ -1,4 +1,6 @@
-﻿using CA.Core.Entidades.Tfs;
+﻿using CA.Core.Constantes;
+using CA.Core.Entidades.Tfs;
+using CA.Core.Extensions;
 using CA.Core.Interfaces.Tfs;
 using CA.Core.Valores;
 using CA.Util.Extensions;
@@ -80,6 +82,11 @@ namespace CA.Core.Servicos.Tfs
 
             if (string.IsNullOrEmpty(colecao))
                 return Resultado.DeErros<IEnumerable<ItemTrabalho>>(new Erro("A coleção do TFS não foi informada.", nameof(colecao)));
+
+            var camposSuportadosDaColecao = await _repositorioItens.ObterCamposSuportadosPorColecaoAsync(colecao);
+
+            if(!camposSuportadosDaColecao.CampoSuportado(NomesCamposTfs.Apontamentos))
+                return Resultado.DeValor<IEnumerable<ItemTrabalho>>(new List<ItemTrabalho>());
 
             var filtroPeriodo = string.Join(" or ", data.Select(c => $@"Source.[Custom.Timesheets.TimesheetRawData] contains words 'CreatedBy=\""{usuario.NomeUsuario}\"" TimeSheetDate=\""{c:d}\""'"));
 
@@ -164,7 +171,7 @@ namespace CA.Core.Servicos.Tfs
             });
         }
 
-        public async Task<Resultado> AdicionarNovoApontamentoAsync(UsuarioTfs usuario, string colecao, int idItemTrabalho, Apontamento apontamento)
+        public async Task<Resultado> AdicionarNovoApontamentoAsync(UsuarioTfs usuario, string colecao, int idItemTrabalho, ApontamentoTfs apontamento)
         {
             if (string.IsNullOrEmpty(colecao))
                 return Resultado.DeErros<Resultado>(new Erro("A coleção do TFS não foi informada.", nameof(colecao)));

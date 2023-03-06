@@ -1,4 +1,4 @@
-﻿using CA.Repositorios.Tfs.Entidades;
+﻿using CA.Core.Valores;
 
 namespace CA.Repositorios.Tfs.Extensions
 {

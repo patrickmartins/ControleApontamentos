@@ -2,11 +2,14 @@
 	margin-right: 5px;
 }
 
-.foto-usuario {
-	height: 26px;
+.foto-usuario {	
     border-radius: 50%;
     border: 2px solid;
 	align-self: center;
+}
+
+img.foto-usuario {
+	height: 26px;
 }
 
 .menu-usuario {

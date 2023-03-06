@@ -11,6 +11,6 @@ namespace CA.Core.Interfaces.Tfs
         Task<Resultado<IEnumerable<ItemTrabalho>>> ObterItensTrabalhoApontadosPorDatasAsync(UsuarioTfs usuario, string colecao, params DateOnly[] data);
         Task<Resultado<IEnumerable<ItemTrabalho>>> ObterItensTrabalhoApontadosPorPeriodoAsync(UsuarioTfs usuario, string colecao, DateOnly inicio, DateOnly fim);        
         Task<Resultado<Pagina<ItemTrabalho>>> BuscarItensTrabalhoAsync(string colecao, string palavraChave, StatusItemTrabalho[] status, int pagina = 1, int tamanhoPagina = 10);
-        Task<Resultado> AdicionarNovoApontamentoAsync(UsuarioTfs usuario, string colecao, int idItemTrabalho, Apontamento apontamento);
+        Task<Resultado> AdicionarNovoApontamentoAsync(UsuarioTfs usuario, string colecao, int idItemTrabalho, ApontamentoTfs apontamento);
     }
 }

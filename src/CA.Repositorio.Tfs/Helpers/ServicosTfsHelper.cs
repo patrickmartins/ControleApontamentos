@@ -1,8 +1,10 @@
-﻿using CA.Core.Entidades.Tfs;
-using CA.Repositorios.Tfs.Constantes;
-using CA.Repositorios.Tfs.Entidades;
+﻿using CA.Core.Constantes;
+using CA.Core.Entidades.Tfs;
+using CA.Core.Valores;
 using CA.Repositorios.Tfs.Extensions;
-using CA.Repositorios.Tfs.ServicosSoap.Models.Responses;
+using CA.Repositorios.Tfs.Models;
+using CA.Servicos.Tfs.Entidades;
+using CA.Servicos.Tfs.Models.Responses;
 using CA.Util.Helpers;
 using System.Xml;
 using System.Xml.Linq;
@@ -163,7 +165,7 @@ namespace CA.Repositorios.Tfs.Helpers
                 foreach (var campo in linha.Campos)
                 {
                     var coluna = tabelaRegistrosCampos.ObterColunaPorIndice(campo.IndiceColuna);
-                    var valor = campo.Valor;                    
+                    var valor = campo.Valor;
 
                     if (coluna is null)
                         continue;
@@ -174,11 +176,11 @@ namespace CA.Repositorios.Tfs.Helpers
                         case NomesCamposTfs.Revisao: workitem.Revisao = valor is not null ? (int)valor : 0; break;
                         case NomesCamposTfs.EstimativaOriginal: workitem.EstimativaOriginal = valor is not null ? (double)valor : 0; break;
                         case NomesCamposTfs.TempoConcluido: workitem.TempoConcluido = valor is not null ? (double)valor : 0; break;
-                        case NomesCamposTfs.TempoRestante: workitem.TempoRestante = valor is not null ? (double)valor : 0; break;                        
+                        case NomesCamposTfs.TempoRestante: workitem.TempoRestante = valor is not null ? (double)valor : 0; break;
                         case NomesCamposTfs.Titulo: workitem.Titulo = valor is not null ? (string)valor : string.Empty; break;
                         case NomesCamposTfs.IterationPath: workitem.IterationPath = valor is not null ? (string)valor : string.Empty; break;
                         case NomesCamposTfs.Projeto: workitem.Projeto = valor is not null ? (string)valor : string.Empty; break;
-                        case NomesCamposTfs.Designado: workitem.Designado = valor is not null ? (string)valor : string.Empty; break;                        
+                        case NomesCamposTfs.Designado: workitem.Designado = valor is not null ? (string)valor : string.Empty; break;
                         case NomesCamposTfs.DataCriacao: workitem.DataCriacao = valor is not null ? (DateTime)valor : new DateTime(); break;
                         case NomesCamposTfs.TipoWorkitem: workitem.Tipo = valor is not null ? ItemTrabalhoHelper.TipoWorkitemTfsParaTipoItemTrabalho((string)valor) : TipoItemTrabalho.NaoReconhecido; break;
                         case NomesCamposTfs.Status: workitem.Status = valor is not null ? StatusHelper.StatusTfsParaStatusTarefa((string)valor) : StatusItemTrabalho.Desconhecido; break;
@@ -195,7 +197,7 @@ namespace CA.Repositorios.Tfs.Helpers
                         continue;
 
                     var valorIdCampo = linhaCampoLongo.ObterValorCampo(colunaId.Indice);
-                    var valorIdWorkItem =linhaCampoLongo.ObterValorCampo(colunaWorkItemId.Indice);
+                    var valorIdWorkItem = linhaCampoLongo.ObterValorCampo(colunaWorkItemId.Indice);
                     var valorTextoLongo = linhaCampoLongo.ObterValorCampo(colunaValorTextoLongo.Indice);
 
                     if (valorIdWorkItem is null || (int)valorIdWorkItem != workitem.IdItemTrabalho)
@@ -212,7 +214,7 @@ namespace CA.Repositorios.Tfs.Helpers
                     {
                         workitem.ListaApontamentos = valorTextoLongo is not null ? XmlHelper.DesserializarDeString<ListaApontamentos>((string)valorTextoLongo) : new ListaApontamentos();
                     }
-                    
+
                 }
 
                 workitens.Add(workitem);
@@ -236,7 +238,7 @@ namespace CA.Repositorios.Tfs.Helpers
 
             var tabelasRegistros = tabelaCamposSuportados is not null ? ExtrairRegistrosPorTabelaXml(tabelaCamposSuportados) : new TabelaRegistrosTfs();
 
-            foreach(var linha in tabelasRegistros.Linhas)
+            foreach (var linha in tabelasRegistros.Linhas)
             {
                 var colunaId = tabelasRegistros.ObterColunaPorNome(NomesCamposTfs.IdCampo);
                 var colunaNome = tabelasRegistros.ObterColunaPorNome(NomesCamposTfs.NomeReferencia);

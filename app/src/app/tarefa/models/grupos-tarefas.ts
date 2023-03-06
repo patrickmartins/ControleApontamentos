@@ -20,6 +20,5 @@ export class GrupoTarefas implements IModel<GrupoTarefas> {
 		}
 
 		return grupo;
-	}
-	
+	}	
 }

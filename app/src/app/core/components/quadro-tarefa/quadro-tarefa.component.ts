@@ -1,11 +1,10 @@
 import { Component, Input, ViewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BaseComponent } from 'src/app/common/components/base.component';
-import { Usuario } from 'src/app/conta/models/usuario';
 
 import { ContaService } from 'src/app/core/services/conta.service';
 import { TarefaHelper } from 'src/app/helpers/tarefa.helper';
-import { Apontamento } from '../../models/apontamento';
+import { ApontamentoTfs } from '../../models/apontamento-tfs';
 import { NovoApontamento } from '../../models/novo-apontamento';
 import { Tarefa } from '../../models/tarefa';
 import { TarefaService } from '../../services/tarefa.service';
@@ -61,7 +60,7 @@ export class QuadroTarefaComponent extends BaseComponent {
 			.salvarApontamento(novoApontamento).subscribe({
 				next: () => {
 
-					const apontamento = new Apontamento().criarNovo(
+					const apontamento = new ApontamentoTfs().criarNovo(
 						{
 							usuario: this.usuarioLogado?.nomeUsuario.split('@')[0],
 							comentario: novoApontamento.comentario,

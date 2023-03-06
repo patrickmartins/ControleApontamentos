@@ -1,4 +1,5 @@
-﻿using CA.Core.Entidades.Tfs;
+﻿using CA.Core.Entidades.Channel;
+using CA.Core.Entidades.Tfs;
 using System.Security.Claims;
 using System.Security.Principal;
 
@@ -51,7 +52,25 @@ namespace CA.Seguranca.Extensions
             return claims.FirstOrDefault(c => c.Type.Equals(TiposClaims.PisFuncionario))?.Value;
         }
 
-        public static ICollection<string> ObterColecoesTfs(this IEnumerable<Claim> claims)
+        public static string? ObterEmailUsuarioChannel(this IEnumerable<Claim> claims)
+        {
+            return claims.FirstOrDefault(c => c.Type.Equals(TiposClaims.EmailUsuarioChannel))?.Value;
+        }
+
+        public static int? ObterIdUsuarioChannel(this IEnumerable<Claim> claims)
+        {
+            var valor = claims.FirstOrDefault(c => c.Type.Equals(TiposClaims.IdUsuarioChannel))?.Value;
+
+            if(valor is null)
+                return null;
+
+            if(int.TryParse(valor, out var id))            
+                return id;
+            
+            return null;
+        }
+
+        public static IEnumerable<string> ObterColecoesTfs(this IEnumerable<Claim> claims)
         {
             var colecoes = claims.FirstOrDefault(c => c.Type.Equals(TiposClaims.ColecoesTfs))?.Value;
 
@@ -83,6 +102,22 @@ namespace CA.Seguranca.Extensions
                     Tipo = tipoIdentidadeTfs,
                     Id = identidadeTfs
                 }
+            };
+        }
+
+        public static UsuarioChannel? ObterUsuarioChannel(this IEnumerable<Claim> claims)
+        {
+            var idUsuario = claims.ObterIdUsuarioChannel();
+
+            if (idUsuario is null)
+                return null;
+
+            var emailUsuario = claims.ObterEmailUsuarioChannel();
+
+            return new UsuarioChannel
+            {
+                Id = idUsuario.Value,
+                Email = emailUsuario
             };
         }
 
@@ -120,7 +155,22 @@ namespace CA.Seguranca.Extensions
             return identity.Claims.ObterPisFuncionario();
         }
 
-        public static ICollection<string> ObterColecoesTfs(this ClaimsIdentity identity)
+        public static string? ObterEmailUsuarioChannel(this ClaimsIdentity identity)
+        {
+            return identity.Claims.ObterEmailUsuarioChannel();
+        }
+
+        public static int? ObterIdUsuarioChannel(this ClaimsIdentity identity)
+        {
+            return identity.Claims.ObterIdUsuarioChannel();
+        }
+
+        public static UsuarioChannel? ObterUsuarioChannel(this ClaimsIdentity identity)
+        {
+            return identity.Claims.ObterUsuarioChannel();
+        }
+
+        public static IEnumerable<string> ObterColecoesTfs(this ClaimsIdentity identity)
         {
             return identity.Claims.ObterColecoesTfs();
         }
@@ -194,12 +244,36 @@ namespace CA.Seguranca.Extensions
             return ((ClaimsIdentity)principal.Identity).ObterUsuarioTfs();
         }
 
-        public static ICollection<string> ObterColecoesTfs(this IPrincipal principal)
+        public static IEnumerable<string> ObterColecoesTfs(this IPrincipal principal)
         {
             if (principal.Identity is null || !principal.Identity.IsAuthenticated)
                 return new List<string>();
 
             return ((ClaimsIdentity)principal.Identity).ObterColecoesTfs();
+        }
+
+        public static string? ObterEmailUsuarioChannel(this IPrincipal principal)
+        {
+            if (principal.Identity is null || !principal.Identity.IsAuthenticated)
+                return null;
+
+            return ((ClaimsIdentity)principal.Identity).ObterEmailUsuarioChannel();
+        }
+
+        public static int? ObterIdUsuarioChannel(this IPrincipal principal)
+        {
+            if (principal.Identity is null || !principal.Identity.IsAuthenticated)
+                return null;
+
+            return ((ClaimsIdentity)principal.Identity).ObterIdUsuarioChannel();
+        }
+
+        public static UsuarioChannel? ObterUsuarioChannel(this IPrincipal principal)
+        {
+            if (principal.Identity is null || !principal.Identity.IsAuthenticated)
+                return null;
+
+            return ((ClaimsIdentity)principal.Identity).ObterUsuarioChannel();
         }
     }
 
@@ -213,5 +287,7 @@ namespace CA.Seguranca.Extensions
         public const string TipoIdentidadeTfs = "tfs_tipo_identidade";
         public const string ColecoesTfs = "tfs_colecoes";
         public const string PisFuncionario = "secullum_pis";
+        public const string EmailUsuarioChannel = "channel_email_usuario";
+        public const string IdUsuarioChannel = "channel_id_usuario";
     }
 }

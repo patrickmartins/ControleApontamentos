@@ -8,21 +8,23 @@ import { MatInputModule } from '@angular/material/input';
 import { NgChartsModule } from 'ng2-charts';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
 
 import { ApontamentosPorDiaComponent } from './components/apontamentos-por-dia/apontamentos-por-dia.component';
 import { ApontamentoRoutingModule } from './apontamento-routing.module';
 import { GraficoResumoDiaComponent } from './components/grafico-resumo-dia/grafico-resumo-dia.component';
 import { ApontamentosPorMesComponent } from './components/apontamentos-por-mes/apontamentos-por-mes.component';
 import { GraficoResumoMesComponent } from './components/grafico-resumo-mes/grafico-resumo-mes.component';
-import { MatCardModule } from '@angular/material/card';
 import { LoaderModule } from '../loader/loader.module';
+import { ApontamentoService } from './services/apontamento.service';
+import { PontoService } from './services/ponto.service';
 
 @NgModule({
 	declarations: [
 		ApontamentosPorDiaComponent,
 		ApontamentosPorMesComponent,
 		GraficoResumoDiaComponent,
-		GraficoResumoMesComponent
+		GraficoResumoMesComponent		
 	],
 	imports: [
 		CoreModule,
@@ -38,6 +40,10 @@ import { LoaderModule } from '../loader/loader.module';
 		MatIconModule,
 		MatCardModule,
 		NgChartsModule
+	],
+	providers: [
+		ApontamentoService,
+		PontoService
 	]
 })
 export class ApontamentoModule { }

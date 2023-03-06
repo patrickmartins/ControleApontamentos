@@ -10,12 +10,13 @@ namespace CA.Seguranca.Entidades
         public string Email { get; set; }
         public bool PossuiContaPonto { get; set; }
         public bool PossuiContaTfs { get; set; }
+        public bool PossuiContaChannel { get; set; }
 
-        public ICollection<string> Colecoes { get; set; }
-        public ICollection<string> Roles { get; set; }
+        public IEnumerable<string> Colecoes { get; set; }
+        public IEnumerable<string> Roles { get; set; }
 
         [JsonIgnore]
-        public ICollection<Claim> Claims { get; set; }
+        public IEnumerable<Claim> Claims { get; set; }
 
         public UsuarioApp()
         {

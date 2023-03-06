@@ -363,3 +363,7 @@ MigrationBackup/
 FodyWeavers.xsd
 /app/.angular/
 /src/CA.Api/appsettings.Development.json
+/CA.Jobs.ConsoleApp/appsettings.Development.json
+/src/CA.Jobs.ConsoleApp/appsettings.Development.json
+/src/CA.Api/Properties/ServiceDependencies
+/src/CA.Jobs.ConsoleApp/appsettings.Development.json

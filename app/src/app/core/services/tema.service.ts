@@ -4,16 +4,44 @@ import { Tema } from "../models/configuracoes";
 import { ConfigHelper } from "../../helpers/config.helper";
 import { ThemeService } from "ng2-charts";
 import { ChartOptions } from "chart.js";
+import { BehaviorSubject, Observable, Subject } from "rxjs";
 
 @Injectable({
 	providedIn: 'root'
 })
 export class TemaService {
 
+	private _onTemaAlteradoSubscription : Subject<number>;
+	public onTemaAlterado : Observable<Tema | undefined>;   
+
 	constructor(@Inject(DOCUMENT) private document: Document, private servicoTemaGrafico: ThemeService) {
 		const tema = this.obterTemaAtual();
 
+		this._onTemaAlteradoSubscription = new BehaviorSubject(tema);
+		this.onTemaAlterado = this._onTemaAlteradoSubscription.asObservable();
+
 		this.alterarTemaAtual(tema);
+	}
+
+	public ehTemaEscuro(): boolean {
+		let tema = ConfigHelper.obterConfiguracoes().tema;
+
+		if (tema == Tema.Claro) {
+			return false;
+		}
+		else if (tema == Tema.Escuro) {
+			return true;
+		}
+		else {
+			var ehTemaEscuro = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+			if (ehTemaEscuro) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
 	}
 
 	public obterTemaAtual(): Tema {
@@ -28,6 +56,8 @@ export class TemaService {
 		ConfigHelper.salvarConfiguracoes(configuracoes);
 
 		this.aplicarTemaAtual();
+
+		this._onTemaAlteradoSubscription.next(tema);
 	}
 
 	public aplicarTemaAtual() {
@@ -40,9 +70,9 @@ export class TemaService {
 			this.aplicarTemaEscuro();
 		}
 		else {
-			var eTemaEscuro = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+			var ehTemaEscuro = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-			if (eTemaEscuro) {
+			if (ehTemaEscuro) {
 				this.aplicarTemaEscuro();
 			}
 			else {

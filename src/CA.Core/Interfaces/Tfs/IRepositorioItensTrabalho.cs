@@ -5,6 +5,7 @@ namespace CA.Core.Interfaces.Tfs
 {
     public interface IRepositorioItensTrabalho : IRepositorioTfs
     {
+        Task<IEnumerable<CampoTfs>> ObterCamposSuportadosPorColecaoAsync(string colecao);
         Task<IEnumerable<ItemTrabalhoLink>> ExecutarQueryAsync(string colecao, string query);
         Task<IEnumerable<ItemTrabalho>> ObterItensTrabalhoPorIdAsync(string colecao, params int[] ids);
         Task AtualizarItemTrabalhoAsync(UsuarioTfs usuario, ItemTrabalho itemTrabalho);

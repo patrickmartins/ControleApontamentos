@@ -11,18 +11,18 @@ namespace CA.Aplicacao.Models
         public string TituloPai { get; set; }
         public StatusItemTrabalho Status { get; set; }
         public string Colecao { get; set; }
-        public string Designado { get; set; } = string.Empty;
+        public DesignadoModel Designado { get; set; }
         public string Projeto { get; set; } = string.Empty;
         public string[] Tags { get; set; } = new string[0];
         public bool ApontamentoHabilitado { get; set; }        
         public TimeSpan TempoTotalApontadoSincronizadoChannel { get; set; }
         public TimeSpan TempoTotalApontadoNaoSincronizadoChannel { get; set; }
 
-        public ICollection<ApontamentoModel> Apontamentos { get; set; }
+        public IEnumerable<ApontamentoTfsModel> Apontamentos { get; set; }
 
         public TarefaModel()
         {
-            Apontamentos = new HashSet<ApontamentoModel>();
+            Apontamentos = new HashSet<ApontamentoTfsModel>();
         }
     }
 }

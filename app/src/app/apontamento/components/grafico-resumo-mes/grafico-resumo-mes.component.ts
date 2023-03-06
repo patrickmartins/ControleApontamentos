@@ -5,7 +5,8 @@ import { BaseChartDirective } from 'ng2-charts';
 import { debounceTime, fromEvent, Observable, Subscription } from 'rxjs';
 
 import { TempoHelper } from 'src/app/helpers/tempo.helper';
-import { ApontamentosMes } from '../../models/apontamentos-mes';
+import { ApontamentosChannelMes } from '../../models/apontamentos-channel-mes';
+import { ApontamentosTfsMes } from '../../models/apontamentos-tfs-mes';
 import { BatidasPontoMes } from '../../models/batidas-ponto-mes';
 
 @Component({
@@ -158,6 +159,18 @@ export class GraficoResumoMesComponent implements OnChanges, OnInit, OnDestroy, 
 			},
 			{
 				hidden: true,
+				label: 'Horas apontadas (Channel)',
+				data: [],
+				backgroundColor: [
+					'#ffd9004d'
+				],
+				hoverBackgroundColor: [
+					'#ffd900b3'
+				],
+				stack: "Apontados"
+			},
+			{
+				hidden: true,
 				label: 'Horas apontadas (TFS)',
 				data: [],
 				backgroundColor: [
@@ -179,12 +192,15 @@ export class GraficoResumoMesComponent implements OnChanges, OnInit, OnDestroy, 
 					'#f93154b3'
 				],
 				stack: "Apontados"
-			}
+			},
 		]
 	};
 
 	@Input()
-	public apontamentos?: ApontamentosMes;
+	public apontamentosTfs?: ApontamentosTfsMes;
+
+	@Input()
+	public apontamentosChannel?: ApontamentosChannelMes;
 
 	@Input()
 	public batidas?: BatidasPontoMes;
@@ -237,12 +253,17 @@ export class GraficoResumoMesComponent implements OnChanges, OnInit, OnDestroy, 
 			this.dadosGrafico.datasets[0].hidden = this.batidas.tempoTotalTrabalhadoNoMes <= 0;
 		}
 
-		if(this.apontamentos) {
-			this.dadosGrafico.datasets[1].data = this.apontamentos.apontamentosDiarios.map(c => c.tempoTotalApontadoSincronizadoChannel);
-			this.dadosGrafico.datasets[1].hidden = this.apontamentos.tempoTotalApontadoSincronizadoChannel <= 0;
+		if(this.apontamentosChannel) {
+			this.dadosGrafico.datasets[1].data = this.apontamentosChannel.apontamentosDiarios.map(c => c.tempoTotalApontadoNoDia);
+			this.dadosGrafico.datasets[1].hidden = this.apontamentosChannel.tempoTotalApontadoNoMes <= 0;
+		}
 
-			this.dadosGrafico.datasets[2].data = this.apontamentos.apontamentosDiarios.map(c => c.tempoTotalApontadoNaoSincronizadoChannel);
-			this.dadosGrafico.datasets[2].hidden = this.apontamentos.tempoTotalApontadoNaoSincronizadoChannel <= 0;
+		if(this.apontamentosTfs) {
+			this.dadosGrafico.datasets[2].data = this.apontamentosTfs.apontamentosDiarios.map(c => c.tempoTotalApontadoSincronizadoChannel);
+			this.dadosGrafico.datasets[2].hidden = this.apontamentosTfs.tempoTotalApontadoSincronizadoChannel <= 0;
+
+			this.dadosGrafico.datasets[3].data = this.apontamentosTfs.apontamentosDiarios.map(c => c.tempoTotalApontadoNaoSincronizadoChannel);
+			this.dadosGrafico.datasets[3].hidden = this.apontamentosTfs.tempoTotalApontadoNaoSincronizadoChannel <= 0;
 		}
 
 		this.grafico?.update();				

@@ -23,14 +23,14 @@ namespace CA.Core.Servicos.Ponto
             return Resultado.DeValor(batidas);
         }
 
-        public async Task<Resultado<ICollection<BatidasPontoDia>>> ObterBatidasPorPeriodoAsync(string pisFuncionario, DateOnly inicio, DateOnly fim)
+        public async Task<Resultado<IEnumerable<BatidasPontoDia>>> ObterBatidasPorPeriodoAsync(string pisFuncionario, DateOnly inicio, DateOnly fim)
         {
             if (string.IsNullOrEmpty(pisFuncionario))
-                return Resultado.DeErros<ICollection<BatidasPontoDia>>(new Erro("O pis do funcionário não foi informado.", nameof(pisFuncionario)));
+                return Resultado.DeErros<IEnumerable<BatidasPontoDia>>(new Erro("O pis do funcionário não foi informado.", nameof(pisFuncionario)));
 
             var batidas = (await _repositorio.ObterBatidasPorPeriodoAsync(pisFuncionario, inicio, fim)).OrderBy(c => c.Data).ToList();
 
-            return Resultado.DeValor<ICollection<BatidasPontoDia>>(batidas);
+            return Resultado.DeValor<IEnumerable<BatidasPontoDia>>(batidas);
         }
 
         public async Task<Resultado<Funcionario?>> ObterFuncionarioPorNomeAsync(string nome)

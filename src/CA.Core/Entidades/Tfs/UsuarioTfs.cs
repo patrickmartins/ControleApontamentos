@@ -9,7 +9,7 @@
         public IdentidadeTfs Identidade { get; set; }
         public bool Ativo { get; set; }
 
-        public ICollection<string> Colecoes { get; set; }
+        public IEnumerable<string> Colecoes { get; set; }
 
         public UsuarioTfs()
         {

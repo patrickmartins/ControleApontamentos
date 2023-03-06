@@ -56,7 +56,7 @@ namespace CA.Aplicacao.Servicos
             return _servico.ObterFuncionarioPorNomeAsync(nome);
         }
 
-        private ICollection<BatidasPontoDia> AdequarBatidasPorPeriodo(ICollection<BatidasPontoDia> batidas, DateOnly dataInicio, DateOnly dataFim)
+        private IEnumerable<BatidasPontoDia> AdequarBatidasPorPeriodo(IEnumerable<BatidasPontoDia> batidas, DateOnly dataInicio, DateOnly dataFim)
         {
             var batidasPeriodo = batidas.OrderBy(c => c.Data).ToList();
 

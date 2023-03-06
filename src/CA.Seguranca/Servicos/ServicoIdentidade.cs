@@ -1,14 +1,17 @@
 ﻿using CA.Core.Configuracoes;
+using CA.Core.Entidades.Channel;
+using CA.Core.Entidades.Ponto;
 using CA.Core.Entidades.Tfs;
+using CA.Core.Interfaces.Channel;
 using CA.Core.Interfaces.Ponto;
 using CA.Core.Interfaces.Tfs;
 using CA.Core.Valores;
 using CA.Seguranca.Entidades;
 using CA.Seguranca.Extensions;
 using CA.Seguranca.Interfaces;
+using CA.Util.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.VisualBasic;
 using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -25,15 +28,18 @@ namespace CA.Seguranca.Servicos
 
         private readonly IRepositorioUsuariosTfs _repositorioTfs;
         private readonly IRepositorioPonto _repositorioPonto;
+        private readonly IRepositorioUsuariosChannel _repositorioChannel;
         private readonly IRepositorioColecoes _repositorioColecoes;
 
-        public ServicoIdentidade(UserManager<IdentityUser> userManager, ConfiguracoesJwt configuracaoJwt, ConfiguracoesGerais configuracoesGerais, IRepositorioUsuariosTfs repositorioTfs, IRepositorioPonto repositorioPonto, IRepositorioColecoes repositorioColecoes)
+        public ServicoIdentidade(UserManager<IdentityUser> userManager, ConfiguracoesJwt configuracaoJwt, ConfiguracoesGerais configuracoesGerais,
+                                    IRepositorioUsuariosTfs repositorioTfs, IRepositorioPonto repositorioPonto, IRepositorioUsuariosChannel repositorioChannel, IRepositorioColecoes repositorioColecoes)
         {
             _userManager = userManager;
             _configuracaoJwt = configuracaoJwt;
             _configuracoesGerais = configuracoesGerais;
             _repositorioTfs = repositorioTfs;
             _repositorioPonto = repositorioPonto;
+            _repositorioChannel= repositorioChannel;
             _repositorioColecoes = repositorioColecoes;            
         }
 
@@ -65,10 +71,8 @@ namespace CA.Seguranca.Servicos
                     break;
             }
 
-            var usuarioPonto = await _repositorioPonto.ObterFuncionarioPorNomeAsync(nomeCompletoUsuarioLogado.RemoverEspacosDuplicados());
-
-            if(usuarioPonto is null)
-                usuarioPonto = await _repositorioPonto.ObterFuncionarioPorNomeAsync(nomeCompletoUsuarioLogado.RemoverAcentos().RemoverEspacosDuplicados());
+            var funcionarioPonto = await ObterFuncionarioPontoAsync(nomeCompletoUsuarioLogado);
+            var usuarioChannel = ObterUsuarioChannel(emailUsuarioLogado, nomeCompletoUsuarioLogado);
 
             var claims = new List<Claim>();
 
@@ -93,8 +97,14 @@ namespace CA.Seguranca.Servicos
                     claims.Add(new Claim(TiposClaims.TipoIdentidadeTfs, usuarioTfs.Identidade.Tipo));
                 }
 
-                if (usuarioPonto is not null && !string.IsNullOrEmpty(usuarioPonto.NumeroPis))
-                    claims.Add(new Claim(TiposClaims.PisFuncionario, usuarioPonto.NumeroPis));
+                if (usuarioChannel is not null)
+                {
+                    claims.Add(new Claim(TiposClaims.IdUsuarioChannel, usuarioChannel.Id.ToString()));
+                    claims.Add(new Claim(TiposClaims.EmailUsuarioChannel, usuarioChannel.Email));
+                }
+
+                if (funcionarioPonto is not null && !string.IsNullOrEmpty(funcionarioPonto.NumeroPis))
+                    claims.Add(new Claim(TiposClaims.PisFuncionario, funcionarioPonto.NumeroPis));                              
 
                 result = await _userManager.AddClaimsAsync(usuarioIdentity, claims);
 
@@ -119,8 +129,9 @@ namespace CA.Seguranca.Servicos
                 NomeUsuario = usuarioIdentity.UserName,
                 NomeCompleto = nomeCompletoUsuarioLogado,
                 Colecoes = usuarioTfs is not null ? usuarioTfs.Colecoes : new string[0],
-                PossuiContaPonto = usuarioPonto is not null,
-                PossuiContaTfs = usuarioTfs is not null,                
+                PossuiContaPonto = funcionarioPonto is not null && !string.IsNullOrEmpty(funcionarioPonto.NumeroPis),
+                PossuiContaTfs = usuarioTfs is not null,    
+                PossuiContaChannel = usuarioChannel is not null,
                 Roles = new string[0],
                 Claims = claims
             });
@@ -162,6 +173,7 @@ namespace CA.Seguranca.Servicos
                 NomeCompleto = claims.ObterNomeCompleto(),
                 Claims = claims.Append(new Claim(TiposClaims.ColecoesTfs, string.Join(";", colecoes))).ToList(),
                 PossuiContaPonto = claims.ObterPisFuncionario() is not null,
+                PossuiContaChannel = claims.ObterUsuarioChannel() is not null,
                 PossuiContaTfs = usuarioTfs is not null,                
                 Colecoes = colecoes,                                
                 Roles = roles                
@@ -188,6 +200,33 @@ namespace CA.Seguranca.Servicos
                 TokenAcesso = token, 
                 Validade = _configuracaoJwt.TempoVidaToken
             };
+        }
+
+        private async Task<Funcionario?> ObterFuncionarioPontoAsync(string nomeCompleto)
+        {
+            var funcionarioPonto = await _repositorioPonto.ObterFuncionarioPorNomeAsync(nomeCompleto.RemoverEspacosDuplicados());
+
+            if (funcionarioPonto is null)
+                funcionarioPonto = await _repositorioPonto.ObterFuncionarioPorNomeAsync(nomeCompleto.RemoverAcentos().RemoverEspacosDuplicados());
+
+            return funcionarioPonto;
+        }
+
+        private UsuarioChannel? ObterUsuarioChannel(string email, string nomeCompleto)
+        {
+            var usuarioChannel = _repositorioChannel.ObterUsuarioPorEmail(email);
+
+            if (usuarioChannel is null)
+            {
+                usuarioChannel = _repositorioChannel.ObterUsuarioPorNomeCompleto(nomeCompleto.RemoverEspacosDuplicados());
+
+                if (usuarioChannel is null)
+                {
+                    usuarioChannel = _repositorioChannel.ObterUsuarioPorNomeCompleto(nomeCompleto.RemoverAcentos().RemoverEspacosDuplicados());
+                }
+            }
+
+            return usuarioChannel;
         }
     }
 }

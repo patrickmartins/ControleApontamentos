@@ -37,7 +37,7 @@ export class ErrorInterceptor implements HttpInterceptor {
 									
 									if(!this.contaService.estaAutenticado() || token?.Expirou()) {
 										this.contaService.logout();
-										this.router.navigate(["/home"]);
+										this.router.navigate(["/login"]);
 									}
 									else {
 										this.router.navigate(["/acesso-negado"]);

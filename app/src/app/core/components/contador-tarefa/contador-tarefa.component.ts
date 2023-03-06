@@ -1,6 +1,5 @@
 import { AfterViewInit, Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { CdTimerComponent } from 'angular-cd-timer';
 import * as moment from 'moment';
 
 import { LocalStorageHelper } from 'src/app/helpers/local-storage.helper';
@@ -8,6 +7,7 @@ import { ContadorSalvo } from 'src/app/core/models/contador-salvo';
 import { NovoApontamento } from '../../models/novo-apontamento';
 import { StatusContador } from '../../models/status-contador';
 import { ModalSalvarApontamentoComponent } from '../modal-salvar-apontamento/modal-salvar-apontamento.component';
+import { TimerComponent } from 'src/libs/timer/timer.component';
 
 @Component({
 	selector: 'contador-tarefa',
@@ -29,7 +29,7 @@ export class ContadorTarefaComponent implements AfterViewInit {
 	public onApontamentoSalvo = new EventEmitter<NovoApontamento>
 
 	@ViewChild('timer')
-	public timer!: CdTimerComponent;
+	public timer!: TimerComponent;
 
 	public status: StatusContador = StatusContador.naoiniciado;
 

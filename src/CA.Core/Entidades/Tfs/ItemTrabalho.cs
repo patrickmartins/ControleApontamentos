@@ -27,7 +27,8 @@ namespace CA.Core.Entidades.Tfs
         Tarefa,
         Chamado,
         Requisito,
-        HistoriaUsuario        
+        HistoriaUsuario,
+        Novo
     }
 
     public class ItemTrabalho

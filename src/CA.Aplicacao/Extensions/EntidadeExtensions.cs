@@ -1,4 +1,5 @@
 ﻿using CA.Aplicacao.Models;
+using CA.Core.Entidades.Channel;
 using CA.Core.Entidades.Ponto;
 using CA.Core.Entidades.Tfs;
 using CA.Util.Extensions;
@@ -9,8 +10,8 @@ namespace CA.Aplicacao.Extensions
 {
     internal static class EntidadeExtensions
     {
-        private static readonly Regex _regexDesignado = new Regex("<[^>]*>");
-
+        #region Ponto
+        
         public static BatidasPontoDiaModel BatidasPontoParaBatidasPontoModel(this BatidasPontoDia batidaPonto)
         {
             var dataAtual = DateTime.Now.ConverterParaFusoBrasil();
@@ -42,7 +43,7 @@ namespace CA.Aplicacao.Extensions
             };
         }
 
-        public static BatidasPontoMesModel BatidasPontoParaBatidasPontoMesModel(this ICollection<BatidasPontoDia> batidasDia, int mes, int ano)
+        public static BatidasPontoMesModel BatidasPontoParaBatidasPontoMesModel(this IEnumerable<BatidasPontoDia> batidasDia, int mes, int ano)
         {
             var batidasPonto = batidasDia.Select(c => BatidasPontoParaBatidasPontoModel(c)).ToList();
 
@@ -55,22 +56,35 @@ namespace CA.Aplicacao.Extensions
             };
         }
 
-        public static ICollection<TarefaModel> ItensTrabalhoParaTarefaModel(this ICollection<ItemTrabalho> itensTrabalho, string usuario)
+        #endregion
+
+        #region TFS
+
+        public static IEnumerable<TarefaModel> ItensTrabalhoParaTarefaModel(this IEnumerable<ItemTrabalho> itensTrabalho, string usuario)
         {
             return itensTrabalho.Select(c => c.ItemTrabalhoParaTarefaModel(usuario)).ToList();
         }
 
         public static TarefaModel ItemTrabalhoParaTarefaModel(this ItemTrabalho itemTrabalho, string usuario, DateOnly? dataReferencia = null)
         {
+            var designadoMatch = Regex.Matches(itemTrabalho.Designado, "((^.*)(?=\\<))|((?<=\\\\)(.*?)(?=\\>))");
+
+            var tituloItemTrabalho = itemTrabalho.Titulo.RemoverQuebrasDeLinha().RemoverTabulacoes().Trim().Replace(";", ",");
+            var tituloItemTrabalhoPai = itemTrabalho.TituloItemTrabalhoPai.RemoverQuebrasDeLinha().RemoverTabulacoes().Trim().Replace(";", ",");            
+
             var tarefa = new TarefaModel
             {
                 Id = itemTrabalho.IdItemTrabalho,
                 Tipo = itemTrabalho.Tipo,
-                Titulo = itemTrabalho.Titulo,
-                TituloPai = itemTrabalho.TituloItemTrabalhoPai,
+                Titulo = tituloItemTrabalho,
+                TituloPai = tituloItemTrabalhoPai,
                 DataCriacao = itemTrabalho.DataCriacao,
                 Colecao = itemTrabalho.Colecao,
-                Designado = _regexDesignado.Replace(itemTrabalho.Designado, string.Empty).Trim(),
+                Designado = new DesignadoModel
+                {
+                   Nome = designadoMatch.Count == 2 ? designadoMatch[0].Value.Trim() : "Sem usuário designado",
+                   Usuario = designadoMatch.Count == 2 ? designadoMatch[1].Value.Trim() : "Sem usuário designado"
+                },
                 Projeto = itemTrabalho.Projeto,
                 Tags = itemTrabalho.Tags.Split(';', StringSplitOptions.RemoveEmptyEntries),
                 Status = itemTrabalho.Status,
@@ -78,16 +92,19 @@ namespace CA.Aplicacao.Extensions
                 Apontamentos = itemTrabalho.
                                 ListaApontamentos.Apontamentos.OrderByDescending(c => c.DataCriacao).Select(c =>
                                 {
+                                    var comentario = c.Comentario.RemoverEspacosDuplicados().Trim().Replace(";", ",");
+
                                     DateOnly.TryParse(c.DataApontamento, out var data);
                                     TimeSpan.TryParse(c.TempoApontamento, out var tempo);
 
-                                    return new ApontamentoModel
-                                    {
+                                    return new ApontamentoTfsModel
+                                    {   
                                         Data = data,
                                         Tempo = tempo,
-                                        Comentario = c.Comentario.Trim(),
                                         Usuario = c.Usuario,
-                                        SincronizadoChannel = c.SincronizadoChannel
+                                        Comentario = c.Comentario.Trim(),                                        
+                                        SincronizadoChannel = c.SincronizadoChannel,                                        
+                                        Hash = Sha1Helper.GerarHashPorString($"{itemTrabalho.IdItemTrabalho} - {comentario} - {data} - {tempo}")
                                     };
                                 })
                                 .ToList()
@@ -99,7 +116,7 @@ namespace CA.Aplicacao.Extensions
             return tarefa;
         }
 
-        public static ICollection<GrupoTarefasModel> ItensTrabalhoParaItensAgrupadosModel(this ICollection<ItemTrabalho> itensTrabalho, string usuario)
+        public static IEnumerable<GrupoTarefasModel> ItensTrabalhoParaItensAgrupadosModel(this IEnumerable<ItemTrabalho> itensTrabalho, string usuario)
         {
             return new List<GrupoTarefasModel>
             {
@@ -135,14 +152,15 @@ namespace CA.Aplicacao.Extensions
             };
         }
 
-        public static ApontamentosDiaModel ItemTrabalhoParaApontamentoDiaModel(this ICollection<ItemTrabalho> itensTrabalho, string usuario, DateOnly dataReferencia)
+        public static ApontamentosTfsDiaModel ItemTrabalhoParaApontamentoTfsDiaModel(this IEnumerable<ItemTrabalho> itensTrabalho, string usuario, DateOnly dataReferencia)
         {
             var itensTrabalhoViewModel = itensTrabalho
                                 .Where(c => c.ListaApontamentos.Apontamentos.Any(a => a.Usuario.Equals(usuario) && a.DataApontamento.Equals(dataReferencia.ToString("d"))))
                                 .Select(c => c.ItemTrabalhoParaTarefaModel(usuario, dataReferencia)).ToList();
 
-            return new ApontamentosDiaModel
+            return new ApontamentosTfsDiaModel
             {
+                UsuarioReferencia = usuario,
                 DataReferencia = dataReferencia,
                 Tarefas = itensTrabalhoViewModel,
                 TempoTotalApontadoNoDia = new TimeSpan(itensTrabalhoViewModel.Select(c => c.TempoTotalApontadoNaoSincronizadoChannel + c.TempoTotalApontadoSincronizadoChannel).Sum(c => c.Ticks)),
@@ -151,14 +169,15 @@ namespace CA.Aplicacao.Extensions
             };
         }
 
-        public static ApontamentosMesModel ItemTrabalhoParaApontamentoMesModel(this ICollection<ItemTrabalho> itensTrabalho, string usuario, int mes, int ano)
-        {            
+        public static ApontamentosTfsMesModel ItemTrabalhoParaApontamentoTfsMesModel(this IEnumerable<ItemTrabalho> itensTrabalho, string usuario, int mes, int ano)
+        {
             var apontamentosDiarios = DateTimeHelper.ObterIntervalo(new DateOnly(ano, mes, 1), new DateOnly(ano, mes, (DateTime.Today.Month == mes && DateTime.Today.Year == ano) ? DateTime.Today.Day : DateTime.DaysInMonth(ano, mes)))
-                                                    .Select(c => itensTrabalho.ItemTrabalhoParaApontamentoDiaModel(usuario, c))
+                                                    .Select(c => itensTrabalho.ItemTrabalhoParaApontamentoTfsDiaModel(usuario, c))
                                                     .ToList();
 
-            return new ApontamentosMesModel
+            return new ApontamentosTfsMesModel
             {
+                UsuarioReferencia = usuario,
                 MesReferencia = mes,
                 AnoReferencia = ano,
                 ApontamentosDiarios = apontamentosDiarios.OrderBy(c => c.DataReferencia).ToList(),
@@ -167,5 +186,180 @@ namespace CA.Aplicacao.Extensions
                 TempoTotalApontadoNaoSincronizadoChannel = new TimeSpan(apontamentosDiarios.Sum(c => c.TempoTotalApontadoNaoSincronizadoChannel.Ticks)),
             };
         }
+
+        #endregion
+
+        #region Channel
+
+        public static ApontamentoChannelModel ApontamentoChannelParaApontamentoModel(this ApontamentoChannel apontamento)
+        {
+            return new ApontamentoChannelModel
+            {
+                Id = apontamento.Id,
+                Hash = apontamento.Hash,
+                Status = apontamento.Status,
+                ApontamentoTfs = apontamento.ApontamentoTfs,
+                Usuario = apontamento.Usuario.Email.Split("@")[0],
+                Data = DateOnly.FromDateTime(apontamento.Data),
+                Tempo = apontamento.TempoApontado,
+                Comentario = apontamento.Comentario,
+                IdTarefaTfs = apontamento.IdTarefaTfs,                
+            };
+        }
+
+        public static IEnumerable<ApontamentoChannelModel> ApontamentosChannelParaApontamentosModel(this IEnumerable<ApontamentoChannel> apontamentos)
+        {
+            return apontamentos.OrderByDescending(c => c.Data).Select(c => c.ApontamentoChannelParaApontamentoModel());
+        }
+
+        public static AtividadeModel AtividadeChannelParaAtividadeModel(this AtividadeChannel atividade, DateOnly? dataReferencia = null)
+        {
+            var atividadeModel = new AtividadeModel
+            {
+                Id = atividade.Id,
+                IdProjeto = atividade.Projeto.Id,
+                NomeProjeto = atividade.Projeto.Nome,
+                Codigo = atividade.Codigo,
+                Nome = atividade.Nome,
+                Apontamentos = atividade.Apontamentos.ApontamentosChannelParaApontamentosModel()
+            };
+
+            atividadeModel.TempoTotalApontado = new TimeSpan(atividadeModel.Apontamentos.Where(c => (c.Data == dataReferencia || dataReferencia is null)).Sum(c => c.Tempo.Ticks));
+
+            return atividadeModel;
+        }
+
+        public static IEnumerable<AtividadeModel> ApontamentosChannelParaAtividadesModel(this IEnumerable<ApontamentoChannel> apontamentos, DateOnly? dataReferencia = null)
+        {
+            var atividades = new List<AtividadeModel>();
+
+            var apontamentosPorAtividades = apontamentos.Where(c => c.Tipo == TipoApontamento.Atividade).ToList();
+            var apontamentosPorProjeto = apontamentos.Where(c => c.Tipo == TipoApontamento.Projeto).ToList();
+            var apontamentosAvulsos = apontamentos.Where(c => c.Tipo == TipoApontamento.Avulso).ToList();
+
+            foreach(var apontamentosAgrupados in apontamentosPorAtividades.GroupBy(c => c.Atividade))
+            {
+                var atividade = apontamentosAgrupados.Key;
+                var apontamentoPorAtividade = apontamentosAgrupados.ToList();
+
+                var atividadeModel = new AtividadeModel
+                {
+                    Id = atividade.Id,
+                    IdProjeto = atividade.Projeto.Id,
+                    NomeProjeto = atividade.Projeto.Nome,
+                    Codigo = atividade.Codigo,
+                    Nome = atividade.Nome,
+                    TipoApontamentos = TipoApontamento.Atividade,
+                    Apontamentos = apontamentoPorAtividade.ApontamentosChannelParaApontamentosModel()
+                };
+
+                atividadeModel.TempoTotalApontado = new TimeSpan(atividadeModel.Apontamentos.Where(c => (c.Data == dataReferencia || dataReferencia is null)).Sum(c => c.Tempo.Ticks));
+
+                if (atividadeModel.Apontamentos.Any(c => c.Data == dataReferencia || dataReferencia is null))
+                    atividades.Add(atividadeModel);
+            }
+
+            foreach (var apontamentosAgrupados in apontamentosPorProjeto.GroupBy(c => c.Projeto))
+            {
+                var projeto = apontamentosAgrupados.Key;
+                var apontamentoPorProjeto = apontamentosAgrupados.ToList();
+
+                var atividadeModel = new AtividadeModel
+                {
+                    Id = 0,
+                    IdProjeto = projeto.Id,
+                    NomeProjeto = projeto.Nome,
+                    Codigo = string.Empty,
+                    Nome = string.Empty,
+                    TipoApontamentos = TipoApontamento.Projeto,
+                    Apontamentos = apontamentoPorProjeto.ApontamentosChannelParaApontamentosModel()
+                };
+
+                atividadeModel.TempoTotalApontado = new TimeSpan(atividadeModel.Apontamentos.Where(c => c.Data == dataReferencia || dataReferencia is null).Sum(c => c.Tempo.Ticks));
+
+                if (atividadeModel.Apontamentos.Any(c => c.Data == dataReferencia || dataReferencia is null))
+                    atividades.Add(atividadeModel);
+            }
+
+            if (apontamentosAvulsos.Any())
+            {
+                var apontamentosAvulsosModel = apontamentosAvulsos.ApontamentosChannelParaApontamentosModel();
+
+                if (apontamentosAvulsosModel.Any(c => c.Data == dataReferencia || dataReferencia is null))
+                {
+                    atividades.Add(new AtividadeModel
+                    {
+                        Id = 0,
+                        IdProjeto = 0,
+                        NomeProjeto = string.Empty,
+                        Codigo = string.Empty,
+                        Nome = string.Empty,
+                        TipoApontamentos = TipoApontamento.Avulso,
+                        Apontamentos = apontamentosAvulsosModel,
+                        TempoTotalApontado = new TimeSpan(apontamentosAvulsosModel.Where(c => (c.Data == dataReferencia || dataReferencia is null)).Sum(c => c.Tempo.Ticks))
+                    });
+                }
+            }
+
+            return atividades;
+        }
+
+        public static ApontamentosChannelDiaModel ApontamentosChannelParaApontamentoChannelDiaModel(this IEnumerable<ApontamentoChannel> apontamentos, DateOnly dataReferencia)
+        {
+            var atividadeModel = apontamentos.ApontamentosChannelParaAtividadesModel(dataReferencia);
+
+            return new ApontamentosChannelDiaModel
+            {
+                DataReferencia = dataReferencia,
+                Atividades = atividadeModel,
+                TempoTotalApontadoNoDia = new TimeSpan(atividadeModel.Select(c => c.TempoTotalApontado).Sum(c => c.Ticks))
+            };
+        }
+
+        public static ApontamentosChannelMesModel ApontamentosChannelParaApontamentoChannelMesModel(this IEnumerable<ApontamentoChannel> apontamentos, int mes, int ano)
+        {
+            var apontamentosDiarios = DateTimeHelper.ObterIntervalo(new DateOnly(ano, mes, 1), new DateOnly(ano, mes, (DateTime.Today.Month == mes && DateTime.Today.Year == ano) ? DateTime.Today.Day : DateTime.DaysInMonth(ano, mes)))
+                                                    .Select(c => apontamentos.ApontamentosChannelParaApontamentoChannelDiaModel(c))
+                                                    .ToList();
+
+            return new ApontamentosChannelMesModel
+            {
+                MesReferencia = mes,
+                AnoReferencia = ano,
+                ApontamentosDiarios = apontamentosDiarios.OrderBy(c => c.DataReferencia).ToList(),
+                TempoTotalApontadoNoMes = new TimeSpan(apontamentosDiarios.Sum(c => c.TempoTotalApontadoNoDia.Ticks))
+            };
+        }
+
+        public static ApontamentosChannelDiaModel AtividadeParaApontamentoChannelDiaModel(this IEnumerable<AtividadeChannel> atividades, DateOnly dataReferencia)
+        {
+            var atividadeModel = atividades
+                                    .Where(c => c.Apontamentos.Any(a => DateOnly.FromDateTime(a.Data) == dataReferencia))
+                                    .Select(c => c.AtividadeChannelParaAtividadeModel(dataReferencia)).ToList();
+
+            return new ApontamentosChannelDiaModel
+            {
+                DataReferencia = dataReferencia,
+                Atividades = atividadeModel,
+                TempoTotalApontadoNoDia = new TimeSpan(atividadeModel.Select(c => c.TempoTotalApontado).Sum(c => c.Ticks))
+            };
+        }
+
+        public static ApontamentosChannelMesModel AtividadeParaApontamentoChannelMesModel(this IEnumerable<AtividadeChannel> atividades, int mes, int ano)
+        {
+            var apontamentosDiarios = DateTimeHelper.ObterIntervalo(new DateOnly(ano, mes, 1), new DateOnly(ano, mes, (DateTime.Today.Month == mes && DateTime.Today.Year == ano) ? DateTime.Today.Day : DateTime.DaysInMonth(ano, mes)))
+                                                    .Select(c => atividades.AtividadeParaApontamentoChannelDiaModel(c))
+                                                    .ToList();
+
+            return new ApontamentosChannelMesModel
+            {
+                MesReferencia = mes,
+                AnoReferencia = ano,
+                ApontamentosDiarios = apontamentosDiarios.OrderBy(c => c.DataReferencia).ToList(),
+                TempoTotalApontadoNoMes = new TimeSpan(apontamentosDiarios.Sum(c => c.TempoTotalApontadoNoDia.Ticks))                
+            };
+        }
+
+        #endregion
     }
 }
