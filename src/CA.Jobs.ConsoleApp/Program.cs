@@ -1,5 +1,6 @@
 ﻿using CA.Container.IoC;
 using CA.Core.Entidades.Channel;
+using CA.Jobs.Channel.Configuracoes;
 using CA.Jobs.Channel.Interfaces;
 using CA.Jobs.ConsoleApp.Configuracoes;
 using CA.Polly;

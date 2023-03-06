@@ -123,6 +123,14 @@
 	}
 }
 
+.observacao {
+	text-align: center;
+    display: block;
+    font-style: italic;
+    font-size: 12px;
+	margin-top: 5px;
+}
+
 ::ng-deep .painel-tarefas .mat-expansion-panel-body {
 	padding: 0;
 }

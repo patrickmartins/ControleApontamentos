@@ -14,6 +14,9 @@ import { ApontamentosChannelMes } from '../../models/apontamentos-channel-mes';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
 import { tap } from 'rxjs';
+import { JobService } from 'src/app/core/services/job.service';
+import { JobInfo } from 'src/app/core/models/job-info';
+import { environment } from 'src/environments/environment';
 
 @Component({
 	selector: 'app-apontamentos-por-mes',
@@ -65,10 +68,13 @@ export class ApontamentosPorMesComponent extends BaseComponent implements OnInit
 	public apontamentosTfsMes?: ApontamentosTfsMes;
 	public apontamentosChannelMes?: ApontamentosChannelMes;
 	public batidas?: BatidasPontoMes;
+	
+	public infoJobCarga?: JobInfo;
 
 	constructor(servicoConta: ContaService,
 		private servicoApontamento: ApontamentoService,
 		private servicoPonto: PontoService,
+		private servicoJob: JobService,
 		private dataAdapter: DateAdapter<any>,
 		private zone: NgZone,
 		private activeRoute: ActivatedRoute, 
@@ -86,6 +92,12 @@ export class ApontamentosPorMesComponent extends BaseComponent implements OnInit
 				let data = moment(`01-${mapParams.params.mes}-${mapParams.params.ano}`, 'DD-MM-YYYY');
 
 				this.mesSelecionado = data.isValid() ? data.toDate() : this.mesSelecionado;
+
+				this.servicoJob.obterJobCarga().subscribe({
+					next: (jobInfo) => {
+						this.infoJobCarga = jobInfo;
+					}
+				});
 
 				this.obterBatidasEApontamentosPorMes(this.mesSelecionado);
 			});		
@@ -116,6 +128,9 @@ export class ApontamentosPorMesComponent extends BaseComponent implements OnInit
 	}
 
 	public obterBatidasEApontamentosPorMes(data: Date): void {
+		this.apontamentosChannelMes = undefined;
+		this.apontamentosTfsMes = undefined;
+
 		this.carregandoApontamentosTfs = true;
 		this.carregandoApontamentosChannel = true;
 		this.carregandoBatidasPonto = true;
@@ -126,7 +141,7 @@ export class ApontamentosPorMesComponent extends BaseComponent implements OnInit
 		if(this.usuarioLogado?.possuiContaTfs) {
 			this.servicoApontamento
 				.obterApontamentosTfsPorMes(mes, ano)
-				.pipe(tap((apontamentosTfsMes: ApontamentosTfsMes) => this.consolidarTarefasPorAtividades(apontamentosTfsMes, this.apontamentosChannelMes)))
+				.pipe(tap((apontamentosTfsMes: ApontamentosTfsMes) => this.consolidarTarefasEAtividades(apontamentosTfsMes, this.apontamentosChannelMes)))
 				.subscribe({
 					next: (apontamentos) => {
 						this.apontamentosTfsMes = apontamentos;
@@ -143,7 +158,7 @@ export class ApontamentosPorMesComponent extends BaseComponent implements OnInit
 		if(this.usuarioLogado?.possuiContaChannel) {
 			this.servicoApontamento
 				.obterApontamentosChannelPorMes(mes, ano)
-				.pipe(tap((apontamentosChannelMes: ApontamentosChannelMes) => this.consolidarTarefasPorAtividades(this.apontamentosTfsMes, apontamentosChannelMes)))
+				.pipe(tap((apontamentosChannelMes: ApontamentosChannelMes) => this.consolidarTarefasEAtividades(this.apontamentosTfsMes, apontamentosChannelMes)))
 				.subscribe({
 					next: (apontamentos) => {
 						this.apontamentosChannelMes = apontamentos;
@@ -211,9 +226,9 @@ export class ApontamentosPorMesComponent extends BaseComponent implements OnInit
 			this.onDiaClicado(this.diaSelecionado.getDate());
 	}
 
-	private consolidarTarefasPorAtividades(apontamentosTfs: ApontamentosTfsMes | undefined, apontamentosChannel: ApontamentosChannelMes | undefined): ApontamentosTfsMes | undefined {
+	private consolidarTarefasEAtividades(apontamentosTfs: ApontamentosTfsMes | undefined, apontamentosChannel: ApontamentosChannelMes | undefined): void {
 		if(!apontamentosTfs || !apontamentosChannel)
-			return apontamentosTfs;
+			return;
 
 		var apontamentosChannelTfs = apontamentosChannel.obterApontamentosTfs();
 		
@@ -230,8 +245,6 @@ export class ApontamentosPorMesComponent extends BaseComponent implements OnInit
 		apontamentosChannel.recalcularTempoTotalApontado();
 
 		apontamentosTfs.removerTarefasSemApontamentos();
-		apontamentosTfs.recalcularTempoTotalApontado();		
-
-		return apontamentosTfs;
+		apontamentosTfs.recalcularTempoTotalApontado();
 	}
 }

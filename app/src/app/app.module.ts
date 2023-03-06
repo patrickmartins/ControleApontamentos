@@ -2,9 +2,7 @@ import { MsalGuard, MsalInterceptor, MsalService, MSAL_GUARD_CONFIG, MSAL_INSTAN
 import { MsalFactory } from './conta/factories/msal.factory';
 import { APP_INITIALIZER, LOCALE_ID, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
-import { HomeComponent } from './home/home.component';
+
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatButtonModule } from '@angular/material/button';
@@ -19,6 +17,7 @@ import { MatInputModule } from '@angular/material/input';
 import { CommonModule } from '@angular/common';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { registerLocaleData } from '@angular/common';
+import { NgChartsModule } from 'ng2-charts';
 import localePT from '@angular/common/locales/pt';
 import * as moment from 'moment';
 
@@ -26,19 +25,21 @@ import { NavegacaoModule } from './navegacao/navegacao.module';
 import { CoreModule } from './core/core.module';
 import { DefaultInterceptor } from './interceptors/default.interceptor';
 import { ErrorInterceptor } from './interceptors/error.interceptor';
-import { NgChartsModule } from 'ng2-charts';
 import { AcessoNegadoComponent } from './acesso-negado/acesso-negado.component';
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+import { ContaModule } from './conta/conta.module';
 
 registerLocaleData(localePT);
 
 @NgModule({
 	declarations: [
 		AppComponent,
-		HomeComponent,
   		AcessoNegadoComponent
 	],
 	imports: [
 		NavegacaoModule,
+		ContaModule,
 		CoreModule,
 		CommonModule,
 		BrowserModule,

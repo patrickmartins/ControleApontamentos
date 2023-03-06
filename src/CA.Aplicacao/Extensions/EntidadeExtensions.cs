@@ -195,6 +195,7 @@ namespace CA.Aplicacao.Extensions
         {
             return new ApontamentoChannelModel
             {
+                Id = apontamento.Id,
                 Hash = apontamento.Hash,
                 Status = apontamento.Status,
                 ApontamentoTfs = apontamento.ApontamentoTfs,

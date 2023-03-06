@@ -1,9 +1,8 @@
 ﻿using CA.Core.Entidades.Channel;
-using CA.Jobs.Channel;
 using CA.Jobs.Channel.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CA.Jobs.ConsoleApp.Configuracoes
+namespace CA.Jobs.Channel.Configuracoes
 {
     public static class ConfiguracaoJobs
     {

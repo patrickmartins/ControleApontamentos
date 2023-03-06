@@ -1,4 +1,4 @@
-import { Component, forwardRef } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { FiltroBusca } from 'src/app/core/models/filtro-busca';
 import { BaseComponent } from 'src/app/common/components/base.component';
@@ -42,7 +42,6 @@ export class MenuComponent extends BaseComponent {
 		]
 	}
 
-	public entrando: boolean = false;
 	public temaAplicacaoAtual: Tema;
 
 	constructor(servicoConta: ContaService, private servicoTema: TemaService, private router: Router) {
@@ -68,21 +67,5 @@ export class MenuComponent extends BaseComponent {
 		this.servicoTema.aplicarTemaAtual();
 
 		this.temaAplicacaoAtual = tema;
-	}
-
-	public onLoginEntrando() {
-		this.entrando = true;
-	}
-
-	public onLoginSucesso() {
-		this.entrando = false;
-	}
-	
-	public onLoginErro() {
-		this.entrando = false;
-	}
-
-	public onLogout() {
-		this.entrando = false;
 	}
 }

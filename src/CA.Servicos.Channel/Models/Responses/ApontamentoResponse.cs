@@ -28,15 +28,15 @@ namespace CA.Servicos.Channel.Models.Responses
                                                 : TipoApontamento.Avulso;
         }
 
-        public int ObterIdDaTarefaTfs()
+        public int? ObterIdDaTarefaTfs()
         {
             if(!EhApontamentoTfs())
-                return 0;
+                return null;
 
             var resultado = Regex.Match(Comentario, "(?<=^\\[)\\d*(?=\\])").Value;
 
             if (string.IsNullOrEmpty(resultado))
-                return 0;
+                return null;
 
             return int.TryParse(resultado, out var id) ? id : 0;
         }

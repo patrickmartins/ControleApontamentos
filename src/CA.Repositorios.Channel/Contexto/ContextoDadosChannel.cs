@@ -23,8 +23,7 @@ namespace CA.Repositorios.Channel.Contexto
                         .IsRequired();
 
             modelBuilder.Entity<ApontamentoChannel>()
-                        .Property(c => c.IdTarefaTfs)
-                        .IsRequired();
+                        .Property(c => c.IdTarefaTfs);
 
             modelBuilder.Entity<ApontamentoChannel>()
                         .Property(c => c.Tipo)

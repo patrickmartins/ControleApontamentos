@@ -20,6 +20,10 @@ import { QuadroTarefaComponent } from './components/quadro-tarefa/quadro-tarefa.
 import { TempoApontadoPipe } from './pipes/tempo-apontado.pipe';
 import { TempoTrabalhadoPipe } from './pipes/tempo-trabalhado.pipe';
 import { TempoPipe } from './pipes/tempo.pipe';
+import { ContaService } from './services/conta.service';
+import { JobService } from './services/job.service';
+import { TarefaService } from './services/tarefa.service';
+import { TemaService } from './services/tema.service';
 
 @NgModule({
 	declarations: [		
@@ -47,7 +51,12 @@ import { TempoPipe } from './pipes/tempo.pipe';
 		MatDividerModule,
 		MatProgressBarModule	
 	],
-	providers: [],
+	providers: [
+		ContaService,
+		JobService,
+		TarefaService,
+		TemaService
+	],
 	exports: [
 		ModalSalvarApontamentoComponent,
 		ContadorTarefaComponent,

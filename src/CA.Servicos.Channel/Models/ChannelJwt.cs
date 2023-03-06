@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using CA.Util.Extensions;
 
 namespace CA.Servicos.Channel.Models
 {
@@ -10,9 +11,16 @@ namespace CA.Servicos.Channel.Models
         [JsonPropertyName("defaultService")]
         public ChannelEndpoint Endpoint { get; set; }
 
+        public DateTime DataExpiracao { get; set; }
+
         public string ObterUrlAutenticacao()
         {
             return Endpoint.Url.Replace("{{token}}", TokenAcesso);
+        }
+
+        public bool Expirado()
+        {
+            return DateTime.Now.ConverterParaFusoBrasil() > DataExpiracao;
         }
     }
 

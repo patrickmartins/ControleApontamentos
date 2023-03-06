@@ -100,5 +100,10 @@ $theme: map.set(
 	background-color: mat.get-color-from-palette($color-primary)!important;
 }
 
+.primary-button-color {
+  color: white!important;
+  background-color: mat.get-color-from-palette($color-primary)!important;
+}
+
 @include mat.all-component-themes($theme);
 

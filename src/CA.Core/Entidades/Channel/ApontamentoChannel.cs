@@ -20,7 +20,7 @@ namespace CA.Core.Entidades.Channel
     public class ApontamentoChannel
     {
         public int Id { get; set; }
-        public int IdTarefaTfs { get; set; }
+        public int? IdTarefaTfs { get; set; }
         public TipoApontamento Tipo { get; set; }
         public bool ApontamentoTfs { get; set; }
         public DateTime Data { get; set; }

@@ -5,10 +5,12 @@ using CA.Servicos.Channel.Interfaces;
 using CA.Servicos.Channel.Models;
 using CA.Servicos.Channel.Models.Requests;
 using CA.Servicos.Channel.Models.Responses;
+using CA.Util.Extensions;
 using Flurl;
 using Flurl.Http;
 using Polly;
 using Polly.Registry;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace CA.Servicos.Channel
 {
@@ -34,7 +36,7 @@ namespace CA.Servicos.Channel
         {
             lock (_lock)
             {
-                if (_token is null)
+                if (_token is null || _token.Expirado())
                 {
                     _token = ObterTokenAcesso();
                 }
@@ -43,26 +45,33 @@ namespace CA.Servicos.Channel
             }
         }
 
-        private IEnumerable<ChannelCookie> ObterCookies(ChannelJwt token)
+        private IEnumerable<ChannelCookie> ObterCookies()
         {
             lock (_lock)
             {
                 if (_cookies is null)
                 {
-                    _cookies = ObterCookiesAcesso(token);
+                    _cookies = ObterCookiesAcesso();
                 }
 
                 return _cookies;
             }
         }
 
-        private IEnumerable<ChannelCookie> ObterCookiesAcesso(ChannelJwt token)
+        private void RemoverCookies()
+        {
+            _cookies = null;
+        }
+
+        private IEnumerable<ChannelCookie> ObterCookiesAcesso()
         {
             var result = _policy.ExecuteAsync(() =>
             {
+                var token = ObterTokenJwt();
+
                 return token.ObterUrlAutenticacao()
-                            .WithAutoRedirect(false)
-                            .GetAsync();
+                                .WithAutoRedirect(false)
+                                .GetAsync();
             }).Result;  
 
             return result.Cookies.Select(c => new ChannelCookie
@@ -88,16 +97,22 @@ namespace CA.Servicos.Channel
                                             .ReceiveJson<ChannelJwt>();
             }).Result;
 
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            var jwtToken = tokenHandler.ReadJwtToken(token.TokenAcesso);
+            var claimExpiracao = jwtToken.Claims.First(c => c.Type == "exp");
+
+            token.DataExpiracao = DateTimeOffset.FromUnixTimeSeconds(int.Parse(claimExpiracao.Value)).LocalDateTime.ConverterParaFusoBrasil();
+
             return token;
         }
 
         public async Task<IEnumerable<UsuarioResponse>> ObterUsuariosAtivosAsync()
         {
-            var token = ObterTokenJwt();
-            var cookies = ObterCookies(token).ParaCookieJar();
-
             var resultado = await _policy.ExecuteAsync(() =>
             {
+                var cookies = ObterCookies().ParaCookieJar();
+
                 var parametros = "callCount=1" + Environment.NewLine;
                 parametros += "windowName=c0-param0" + Environment.NewLine;
                 parametros += "c0-scriptName=UsuarioAjax" + Environment.NewLine;
@@ -121,6 +136,16 @@ namespace CA.Servicos.Channel
                 return _configuracoes.UrlBase
                                     .AppendPathSegment("dwr/call/plaincall/UsuarioAjax.listarUsuariosAssociarProjeto.dwr")
                                     .WithCookies(cookies)
+                                    .OnRedirect(c =>
+                                    {
+                                        RemoverCookies();
+
+                                        throw new FlurlHttpException(c);
+                                    })
+                                    .OnError(c =>
+                                    {
+                                        RemoverCookies();
+                                    })
                                     .PostStringAsync(parametros)
                                     .ReceiveString();
             });
@@ -130,11 +155,10 @@ namespace CA.Servicos.Channel
 
         public async Task<IEnumerable<ProjetoResponse>> ObterProjetosAsync()
         {
-            var token = ObterTokenJwt();
-            var cookies = ObterCookies(token).ParaCookieJar();
-
             var resultado = await _policy.ExecuteAsync(() =>
             {
+                var cookies = ObterCookies().ParaCookieJar();
+
                 var parametros = "callCount=1" + Environment.NewLine;
                 parametros += "windowName=c0-e13" + Environment.NewLine;
                 parametros += "c0-scriptName=ProjetoAjax" + Environment.NewLine;
@@ -169,6 +193,16 @@ namespace CA.Servicos.Channel
                 return _configuracoes.UrlBase
                                     .AppendPathSegment("dwr/call/plaincall/ProjetoAjax.listar.dwr")
                                     .WithCookies(cookies)
+                                    .OnRedirect(c =>
+                                    {
+                                        RemoverCookies();
+
+                                        throw new FlurlHttpException(c);
+                                    })
+                                    .OnError(c =>
+                                    {
+                                        RemoverCookies();
+                                    })
                                     .PostStringAsync(parametros)
                                     .ReceiveString();
             });
@@ -178,14 +212,23 @@ namespace CA.Servicos.Channel
 
         public async Task<ProjetoResponse?> ObterProjetoPorIdAsync(int idProjeto)
         {
-            var token = ObterTokenJwt();
-            var cookies = ObterCookies(token).ParaCookieJar();
-
             var resultado = await _policy.ExecuteAsync(() =>
             {
+                var cookies = ObterCookies().ParaCookieJar();
+
                 return _configuracoes.UrlBase
                                     .AppendPathSegment($"api/escopo/{idProjeto}")
                                     .WithCookies(cookies)
+                                    .OnRedirect(c =>
+                                    {
+                                        RemoverCookies();
+
+                                        throw new FlurlHttpException(c);
+                                    })
+                                    .OnError(c =>
+                                    {
+                                        RemoverCookies();
+                                    })
                                     .GetJsonAsync<EscopoResponse>();
             });
 
@@ -197,14 +240,23 @@ namespace CA.Servicos.Channel
 
         public async Task<IEnumerable<AtividadeResponse>> ObterAtividadesPorProjetoAsync(int idProjeto)
         {
-            var token = ObterTokenJwt();
-            var cookies = ObterCookies(token).ParaCookieJar();
-
             var resultado = await _policy.ExecuteAsync(() =>
             {
+                var cookies = ObterCookies().ParaCookieJar();
+
                 return _configuracoes.UrlBase
                                     .AppendPathSegment($"api/escopo/{idProjeto}")
                                     .WithCookies(cookies)
+                                    .OnRedirect(c =>
+                                    {
+                                        RemoverCookies();
+
+                                        throw new FlurlHttpException(c);
+                                    })
+                                    .OnError(c =>
+                                    {
+                                        RemoverCookies();
+                                    })
                                     .GetJsonAsync<EscopoResponse>();
             });
 
@@ -220,11 +272,10 @@ namespace CA.Servicos.Channel
 
         public async Task<IEnumerable<ApontamentoResponse>> ObterApontamentosPorPeriodoAsync(DateOnly inicio, DateOnly fim)
         {
-            var token = ObterTokenJwt();
-            var cookies = ObterCookies(token).ParaCookieJar();
-
             var stream = await _policy.ExecuteAsync(() =>
             {
+                var cookies = ObterCookies().ParaCookieJar();
+
                 return _configuracoes.UrlBase
                                     .AppendPathSegment("apontamento.do")
                                     .SetQueryParam("action", "exportarExcelRelatorioGeral")
@@ -242,6 +293,16 @@ namespace CA.Servicos.Channel
                                     .SetQueryParam("colunaOrdenacao", "area")
                                     .SetQueryParam("colunaOrdenacao", 0)
                                     .WithCookies(cookies)
+                                    .OnRedirect(c =>
+                                    {
+                                        RemoverCookies();
+
+                                        throw new FlurlHttpException(c);
+                                    })
+                                    .OnError(c =>
+                                    {
+                                        RemoverCookies();
+                                    })
                                     .GetStreamAsync();
             });
 

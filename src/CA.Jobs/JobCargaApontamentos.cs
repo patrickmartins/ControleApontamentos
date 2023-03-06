@@ -1,10 +1,10 @@
 ﻿using CA.Core.Entidades.Channel;
 using CA.Core.Interfaces.Channel;
-using CA.Core.Valores;
 using CA.Jobs.Channel.Extensions;
 using CA.Jobs.Channel.Interfaces;
 using CA.Servicos.Channel.Interfaces;
 using CA.Servicos.Channel.Models.Responses;
+using CA.Util.Extensions;
 using Microsoft.Extensions.Logging;
 
 namespace CA.Jobs.Channel
@@ -34,10 +34,11 @@ namespace CA.Jobs.Channel
         {
             LogarInformacao("Iniciando a execução do Job de Carga de Apontamentos.");
 
-            var resultado = Resultado.DeSucesso();
-
-            var dataFim = DateOnly.FromDateTime(DateTime.Now);
+            var dataFim = DateOnly.FromDateTime(DateTime.Now.ConverterParaFusoBrasil());
             var dataInicio = new DateOnly(dataFim.Year, dataFim.Month, 1);
+
+            LogarInformacao($"Data de início: {dataInicio:d}.");
+            LogarInformacao($"Data de fim: {dataFim:d}.");
 
             LogarInformacao("Obtendo apontamentos no Channel.");
 
@@ -53,9 +54,9 @@ namespace CA.Jobs.Channel
             var apontamentoAtualizados = ExtrairApontamentosAtualizados(apontamentosServico, apontamentosBanco, projetos, usuarios);
             var apontamentosExcluidos = ExtrairApontamentosExcluidos(apontamentosServico, apontamentosBanco);
 
-            LogarInformacao($@"{apontamentosInseridos.Count()} apontamentos serão inseridos.");
-            LogarInformacao(@$"{apontamentoAtualizados.Count()} apontamentos serão atualizados.");
-            LogarInformacao($@"{apontamentosExcluidos.Count()} apontamentos serão excluídos.");
+            LogarInformacao($"{apontamentosInseridos.Count()} apontamentos serão inseridos.");
+            LogarInformacao($"{apontamentoAtualizados.Count()} apontamentos serão atualizados.");
+            LogarInformacao($"{apontamentosExcluidos.Count()} apontamentos serão excluídos.");
 
             foreach (var apontamento in apontamentosExcluidos)
             {
@@ -66,7 +67,7 @@ namespace CA.Jobs.Channel
 
             foreach (var apontamento in apontamentosInseridos)
             {
-                resultado = apontamento.Validar();
+                var resultado = apontamento.Validar();
 
                 if (resultado.Sucesso)
                 {
@@ -74,7 +75,7 @@ namespace CA.Jobs.Channel
                 }
                 else
                 {
-                    LogarInformacao(@$"Não foi possível inserir o apontamento {apontamento.Id}. Devido aos erros abaixo:");
+                    LogarInformacao($"Não foi possível inserir o apontamento {apontamento.Id}. Devido aos erros abaixo:");
 
                     LogarErros(resultado.Erros.ToArray());
                 }
@@ -84,7 +85,7 @@ namespace CA.Jobs.Channel
             {
                 var apontamentoBanco = apontamentosBanco.First(c => c.Id == apontamentoServico.Id);
 
-                resultado = apontamentoServico.Validar();
+                var resultado = apontamentoServico.Validar();
 
                 if (resultado.Sucesso)
                 {
@@ -94,7 +95,7 @@ namespace CA.Jobs.Channel
                 }
                 else
                 {
-                    LogarErros(@$"Não foi possível atualizar o apontamento {apontamentoServico.Id}. Devido aos erros abaixo:");
+                    LogarErros($"Não foi possível atualizar o apontamento {apontamentoServico.Id}. Devido aos erros abaixo:");
 
                     LogarErros(resultado.Erros.ToArray());
                 }
@@ -112,7 +113,7 @@ namespace CA.Jobs.Channel
 
         private IEnumerable<ApontamentoChannel> ExtrairApontamentosAtualizados(IEnumerable<ApontamentoResponse> apontamentosServico, IEnumerable<ApontamentoChannel> apontamentosBanco, IEnumerable<ProjetoChannel> projetos, IEnumerable<UsuarioChannel> usuarios)
         {
-            return apontamentosServico.Where(c => apontamentosBanco.Any(x => x.Id == c.Id))
+            return apontamentosServico.Where(c => apontamentosBanco.Any(x => x.Id == c.Id && x.Status != StatusApontamento.Excluido))
                                                                 .ParaApontamentosChannel(projetos, usuarios)
                                                                 .Where(apontamentoServico => apontamentosBanco.Any(apontamentoBanco => apontamentoBanco.Id == apontamentoServico.Id && apontamentoBanco != apontamentoServico))
                                                                 .ToList();
@@ -120,7 +121,7 @@ namespace CA.Jobs.Channel
 
         private IEnumerable<ApontamentoChannel> ExtrairApontamentosExcluidos(IEnumerable<ApontamentoResponse> apontamentosServico, IEnumerable<ApontamentoChannel> apontamentosBanco)
         {
-            return apontamentosBanco.Where(c => !apontamentosServico.Any(x => x.Id == c.Id)).ToList();
+            return apontamentosBanco.Where(c => !apontamentosServico.Any(x => x.Id == c.Id) && c.Status != StatusApontamento.Excluido).ToList();
         }
     }
 }

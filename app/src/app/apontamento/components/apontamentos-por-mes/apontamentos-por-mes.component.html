@@ -11,7 +11,7 @@
 		<h4>Seus dados não foram encontrados no Channel.</h4>
 	</mat-card>
 
-	<div *ngIf="usuarioLogado.possuiContaTfs || usuarioLogado.possuiContaPonto">
+	<div *ngIf="usuarioLogado.possuiContaTfs || usuarioLogado.possuiContaPonto || usuarioLogado.possuiContaChannel">
 		<mat-expansion-panel class="boasvindas borda-1" [expanded]="true">
 			<mat-expansion-panel-header class="cabecalho" matRipple>		
 					<h2 *ngIf="dataAtual.getHours() >= 6 && dataAtual.getHours() < 12" class="nome-usuario">Bom dia, {{ usuarioLogado.nomeCompleto.split(' ')[0] }}!</h2>	
@@ -68,16 +68,22 @@
 							</li>
 						</ul>
 
-						<grafico-resumo-mes	*ngIf="tempoTotalApontadoNoMes > 0 || tempoTotalTrabalhadoNoMes > 0"
-												(onDiaClicado)="onDiaClicado($event)"
+						<div *ngIf="tempoTotalApontadoNoMes > 0 || tempoTotalTrabalhadoNoMes > 0">
+							<grafico-resumo-mes (onDiaClicado)="onDiaClicado($event)"
 												[dataReferencia]="mesSelecionado"
 												[apontamentosTfs]="apontamentosTfsMes"
 												[apontamentosChannel]="apontamentosChannelMes"
 												[batidas]="batidas"></grafico-resumo-mes>
+							
+							<span class="observacao">
+								Obs.: os apontamentos do Channel são atualizados a cada {{ (infoJobCarga ? infoJobCarga.intervaloExecucao : 30) | tempo }}.
+								<span *ngIf="infoJobCarga && infoJobCarga.ultimaExecucao"> Última atualização as {{ infoJobCarga.ultimaExecucao | date : 'HH:mm \'do dia\' dd \'de\' LLLL \'de\' yyyy' }}.</span>
+							</span>
+						</div>
 					</section>
 
 					<section *ngIf="carregando">
-						<grafico-resumo-mes-loader style="height: 182px;"></grafico-resumo-mes-loader>
+						<grafico-resumo-mes-loader style="height: 182px;"></grafico-resumo-mes-loader>						
 					</section>	
 				</div>		
 			</ng-template>

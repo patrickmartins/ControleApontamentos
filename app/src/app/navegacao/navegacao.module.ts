@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MenuComponent } from './components/menu/menu.component';
 import { RouterModule } from '@angular/router';
-import { LoginMenuComponent } from '../conta/components/login-menu/login-menu.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -21,13 +20,14 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { CoreModule } from '../core/core.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoaderModule } from '../loader/loader.module';
+import { ContaModule } from '../conta/conta.module';
 
 @NgModule({
 	declarations: [
-		MenuComponent,
-		LoginMenuComponent
+		MenuComponent
 	],
 	imports: [
+		ContaModule,
 		LoaderModule,
 		RouterModule,
 		BrowserModule,
@@ -48,11 +48,10 @@ import { LoaderModule } from '../loader/loader.module';
 		MatInputModule,
 		MatCheckboxModule,
 		MatRadioModule,
-		CoreModule
+		CoreModule		
 	],
 	exports: [
-		MenuComponent,
-		LoginMenuComponent
+		MenuComponent
 	]
 })
 

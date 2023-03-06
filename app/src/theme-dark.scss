@@ -55,6 +55,15 @@ $color-primary: mat.define-palette($dark-palette, 800);
 	.background-primary-1 {
 		background-color: mat.get-color-from-palette($color-primary)!important;
 	}
+
+	.primary-color {
+		background-color: mat.get-color-from-palette($color-primary)!important;
+	}
+
+	.primary-button-color {
+		color: black!important; 
+        background-color: white!important;
+	}
 	
 	@include mat.all-component-colors($theme);
 }

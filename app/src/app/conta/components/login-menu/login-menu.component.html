@@ -3,17 +3,19 @@
 		<button mat-button [matMenuTriggerFor]="menuConta">
 			<span class="nome-usuario" fxHide.xs>{{ usuarioLogado.nomeCompleto }}</span>
 			<img *ngIf="fotoUsuarioLogado" class="foto-usuario" [src]="fotoUsuarioLogado">
-			<mat-icon *ngIf="!fotoUsuarioLogado" class="foto-usuario" style="display: inline; width: 26px;">account_circle</mat-icon>			
+			<mat-icon *ngIf="!fotoUsuarioLogado" class="foto-usuario" style="display: inline-block; width: 26px;">account_circle</mat-icon>			
 		</button>
 		<mat-menu #menuConta="matMenu">
 			<button mat-menu-item fxHide.gt-xs class="menu-usuario">
 				<img *ngIf="fotoUsuarioLogado" class="foto-usuario" [src]="fotoUsuarioLogado">
-				<mat-icon *ngIf="!fotoUsuarioLogado" class="foto-usuario" style="display: inline; width: 26px;">account_circle</mat-icon>
+				<mat-icon *ngIf="!fotoUsuarioLogado" class="foto-usuario" style="display: inline-block; width: 26px;">account_circle</mat-icon>
 				<span class="nome-usuario">{{ usuarioLogado.nomeCompleto }}</span>				
 			</button>
 			<button mat-menu-item (click)="logout()">Sair</button>
 		</mat-menu>
 	</div>
 
-	<button mat-button *ngIf="!usuarioLogado" (click)="login()">Entrar</button>
+	<button mat-button *ngIf="!usuarioLogado && !entrando" (click)="login()">Entrar</button>
 </div>
+
+<login-menu-loader [ngStyle]="{display: entrando ? 'block' : 'none'}"></login-menu-loader>

@@ -29,7 +29,7 @@ namespace CA.Repositorios.Ponto
         {
             var funcionarios = await _servico.ObterFuncionariosAsync();
 
-            return funcionarios.FirstOrDefault(c => c.Nome.Equals(nome));
+            return funcionarios.FirstOrDefault(c => c.Nome.ToLower().Equals(nome.ToLower()));
         }
     }
 }

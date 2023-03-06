@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CA.Repositorios.Channel
 {
-    public class RepositorioUsuariosChannel : Core.Interfaces.Channel.IRepositorioUsuariosChannel
+    public class RepositorioUsuariosChannel : IRepositorioUsuariosChannel
     {
         private readonly ContextoDadosChannel _contexto;
         private readonly DbSet<UsuarioChannel> _set;
@@ -47,12 +47,12 @@ namespace CA.Repositorios.Channel
 
         public UsuarioChannel? ObterUsuarioPorEmail(string email)
         {
-            return _set.FirstOrDefault(c => c.Email.Equals(email));
+            return _set.FirstOrDefault(c => c.Email.ToLower().Equals(email.ToLower()));
         }
 
         public UsuarioChannel? ObterUsuarioPorNomeCompleto(string nomeCompleto)
         {
-            return _set.FirstOrDefault(c => c.NomeCompleto.Equals(nomeCompleto));
+            return _set.FirstOrDefault(c => c.NomeCompleto.ToLower().Equals(nomeCompleto.ToLower()));
         }
 
         public Task<int> SalvarAlteracoesAsync()

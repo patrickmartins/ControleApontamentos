@@ -9,33 +9,53 @@ import { LocalStorageHelper } from 'src/app/helpers/local-storage.helper';
 import { Usuario } from 'src/app/conta/models/usuario';
 import { LoginSucesso } from 'src/app/conta/models/login-sucess';
 import { JwtToken } from 'src/app/conta/models/jwt.token';
+import { StatusLogin } from '../models/status-login';
 
 @Injectable({
     providedIn: 'root'
 })
 export class ContaService extends BaseService {
+    private _token?: JwtToken;
 
+    private _onStatusLoginAlteradoSubscription : Subject<number>;
 	private _usuarioLogadoSubscription : Subject<Usuario | undefined>;
-	private _usuarioLogado : Observable<Usuario | undefined>;
-	private _token?: JwtToken;
+	private _usuarioLogado : Observable<Usuario | undefined>;    
+
+	public onStatusLoginAlterado : Observable<StatusLogin>;
 
     constructor(httpClient: HttpClient) {
         super(httpClient);
 
 		this._usuarioLogadoSubscription = new BehaviorSubject(LocalStorageHelper.obterDados(environment.chaveStorageUsuario, Usuario));
 		this._usuarioLogado = this._usuarioLogadoSubscription.asObservable();
+
+        this._onStatusLoginAlteradoSubscription = new BehaviorSubject(this.estaAutenticado() ? StatusLogin.Conectado : StatusLogin.Desconectado);
+		this.onStatusLoginAlterado = this._onStatusLoginAlteradoSubscription.asObservable();
     }
 
     public estaAutenticado(): boolean {
         return LocalStorageHelper.dadoExiste(environment.chaveStorageToken) &&
-				LocalStorageHelper.dadoExiste(environment.chaveStorageToken);        
+				LocalStorageHelper.dadoExiste(environment.chaveStorageUsuario);        
     }
 
     public login(): Observable<LoginSucesso> {
-        return this.post<LoginSucesso>(`${environment.urlApiBase}conta/login`, { }, undefined, LoginSucesso).pipe(map(this.onLoginSucesso, this));
+        this._onStatusLoginAlteradoSubscription.next(StatusLogin.Conectando);
+
+        var observable = this.post<LoginSucesso>(`${environment.urlApiBase}conta/login`, { }, undefined, LoginSucesso).pipe(map(this.onLoginSucesso, this));
+
+        observable.subscribe({
+            next: () => {
+                this._onStatusLoginAlteradoSubscription.next(StatusLogin.Conectado);
+            },
+            error: () => {
+                this._onStatusLoginAlteradoSubscription.next(StatusLogin.Desconectado);
+            }
+        });
+
+        return observable;
     }
 
-    public logout() {
+    public logout(): void {
         if (LocalStorageHelper.dadoExiste(environment.chaveStorageToken)) { 
             LocalStorageHelper.removerDados(environment.chaveStorageToken);
 		}
@@ -45,6 +65,8 @@ export class ContaService extends BaseService {
 		}
 
 		this._usuarioLogadoSubscription.next(undefined);
+        this._onStatusLoginAlteradoSubscription.next(StatusLogin.Desconectado);
+
 		this._token = undefined;
     }
 
@@ -70,6 +92,5 @@ export class ContaService extends BaseService {
 		this._usuarioLogadoSubscription.next(sucess.usuario);
 		
         return sucess;
-    }
-	
+    }	
 }

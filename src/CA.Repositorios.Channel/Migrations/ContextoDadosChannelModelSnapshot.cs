@@ -44,7 +44,7 @@ namespace CA.Repositorios.Channel.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("IdTarefaTfs")
+                    b.Property<int?>("IdTarefaTfs")
                         .HasColumnType("int");
 
                     b.Property<int?>("ProjetoId")

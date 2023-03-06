@@ -22,24 +22,24 @@ export class Atividade implements IModel<Atividade> {
 		if(!params)
 			return undefined;
 
-		let tarefa = new Atividade();
+		let atividade = new Atividade();
 
 		if(params) {
-			tarefa.id = params.id;
-			tarefa.nome = params.nome;
-			tarefa.codigo = params.codigo;
-			tarefa.idProjeto = params.idProjeto;
-			tarefa.nomeProjeto = params.nomeProjeto;
-			tarefa.tempoTotalApontado = params.tempoTotalApontado;		
-			tarefa.tipoApontamentos = params.tipoApontamentos as TipoApontamentoChannel;
+			atividade.id = params.id as number;
+			atividade.nome = params.nome;
+			atividade.codigo = params.codigo;
+			atividade.idProjeto = params.idProjeto as number;
+			atividade.nomeProjeto = params.nomeProjeto;
+			atividade.tempoTotalApontado = params.tempoTotalApontado as number;		
+			atividade.tipoApontamentos = params.tipoApontamentos as TipoApontamentoChannel;
 
-			tarefa.apontamentos = Array.isArray(params.apontamentos) ? Array.from(params.apontamentos).map(item => new ApontamentoChannel().criarNovo(item)!) : [];
+			atividade.apontamentos = Array.isArray(params.apontamentos) ? Array.from(params.apontamentos).map(item => new ApontamentoChannel().criarNovo(item)!) : [];
 		}	
 
-		return tarefa;
+		return atividade;
 	}
 
-	public obterLinkChannel(): string {
+	public obterLinkApontamentosProjetoChannel(): string {
 		return `${environment.urlChannel}/projeto.do?action=escopo&idProjeto=${this.idProjeto}&idAtividade=${this.id}&abaSelecionada=abaApontamentos`
 	}
 

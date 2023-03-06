@@ -23,7 +23,9 @@
 				</quadro-tarefa>
 			</div>
 
-			<h3 *ngIf="pagina.totalResultados === 0">A busca não retornou resultados</h3>
+			<mat-card *ngIf="pagina.totalResultados === 0" class="aviso-sem-tarefa borda-1">
+				<span>A busca não retornou resultados</span>
+			</mat-card>
 		</section>
 
 		<section *ngIf="carregando">

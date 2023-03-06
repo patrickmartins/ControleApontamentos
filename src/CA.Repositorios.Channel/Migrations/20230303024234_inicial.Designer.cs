@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CA.Repositorios.Channel.Migrations
 {
     [DbContext(typeof(ContextoDadosChannel))]
-    [Migration("20230228233744_inicial")]
+    [Migration("20230303024234_inicial")]
     partial class inicial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -46,7 +46,7 @@ namespace CA.Repositorios.Channel.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("IdTarefaTfs")
+                    b.Property<int?>("IdTarefaTfs")
                         .HasColumnType("int");
 
                     b.Property<int?>("ProjetoId")

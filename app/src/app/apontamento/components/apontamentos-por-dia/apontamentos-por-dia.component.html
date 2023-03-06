@@ -7,7 +7,11 @@
 		<h4>Seus dados não foram encontrados no TFS.</h4>
 	</mat-card>
 
-	<div *ngIf="usuarioLogado.possuiContaTfs || usuarioLogado.possuiContaPonto">
+	<mat-card class="quadro-aviso" *ngIf="!usuarioLogado.possuiContaChannel">
+		<h4>Seus dados não foram encontrados no Channel.</h4>
+	</mat-card>
+	
+	<div *ngIf="usuarioLogado.possuiContaTfs || usuarioLogado.possuiContaPonto || usuarioLogado.possuiContaChannel">
 		<mat-expansion-panel class="boasvindas borda-1" [expanded]="true">
 			<mat-expansion-panel-header class="cabecalho" matRipple>		
 					<h2 *ngIf="dataAtual.getHours() >= 6 && dataAtual.getHours() < 12" class="nome-usuario">Bom dia, {{ usuarioLogado.nomeCompleto.split(' ')[0] }}!</h2>	
@@ -65,10 +69,16 @@
 							</li>
 						</ul>
 			
-						<grafico-resumo-dia	*ngIf="(tempoTotalApontadoNoDia > 0 ||  tempoTotalTrabalhadoNoDia > 0)"
-											[apontamentosTfs]="apontamentosTfsDia"
-											[apontamentosChannel]="apontamentosChannelDia"
-											[batidas]="batidas"></grafico-resumo-dia>				
+						<div *ngIf="(tempoTotalApontadoNoDia > 0 ||  tempoTotalTrabalhadoNoDia > 0)">
+							<grafico-resumo-dia	[apontamentosTfs]="apontamentosTfsDia"
+												[apontamentosChannel]="apontamentosChannelDia"
+												[batidas]="batidas"></grafico-resumo-dia>	
+													
+							<span class="observacao">
+								Obs.: os apontamentos do Channel são atualizados a cada {{ (infoJobCarga ? infoJobCarga.intervaloExecucao : 30) | tempo }}.
+								<span *ngIf="infoJobCarga"> Última atualização as {{ infoJobCarga.ultimaExecucao | date : 'HH:mm \'do dia\' dd \'de\' LLLL \'de\' yyyy' }}.</span>
+							</span>
+						</div>
 					</section>			
 					<section *ngIf="carregando">
 						<grafico-resumo-dia-loader style="height: 182px;"></grafico-resumo-dia-loader>

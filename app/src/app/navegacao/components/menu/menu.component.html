@@ -3,19 +3,19 @@
 		<mat-toolbar-row class="nav-toolbar-row">
 			<div fxFlex.gt-md="75%" fxFlex.gt-sm="85%" fxFlex.gt-xs="90%" fxFlex="100%" fxLayoutAlign="center center">
 				<div>
-					<button mat-icon-button class="nav-toolbar-btn-menu" (click)="sidenav.toggle()" fxShow="true" fxHide.gt-xs>
+					<button *ngIf="usuarioLogado && usuarioLogado.possuiContaTfs" mat-icon-button class="nav-toolbar-btn-menu" (click)="sidenav.toggle()" fxShow="true" fxHide.gt-xs>
 						<mat-icon class="nav-toolbar-icon-menu">menu</mat-icon>
 					</button>
-					<button mat-button class="nav-toolbar-brand" fxHide.xs [routerLink]="['/home']">
+					<button mat-button class="nav-toolbar-brand" fxHide.xs>
 						<span>Controle de Apontamentos</span>
 					</button>
 				</div>
 				<div fxShow="true" fxHide.lt-lg>
-					<button mat-button [routerLink]="['/tarefa/minhas-tarefas']">Minhas Tarefas</button>
-					<button mat-button [matMenuTriggerFor]="menuApontamentos">Meus Apontamentos</button>
+					<a *ngIf="usuarioLogado && usuarioLogado.possuiContaTfs" mat-button [routerLink]="['/tarefa/minhas-tarefas']">Minhas Tarefas</a>
+					<button *ngIf="usuarioLogado" mat-button [matMenuTriggerFor]="menuApontamentos">Meus Apontamentos</button>
 					<mat-menu #menuApontamentos>
-						<button mat-menu-item [routerLink]="['/apontamento/por-dia']">Apontamentos por Dia</button>
-						<button mat-menu-item [routerLink]="['/apontamento/por-mes']">Apontamentos por Mês</button>
+						<a mat-menu-item [routerLink]="['/apontamento/por-dia']">Apontamentos por Dia</a>
+						<a mat-menu-item [routerLink]="['/apontamento/por-mes']">Apontamentos por Mês</a>
 					</mat-menu>
 					<button mat-button *ngIf="usuarioLogado?.possuiRole('administrador')">Administração<div></div></button>
 				</div>
@@ -51,8 +51,7 @@
 					</mat-menu>
 				</div>
 
-				<login-menu [ngStyle]="{display: !entrando ? 'block' : 'none'}" (onLoginEntrando)="onLoginEntrando()" (onLoginSucesso)="onLoginSucesso()" (onLogout)="onLogout()" (onLoginErro)="onLoginErro()"></login-menu>
-				<login-menu-loader [ngStyle]="{display: entrando ? 'block' : 'none'}"></login-menu-loader>
+				<login-menu></login-menu>
 				
 				<div class="configuracoes">
 					<button mat-icon-button [matMenuTriggerFor]="menuConfiguracoes">
@@ -81,13 +80,13 @@
 			</div>
 		</mat-toolbar-row>
 
-		<mat-toolbar-row class="nav-toolbar-row" fxHide.xs fxHide.gt-md>
+		<mat-toolbar-row *ngIf="usuarioLogado" class="nav-toolbar-row" fxHide.xs fxHide.gt-md>
 			<div fxLayoutAlign="center center">
-				<button mat-button [routerLink]="['/tarefa/minhas-tarefas']">Minhas Tarefas</button>
-				<button mat-button [matMenuTriggerFor]="menuApontamentos">Meus Apontamentos</button>
+				<a *ngIf="usuarioLogado && usuarioLogado.possuiContaTfs" mat-button [routerLink]="['/tarefa/minhas-tarefas']">Minhas Tarefas</a>
+				<button *ngIf="usuarioLogado" mat-button [matMenuTriggerFor]="menuApontamentos">Meus Apontamentos</button>
 				<mat-menu #menuApontamentos>
-					<button mat-menu-item [routerLink]="['/apontamento/por-dia']">Apontamentos por Dia</button>
-					<button mat-menu-item [routerLink]="['/apontamento/por-mes']">Apontamentos por Mês</button>
+					<a mat-menu-item [routerLink]="['/apontamento/por-dia']">Apontamentos por Dia</a>
+					<a mat-menu-item [routerLink]="['/apontamento/por-mes']">Apontamentos por Mês</a>
 				</mat-menu>
 				<button mat-button *ngIf="usuarioLogado?.possuiRole('administrador')">Administração</button>
 			</div>
@@ -97,16 +96,16 @@
 	<mat-sidenav-container fxFlexFill class="sidemenu-container">
 		<mat-sidenav #sidenav>
 			<mat-nav-list class="nav-sidebar-menu">
-				<button mat-button [routerLink]="['/tarefa/minhas-tarefas']" (click)="sidenav.close()">Minhas Tarefas</button>
-				<mat-expansion-panel>
+				<a *ngIf="usuarioLogado && usuarioLogado.possuiContaTfs" mat-button [routerLink]="['/tarefa/minhas-tarefas']" (click)="sidenav.close()">Minhas Tarefas</a>
+				<mat-expansion-panel *ngIf="usuarioLogado">
 					<mat-expansion-panel-header matRipple>
 						<mat-panel-title>
 							Meus Apontamentos
 						</mat-panel-title>
 					</mat-expansion-panel-header>
 					<div>
-						<button mat-menu-item [routerLink]="['/apontamento/por-dia']" (click)="sidenav.close()">Apontamentos por Dia</button>
-						<button mat-menu-item [routerLink]="['/apontamento/por-mes']" (click)="sidenav.close()">Apontamentos por Mês</button>
+						<a mat-menu-item [routerLink]="['/apontamento/por-dia']" (click)="sidenav.close()">Apontamentos por Dia</a>
+						<a mat-menu-item [routerLink]="['/apontamento/por-mes']" (click)="sidenav.close()">Apontamentos por Mês</a>
 					</div>
 				</mat-expansion-panel>
 				<button mat-button *ngIf="usuarioLogado?.possuiRole('administrador')">Administração</button>

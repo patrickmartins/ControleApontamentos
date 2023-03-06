@@ -1,9 +1,9 @@
 ﻿using CA.Core.Entidades.Channel;
 using CA.Core.Interfaces.Channel;
-using CA.Core.Valores;
 using CA.Jobs.Channel.Extensions;
 using CA.Jobs.Channel.Interfaces;
 using CA.Servicos.Channel.Interfaces;
+using CA.Util.Extensions;
 using Microsoft.Extensions.Logging;
 
 namespace CA.Jobs.Channel
@@ -25,10 +25,11 @@ namespace CA.Jobs.Channel
         {
             LogarInformacao("Iniciando a execução do Job de Carga de Projetos.");
 
-            var resultado = Resultado.DeSucesso();
-
-            var dataFim = DateOnly.FromDateTime(DateTime.Now);
+            var dataFim = DateOnly.FromDateTime(DateTime.Now.ConverterParaFusoBrasil());
             var dataInicio = new DateOnly(dataFim.Year, dataFim.Month, 1);
+
+            LogarInformacao($"Data de início: {dataInicio:d}.");
+            LogarInformacao($"Data de fim: {dataFim:d}.");
 
             LogarInformacao("Obtendo projetos no Channel.");
 
@@ -37,13 +38,13 @@ namespace CA.Jobs.Channel
 
             var idsProjetosServico = projetosServico.Select(c => c.IdProjeto).Where(c => c > 0).Distinct().ToList();
 
-            LogarInformacao($"{idsProjetosServico.Count()} projetos obtidos no Channel.");
+            LogarInformacao($"{idsProjetosServico.Count} projetos obtidos no Channel.");
 
             var idsProjetosInserir = idsProjetosServico.Where(c => !projetosBanco.Any(p => p.Id == c)).ToList();
             var idsProjetosAtualizar = idsProjetosServico.Where(c => projetosBanco.Any(p => p.Id == c)).ToList();
 
-            LogarInformacao($@"{idsProjetosInserir.Count()} projetos serão inseridos.");
-            LogarInformacao(@$"{idsProjetosAtualizar.Count()} projetos serão atualizados.");
+            LogarInformacao($"{idsProjetosInserir.Count} projetos serão inseridos.");
+            LogarInformacao($"{idsProjetosAtualizar.Count} projetos serão atualizados.");
 
             foreach (var id in idsProjetosInserir) 
             {
@@ -75,7 +76,7 @@ namespace CA.Jobs.Channel
 
             if (!resultado.Sucesso)
             {
-                LogarErros(@$"Não foi possível atualizar o projeto {projetoNovo.Id}. Devido aos erros abaixo:");
+                LogarErros($"Não foi possível atualizar o projeto {projetoNovo.Id}. Devido aos erros abaixo:");
 
                 LogarErros(resultado.Erros.ToArray());
             }
@@ -98,7 +99,7 @@ namespace CA.Jobs.Channel
 
             if (!resultado.Sucesso)
             {
-                LogarErros(@$"Não foi possível atualizar o projeto {projetoServico.Id}. Devido aos erros abaixo:");
+                LogarErros($"Não foi possível atualizar o projeto {projetoServico.Id}. Devido aos erros abaixo:");
 
                 LogarErros(resultado.Erros.ToArray());
 
@@ -117,7 +118,7 @@ namespace CA.Jobs.Channel
 
         private async Task AtualizarAtividadesPorProjetoAsync(ProjetoChannel projetoBanco, ProjetoChannel projetoServico)
         {
-            LogarInformacao(@$"Iniciando à atualização das atividades do projeto {projetoBanco.Id}.");
+            LogarInformacao($"Iniciando à atualização das atividades do projeto {projetoBanco.Id}.");
 
             var atividadesServico = projetoServico.Atividades;
             var atividadesBanco = await _repositorioProjetos.ObterAtividadesPorIdsAsync(atividadesServico.Select(c => c.Id).ToArray());
@@ -125,8 +126,8 @@ namespace CA.Jobs.Channel
             var atividadesInseridas = atividadesServico.Where(c => !atividadesBanco.Any(a => a.Id == c.Id)).ToList();
             var atividadesAtualizadas = atividadesServico.Where(atividadeServico => atividadesBanco.Any(atividadeBanco => atividadeBanco.Id == atividadeServico.Id && atividadeServico != atividadeBanco)).ToList();
 
-            LogarInformacao($@"{atividadesInseridas.Count()} atividades serão inseridas no projeto {projetoBanco.Id}.");
-            LogarInformacao(@$"{atividadesAtualizadas.Count()} apontamentos serão atualizadas no projeto {projetoBanco.Id}.");
+            LogarInformacao($"{atividadesInseridas.Count} atividades serão inseridas no projeto {projetoBanco.Id}.");
+            LogarInformacao($"{atividadesAtualizadas.Count} atividades serão atualizadas no projeto {projetoBanco.Id}.");
 
             foreach (var atividade in atividadesInseridas)
             {
@@ -138,7 +139,7 @@ namespace CA.Jobs.Channel
                 }
                 else
                 {
-                    LogarInformacao(@$"Não foi possível inserir à atividade {atividade.Id}. Devido aos erros abaixo:");
+                    LogarInformacao($"Não foi possível inserir à atividade {atividade.Id}. Devido aos erros abaixo:");
 
                     LogarErros(resultado.Erros.ToArray());
                 }
@@ -157,7 +158,7 @@ namespace CA.Jobs.Channel
                 }
                 else
                 {
-                    LogarErros(@$"Não foi possível atualizar à atividade {atividadeServico.Id}. Devido aos erros abaixo:");
+                    LogarErros($"Não foi possível atualizar à atividade {atividadeServico.Id}. Devido aos erros abaixo:");
 
                     LogarErros(resultado.Erros.ToArray());
                 }

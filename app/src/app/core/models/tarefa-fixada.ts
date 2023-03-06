@@ -14,7 +14,7 @@ export class TarefaFixada implements IModel<TarefaFixada> {
 		let tarefaFixada = new TarefaFixada();
 
 		if(params) {
-			tarefaFixada.idTarefa = params.idTarefa;
+			tarefaFixada.idTarefa = params.idTarefa as number;
 			tarefaFixada.colecao = params.colecao;
 			tarefaFixada.usuario = params.usuario;
 		}

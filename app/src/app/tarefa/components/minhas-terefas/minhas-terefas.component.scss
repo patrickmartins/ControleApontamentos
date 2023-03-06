@@ -1,7 +1,7 @@
 .mat-expansion-panel {	
 	background-color: transparent;	
-	box-shadow: none!important;
-	border-radius: 0;
+	box-shadow: none !important;
+	border-radius: 0 !important;
 }
 
 .mat-expansion-panel-header {
@@ -26,6 +26,18 @@
 
 .loader {
 	display: block;
+}
+
+.aviso-sem-tarefa {
+	box-shadow: 0 0.125rem 0.25rem rgb(0 0 0 / 8%);
+	border-radius: 0 !important; 
+	text-align: center;
+
+	& span {		
+		font-size: 1.2em;
+		font-weight: 300;
+		margin: 3em;
+	}
 }
 
 ::ng-deep.painel-tarefas .mat-expansion-panel-body {

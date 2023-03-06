@@ -60,7 +60,7 @@ namespace CA.Repositorios.Channel.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
-                    IdTarefaTfs = table.Column<int>(type: "int", nullable: false),
+                    IdTarefaTfs = table.Column<int>(type: "int", nullable: true),
                     Tipo = table.Column<int>(type: "int", nullable: false),
                     ApontamentoTfs = table.Column<bool>(type: "bit", nullable: false),
                     Data = table.Column<DateTime>(type: "datetime2", nullable: false),

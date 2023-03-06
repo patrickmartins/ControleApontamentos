@@ -21,7 +21,7 @@
 
 					<div *ngSwitchCase="1" class="titulo" [title]="'ATIVIDADE ' + atividade.codigo + ' - ' +  atividade.nome">
 						<strong>
-							<a mat-flat-button target="_blank" [href]="atividade.obterLinkChannel()">ATIVIDADE {{ atividade.codigo }}</a> - {{ atividade.nome }}
+							<a mat-flat-button target="_blank" [href]="atividade.obterLinkApontamentosProjetoChannel()">ATIVIDADE {{ atividade.codigo }}</a> - {{ atividade.nome }}
 						</strong>
 					</div>
 
@@ -48,10 +48,12 @@
 		<ng-template matExpansionPanelContent>
 			<ul>
 				<li *ngFor="let apontamento of atividade.apontamentos" class="apontamento">
-					<span title="Sincronizado com o Channel" class="badge sucess">Channel</span>						
-					<span>
-						<span class="data">{{ apontamento.data | date:'dd/MM/yyyy'}}</span>
-						<b>{{ apontamento.usuario }}</b> - {{ apontamento.tempo | tempo }} - {{ apontamento.comentario != "" ? apontamento.comentario : "Nenhum comentário adicionado." }}</span>
+					<a mat-flat-button class="link-apontamento" [href]="apontamento.obterLinkApontamentoChannel()" target="_blank">
+						<span title="Sincronizado com o Channel" class="badge sucess">Channel</span>						
+						<span>
+							<span class="data">{{ apontamento.data | date:'dd/MM/yyyy'}}</span>
+							<b>{{ apontamento.usuario }}</b> - {{ apontamento.tempo | tempo }} - {{ apontamento.comentario != "" ? apontamento.comentario : "Nenhum comentário adicionado." }}</span>
+					</a>
 				</li>
 			</ul>
 		</ng-template>

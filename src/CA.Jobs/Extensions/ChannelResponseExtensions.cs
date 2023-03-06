@@ -2,8 +2,6 @@
 using CA.Servicos.Channel.Models.Responses;
 using CA.Util.Extensions;
 using CA.Util.Helpers;
-using System.Globalization;
-using System.Net;
 
 namespace CA.Jobs.Channel.Extensions
 {
@@ -14,8 +12,8 @@ namespace CA.Jobs.Channel.Extensions
             return new UsuarioChannel
             {
                 Id = response.Id,
-                Email = response.Email.DecodificarHtml().Trim().Truncar(50).ParaUTF8().RemoverCaracteresNaoReconhecidos().RemoverQuebrasDeLinha(),
-                NomeCompleto = response.Nome.DecodificarHtml().Trim().Truncar(200).ParaUTF8().RemoverCaracteresNaoReconhecidos().RemoverQuebrasDeLinha()
+                Email = response.Email.DecodificarHtml().Trim().Truncar(50).ParaUTF8().RemoverCaracteresNaoReconhecidos().RemoverQuebrasDeLinha().ToLower(),
+                NomeCompleto = response.Nome.DecodificarHtml().Trim().Truncar(200).ParaUTF8().RemoverCaracteresNaoReconhecidos().RemoverQuebrasDeLinha().ToLower()
             };
         }
 
@@ -69,7 +67,7 @@ namespace CA.Jobs.Channel.Extensions
 
         public static ApontamentoChannel ParaApontamentoChannel(this ApontamentoResponse response, ProjetoChannel projeto, UsuarioChannel usuario)
         {
-            var atividade = projeto != null ? projeto.Atividades.FirstOrDefault(a => response.CodigoAtividade == a.Codigo && response.IdProjeto == a.Projeto.Id) : null;
+            var atividade = projeto?.Atividades.FirstOrDefault(a => response.CodigoAtividade == a.Codigo && response.IdProjeto == a.Projeto.Id);
 
             return new ApontamentoChannel
             {

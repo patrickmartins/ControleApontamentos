@@ -39,22 +39,9 @@ namespace CA.Servicos.Tfs
 
             return _politicaPolly.ExecuteAsync(async () =>
             {
-                try
-                {
-                    return await url.WithWindowsAuth(_configuracoes.Usuario, _configuracoes.Senha)
-                                .SendXmlSoapAsync(ActionsServicoTfsSoap.QueryWorkitems, request, request.RequestHeader)
-                                .ReceiveXmlSoapAsync<QueryWorkitemsResponse>();
-                }
-                catch (FlurlHttpException ex)
-                {
-                    var msg = await ex.Call.Response.ResponseMessage.Content.ReadAsStringAsync();
-
-                    throw ex;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
+                return await url.WithWindowsAuth(_configuracoes.Usuario, _configuracoes.Senha)
+                            .SendXmlSoapAsync(ActionsServicoTfsSoap.QueryWorkitems, request, request.RequestHeader)
+                            .ReceiveXmlSoapAsync<QueryWorkitemsResponse>();                
             });
         }
 

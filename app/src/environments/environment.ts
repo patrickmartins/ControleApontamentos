@@ -4,6 +4,7 @@
 
 export const environment = {
 	production: false,
+	intervaloExecucaoJob: 30,
 	urlApiBase: "https://localhost:5001/api/",
 	urlTfs: "http://tfs.vixteam.com.br:8080/tfs/",
 	urlChannel: "https://vixteam.jexperts.com.br/channel",

@@ -1,6 +1,5 @@
 ﻿using CA.Core.Entidades.Channel;
 using CA.Core.Interfaces.Channel;
-using CA.Core.Valores;
 using CA.Jobs.Channel.Extensions;
 using CA.Jobs.Channel.Interfaces;
 using CA.Servicos.Channel.Interfaces;
@@ -24,9 +23,6 @@ namespace CA.Jobs.Channel
         public override async Task ExecutarAsync()
         {
             LogarInformacao("Iniciando a execução do Job de Carga de Usuários.");
-
-            var resultado = Resultado.DeSucesso();
-
             LogarInformacao("Obtendo usuários no Channel.");
 
             var usuariosServico = await _servico.ObterUsuariosAtivosAsync();
@@ -34,13 +30,13 @@ namespace CA.Jobs.Channel
 
             LogarInformacao($"{usuariosServico.Count()} usuários obtidos no Channel.");
 
-            var novosUsuarios = usuariosServico.Where(c => !usuariosBanco.Any(x => x.Id == c.Id)).Where(c => !string.IsNullOrEmpty(c.Email)).ParaUsuariosChannel();
+            var novosUsuarios = usuariosServico.Where(c => !usuariosBanco.Any(x => x.Id == c.Id)).Where(c => !string.IsNullOrEmpty(c.Email)).ParaUsuariosChannel().ToList();
 
-            LogarInformacao($@"{novosUsuarios.Count()} usuários serão inseridos.");
+            LogarInformacao($"{novosUsuarios.Count} usuários serão inseridos.");
 
             foreach (var usuario in novosUsuarios)
             {
-                resultado = usuario.Validar();
+                var resultado = usuario.Validar();
 
                 if (!resultado.Sucesso)
                 {

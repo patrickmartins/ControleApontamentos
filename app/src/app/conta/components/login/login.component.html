@@ -1,0 +1,39 @@
+<section class="apresentacao" fxLayout="column" fxLayoutAlign="center center">
+    <div fxFlex="100%" fxLayout.lt-sm="column-reverse" fxLayout="row" fxLayoutAlign="center center" class="secao">
+        <figure class="topico">
+            <article style="margin-right: 3em;">
+                <h3 class="titulo">Gerenciamento de Tempo</h3>
+                <ul class="texto">
+                    <li><span>Controle o tempo gasto em suas tarefas do TFS.</span></li>
+                    <li><span>Verifique os apontamentos de cada tarefa do TFS.</span></li>
+                    <li><span>Salve seus apontamentos no TFS com poucos cliques.</span></li>                    
+                </ul>                
+            </article>
+            <div>
+                <img *ngIf="ehTemaEscuro" src="../../assets/imgs/gerenciamento-tempo-escuro.png" />
+                <img *ngIf="!ehTemaEscuro" src="../../assets/imgs/gerenciamento-tempo-claro.png" />
+            </div>
+        </figure>        
+    </div>
+    <div fxFlex="100%" fxLayout="row" fxLayout.lt-sm="column" fxLayoutAlign="center center" class="secao">
+        <figure class="topico">
+            <div>
+                <img *ngIf="ehTemaEscuro" src="../../assets/imgs/visualizacao-apontamentos-escuro.png" />
+                <img *ngIf="!ehTemaEscuro" src="../../assets/imgs/visualizacao-apontamentos-claro.png" />
+            </div>
+            <article style="margin-left: 3em;">
+                <h3 class="titulo">Acompanhe seus Apontamentos</h3>
+                <ul class="texto">
+                    <li><span>Verifique quantas horas foram apontadas no TFS e no Channel.</span></li>
+                    <li><span>Visualize gráficos de seus apontamentos por dia ou por mês.</span></li>
+                    <li><span>Compare suas horas apontadas com as suas horas trabalhadas.</span></li>                    
+                </ul> 
+            </article>
+        </figure>   
+    </div>
+</section>
+
+<section class="login" fxLayout="column" fxLayoutAlign="center center">
+    <h2 class="texto">Entre com sua conta Microsoft para iniciar</h2>
+    <button mat-raised-button class="primary-button-color" [disabled]="entrando" (click)="login()">Entrar</button>
+</section>

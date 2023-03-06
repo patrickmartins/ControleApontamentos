@@ -30,30 +30,30 @@ namespace CA.Servicos.Secullum
 
         public async Task<IEnumerable<Funcionario>> ObterFuncionariosAsync()
         {
-            var token = ObterTokenJwt();
-
-            var functionarios = await _policy.ExecuteAsync(() =>
+            var funcionarios = await _policy.ExecuteAsync(() =>
             {
+                var token = ObterTokenJwt();
+
                 return _configuracoes.UrlIntegracao
                                         .AppendPathSegment("Funcionarios")
                                         .WithOAuthBearerToken(token.TokenAcesso)
                                         .OnError(c =>
                                         {
                                             if (c.HttpResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
-                                                _token = null;
+                                                RemoverTokenJwt();
                                         })
                                         .GetJsonAsync<IEnumerable<Funcionario>>();
             });
 
-            return functionarios;
+            return funcionarios;
         }
 
         public Task<IEnumerable<BatidasPontoDia>> ObterBatidasPorPeriodoAsync(string pisFuncionario, DateOnly inicio, DateOnly fim)
         {
-            var token = ObterTokenJwt();
-
             var lista = _policy.ExecuteAsync(() =>
             {
+                var token = ObterTokenJwt();
+
                 return _configuracoes.UrlIntegracao
                                             .AppendPathSegment("Batidas")
                                             .WithOAuthBearerToken(token.TokenAcesso)
@@ -63,7 +63,7 @@ namespace CA.Servicos.Secullum
                                             .OnError(c =>
                                             {
                                                 if (c.HttpResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
-                                                    _token = null;
+                                                    RemoverTokenJwt();
                                             })
                                             .GetJsonAsync<IEnumerable<BatidasPontoDia>>();
             });
@@ -131,6 +131,11 @@ namespace CA.Servicos.Secullum
             novoToken.DataExpiracao = DateTime.Now.ConverterParaFusoBrasil().AddSeconds(token.Validade);
 
             return novoToken;
+        }
+
+        private void RemoverTokenJwt()
+        {
+            _token = null;
         }
     }
 }

@@ -8,6 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Hangfire.AspNetCore" Version="1.7.33" />
+    <PackageReference Include="Hangfire.Console" Version="1.4.2" />
+    <PackageReference Include="Hangfire.Dashboard.Basic.Authentication" Version="5.0.0" />
+    <PackageReference Include="Hangfire.SqlServer" Version="1.7.33" />
+    <PackageReference Include="Hangfire.Storage.SQLite" Version="0.3.3" />
     <PackageReference Include="Microsoft.Identity.Web" Version="1.25.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
@@ -15,6 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\CA.Aplicacao\CA.Aplicacao.csproj" />
     <ProjectReference Include="..\CA.Container.IoC\CA.Container.IoC.csproj" />
+    <ProjectReference Include="..\CA.Jobs\CA.Jobs.Channel.csproj" />
     <ProjectReference Include="..\CA.Polly\CA.Polly.csproj" />
     <ProjectReference Include="..\CA.Servicos.Channel\CA.Servicos.Channel.csproj" />
   </ItemGroup>

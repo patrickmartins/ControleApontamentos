@@ -11,6 +11,9 @@ import { BatidasPontoDia } from '../../models/batidas-ponto-dia';
 import { ContaService } from 'src/app/core/services/conta.service';
 import { BaseComponent } from 'src/app/common/components/base.component';
 import { ApontamentosChannelDia } from '../../models/apontamentos-channel-dia';
+import { JobInfo } from 'src/app/core/models/job-info';
+import { environment } from 'src/environments/environment';
+import { JobService } from 'src/app/core/services/job.service';
 
 @Component({
 	selector: 'app-apontamentos-por-dia',
@@ -46,17 +49,6 @@ export class ApontamentosPorDiaComponent extends BaseComponent implements OnInit
 	public get tempoTotalApontadoNaoSincronizadoNoDia() : number {
 		return this.apontamentosTfsDia ? this.apontamentosTfsDia.tempoTotalApontadoNaoSincronizadoChannel : 0;
 	}
-
-	constructor(servicoConta: ContaService,
-		private servicoApontamento: ApontamentoService,
-		private servicoPonto: PontoService,
-		private dataAdapter: DateAdapter<any>,
-		private activeRoute: ActivatedRoute, 
-		private router: Router) {
-
-		super(servicoConta);
-		this.dataAdapter.setLocale('pt-br');
-	}
 	
 	public carregandoApontamentosTfs: boolean = true;
 	public carregandoApontamentosChannel: boolean = true;
@@ -69,6 +61,20 @@ export class ApontamentosPorDiaComponent extends BaseComponent implements OnInit
 	public apontamentosChannelDia?: ApontamentosChannelDia;
 	public batidas?: BatidasPontoDia;
 
+	public infoJobCarga?: JobInfo;
+	
+	constructor(servicoConta: ContaService,
+		private servicoApontamento: ApontamentoService,
+		private servicoPonto: PontoService,
+		private servicoJob: JobService,
+		private dataAdapter: DateAdapter<any>,
+		private activeRoute: ActivatedRoute, 
+		private router: Router) {
+
+		super(servicoConta);
+		this.dataAdapter.setLocale('pt-br');
+	}
+	
 	public ngOnInit(): void {
 		this.activeRoute
 		.queryParamMap
@@ -76,6 +82,12 @@ export class ApontamentosPorDiaComponent extends BaseComponent implements OnInit
 			let data = moment(mapParams.params.data, 'DD-MM-YYYY');
 
 			this.dataSelecionada = data.isValid() ? data.toDate() : this.dataSelecionada;
+
+			this.servicoJob.obterJobCarga().subscribe({
+				next: (jobInfo) => {
+					this.infoJobCarga = jobInfo;
+				}
+			});
 
 			this.obterBatidasEApontamentosPorDia(this.dataSelecionada);
 		});		
@@ -88,6 +100,9 @@ export class ApontamentosPorDiaComponent extends BaseComponent implements OnInit
 	}
 
 	public obterBatidasEApontamentosPorDia(data: Date): void {
+		this.apontamentosChannelDia = undefined;
+		this.apontamentosTfsDia = undefined;
+
 		this.carregandoApontamentosTfs = true;
 		this.carregandoApontamentosChannel = true;
 		this.carregandoBatidasPonto = true;
@@ -95,7 +110,7 @@ export class ApontamentosPorDiaComponent extends BaseComponent implements OnInit
 		if(this.usuarioLogado?.possuiContaTfs) {
 			this.servicoApontamento
 				.obterApontamentosTfsPorDia(data)
-				.pipe(tap((apontamentosTfsDia: ApontamentosTfsDia) => this.consolidarTarefasPorAtividades(apontamentosTfsDia, this.apontamentosChannelDia)))
+				.pipe(tap((apontamentosTfsDia: ApontamentosTfsDia) => this.consolidarTarefasEAtividades(apontamentosTfsDia, this.apontamentosChannelDia)))
 				.subscribe({
 					next: (apontamentos) => {
 						this.apontamentosTfsDia = apontamentos;
@@ -110,7 +125,7 @@ export class ApontamentosPorDiaComponent extends BaseComponent implements OnInit
 		if(this.usuarioLogado?.possuiContaChannel) {
 			this.servicoApontamento
 				.obterApontamentosChannelPorDia(data)
-				.pipe(tap((apontamentosChannelDia: ApontamentosChannelDia) => this.consolidarTarefasPorAtividades(this.apontamentosTfsDia, apontamentosChannelDia)))
+				.pipe(tap((apontamentosChannelDia: ApontamentosChannelDia) => this.consolidarTarefasEAtividades(this.apontamentosTfsDia, apontamentosChannelDia)))
 				.subscribe({
 					next: (apontamentos) => {
 						this.apontamentosChannelDia = apontamentos;
@@ -145,9 +160,9 @@ export class ApontamentosPorDiaComponent extends BaseComponent implements OnInit
 			data.getFullYear() == hoje.getFullYear()
 	}
 
-	private consolidarTarefasPorAtividades(apontamentosTfs: ApontamentosTfsDia | undefined, apontamentosChannel: ApontamentosChannelDia | undefined): ApontamentosTfsDia | undefined {
+	private consolidarTarefasEAtividades(apontamentosTfs: ApontamentosTfsDia | undefined, apontamentosChannel: ApontamentosChannelDia | undefined): void {
 		if(!apontamentosTfs || !apontamentosChannel)
-			return apontamentosTfs;
+			return;
 
 		var apontamentosChannelTfs = apontamentosChannel.obterApontamentosTfs();
 		
@@ -165,7 +180,5 @@ export class ApontamentosPorDiaComponent extends BaseComponent implements OnInit
 
 		apontamentosTfs.removerTarefasSemApontamentos();
 		apontamentosTfs.recalcularTempoTotalApontado();	
-		
-		return apontamentosTfs;
 	}
 }

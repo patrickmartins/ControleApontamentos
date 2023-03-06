@@ -1,10 +1,13 @@
-import { Component, EventEmitter, Inject, OnInit, Output } from '@angular/core';
+import { Component, Inject, OnDestroy } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { Router } from '@angular/router';
 import { MsalGuardConfiguration, MsalService, MSAL_GUARD_CONFIG } from '@azure/msal-angular';
 import { AuthenticationResult, PopupRequest } from '@azure/msal-browser';
+import { Router } from '@angular/router';
+
 import { BaseComponent } from 'src/app/common/components/base.component';
+import { StatusLogin } from 'src/app/core/models/status-login';
 import { ContaService } from 'src/app/core/services/conta.service';
+import { Subscription } from 'rxjs';
 
 @Component({
 	selector: 'login-menu',
@@ -12,71 +15,57 @@ import { ContaService } from 'src/app/core/services/conta.service';
 	styleUrls: ['./login-menu.component.scss']
 })
 
-export class LoginMenuComponent extends BaseComponent implements OnInit{
-
-	@Output()
-	public onLoginEntrando = new EventEmitter;
-
-	@Output()
-	public onLoginSucesso = new EventEmitter;
-
-	@Output()
-	public onLoginErro = new EventEmitter;
-
-	@Output()
-	public onLogout = new EventEmitter;
+export class LoginMenuComponent extends BaseComponent implements OnDestroy{
 
 	public fotoUsuarioLogado?: SafeUrl;
+	public entrando: boolean = false;
+	public onStatusLoginAlteradoSubscription: Subscription;
 
 	constructor(servicoConta: ContaService, 
-		private router: Router, 
-		@Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration, 
+		private router: Router, 		
 		private servicoMsal: MsalService,
-		private sanitizer: DomSanitizer) {
+		private sanitizer: DomSanitizer,
+		@Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration) {
 			super(servicoConta);
+
+			this.onStatusLoginAlteradoSubscription = this.servicoConta.onStatusLoginAlterado.subscribe((status: StatusLogin) => this.onStatusLoginAlterado(status))
 	}
-	
-	public ngOnInit(): void {
-		if(this.usuarioLogado)
-			this.obterFotoUsuarioLogado();		
-	}
+
+	public override ngOnDestroy(): void {
+        this.onStatusLoginAlteradoSubscription.unsubscribe();
+		
+		super.ngOnDestroy();
+    }
 
 	public login(): void {
-
 		this.servicoMsal
 			.loginPopup({ ...this.msalGuardConfig.authRequest } as PopupRequest)
 			.subscribe((response: AuthenticationResult) => {
-				this.servicoMsal.instance.setActiveAccount(response.account);
-
-				this.onLoginEntrando.emit();
+				this.servicoMsal.instance.setActiveAccount(response.account);				
 				
-				this.obterFotoUsuarioLogado();
-
 				this.servicoConta.login().subscribe({
-					next: (login) => {
-						this.usuarioLogado = login.usuario;
-					},
-					error: () => {
-						this.onLoginErro.emit();
-					},
-					complete: () => {
-						this.onLoginSucesso.emit();
+					next: () => {
+						this.router.navigate(["/tarefas"]);
 					}
 				});
 			});
 	}
 
 	public logout(): void {
-
 		this.servicoMsal
 			.logoutPopup()
 			.subscribe(() => {
 				this.servicoConta.logout();
-
-				this.onLogout.emit();
-
-				this.router.navigate(["/home"]);
+				this.router.navigate(["/login"]);
 			});
+	}
+
+	private onStatusLoginAlterado(status: StatusLogin): void {
+		this.entrando = status == StatusLogin.Conectando;
+
+		if(status == StatusLogin.Conectado) {
+			this.obterFotoUsuarioLogado();
+		}
 	}
 
 	private obterFotoUsuarioLogado() {

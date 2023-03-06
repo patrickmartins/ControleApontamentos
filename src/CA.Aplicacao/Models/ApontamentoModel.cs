@@ -50,7 +50,8 @@ namespace CA.Aplicacao.Models
 
     public record ApontamentoChannelModel : ApontamentoModel
     {
-        public int IdTarefaTfs { get; set; }
+        public int Id { get; set; }
+        public int? IdTarefaTfs { get; set; }
         public StatusApontamento Status { get; set; }
         public bool ApontamentoTfs { get; set; }
     }

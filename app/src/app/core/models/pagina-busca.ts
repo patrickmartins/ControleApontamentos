@@ -17,9 +17,9 @@ export class PaginaBusca implements IModel<PaginaBusca> {
 		let pagina = new PaginaBusca();
 
 		if(params) {
-			pagina.totalResultados = params.totalResultados;
-			pagina.numeroPagina = params.numeroPagina;
-			pagina.tamanhoPagina = params.tamanhoPagina;
+			pagina.totalResultados = params.totalResultados as number;
+			pagina.numeroPagina = params.numeroPagina as number;
+			pagina.tamanhoPagina = params.tamanhoPagina as number;
 			pagina.palavraChave = params.palavraChave;
 
 			pagina.tarefas = Array.isArray(params.resultados) ? Array.from(params.resultados).map(item => new Tarefa().criarNovo(item)!) : [];
