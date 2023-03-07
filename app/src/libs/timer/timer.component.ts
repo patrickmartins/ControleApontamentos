@@ -1,8 +1,7 @@
 import {
   AfterViewInit,
-  Component, ElementRef, EventEmitter, Input, OnDestroy, Output, Renderer2
+  Component, ElementRef, Input, OnDestroy, Renderer2
 } from '@angular/core';
-import { TimeInterface } from './timer.interface';
 import { clearInterval, setInterval } from 'worker-timers';
 
 @Component({
@@ -12,38 +11,23 @@ import { clearInterval, setInterval } from 'worker-timers';
 export class TimerComponent implements AfterViewInit, OnDestroy {
   private timeoutId: any;
   private tickCounter: number = 0;
-  private ngContentSchema: string = "";
 
   private seconds: number = 0;
   private minutes: number = 0;
   private hours: number = 0;
-  private days: number = 0;
 
   @Input() startTime: number;
-  @Input() endTime: number;
-  @Input() countdown: boolean;
   @Input() autoStart: boolean;
-  @Input() maxTimeUnit: string = "";
-  @Input() format: string;
-  @Output() onStart: EventEmitter<TimerComponent> = new EventEmitter<TimerComponent>();
-  @Output() onStop: EventEmitter<TimerComponent> = new EventEmitter<TimerComponent>();
-  @Output() onTick: EventEmitter<TimeInterface> = new EventEmitter<TimeInterface>();
-  @Output() onComplete: EventEmitter<TimerComponent> = new EventEmitter<TimerComponent>();
 
   constructor(private elt: ElementRef, private renderer: Renderer2) {
     // Initialization
     this.autoStart = true;
     this.startTime = 0;
-    this.endTime = 0;
     this.timeoutId = null;
-    this.countdown = false;
-    this.format = 'default';
   }
 
   ngAfterViewInit() {
-    const ngContentNode = this.elt.nativeElement.lastChild;    // Get last child, defined by user or span
-    this.ngContentSchema = ngContentNode ? ngContentNode.nodeValue : '';
-    if (this.autoStart === undefined || this.autoStart === true) {
+    if (this.autoStart === true) {
       this.start();
     }
   }
@@ -60,8 +44,6 @@ export class TimerComponent implements AfterViewInit, OnDestroy {
     this.resetTimeout();
     this.computeTimeUnits();
     this.startTickCount();
-
-    this.onStart.emit(this);
   }
 
   /**
@@ -78,8 +60,6 @@ export class TimerComponent implements AfterViewInit, OnDestroy {
    */
   public stop() {
     this.clear();
-
-    this.onStop.emit(this);
   }
 
   /**
@@ -102,7 +82,6 @@ export class TimerComponent implements AfterViewInit, OnDestroy {
       seconds: this.seconds,
       minutes: this.minutes,
       hours: this.hours,
-      days: this.days,
       timer: this.timeoutId,
       tick_count: this.tickCounter
     };
@@ -113,19 +92,7 @@ export class TimerComponent implements AfterViewInit, OnDestroy {
    */
   private initVar() {
     this.startTime = this.startTime || 0;
-    this.endTime = this.endTime || 0;
-    this.countdown = this.countdown || false;
     this.tickCounter = this.startTime;
-
-    // Disable countdown if start time not defined
-    if (this.countdown && this.startTime === 0) {
-      this.countdown = false;
-    }
-
-    // Determine auto format
-    if (!this.format) {
-      this.format = (this.ngContentSchema.length > 5) ? 'user' : 'default';
-    }
   }
 
   /**
@@ -141,56 +108,11 @@ export class TimerComponent implements AfterViewInit, OnDestroy {
    * Render the time to DOM
    */
   private renderText() {
-    let outputText;
-    if (this.format === 'user') {
-      // User presentation
-      const items = {
-        'seconds': this.seconds,
-        'minutes': this.minutes,
-        'hours': this.hours,
-        'days': this.days
-      };
+    let outputText = "";
 
-      outputText = this.ngContentSchema;
-
-      for (const key of Object.keys(items)) {
-        outputText = outputText.replace('[' + key + ']', (items as any)[key].toString());
-      }
-    } else if (this.format === 'intelli') {
-      // Intelli presentation
-      outputText = '';
-      if (this.days > 0) {
-        outputText += this.days.toString() + 'day' + ((this.days > 1) ? 's' : '') + ' ';
-      }
-      if ((this.hours > 0) || (this.days > 0)) {
-        outputText += this.hours.toString() + 'h ';
-      }
-      if (((this.minutes > 0) || (this.hours > 0)) && (this.days === 0)) {
-        outputText += this.minutes.toString().padStart(2, '0') + 'min ';
-      }
-      if ((this.hours === 0) && (this.days === 0)) {
-        outputText += this.seconds.toString().padStart(2, '0') + 's';
-      }
-    } else if (this.format === 'hms') {
-      // Hms presentation
-      outputText = this.hours.toString().padStart(2, '0') + ':';
-      outputText += this.minutes.toString().padStart(2, '0') + ':';
-      outputText += this.seconds.toString().padStart(2, '0');
-    } else if (this.format === 'ms') {
-      // ms presentation
-      outputText = '';
-      if (this.hours > 0) {
-        outputText = this.hours.toString().padStart(2, '0') + ':';
-      }
-      outputText += this.minutes.toString().padStart(2, '0') + ':';
-      outputText += this.seconds.toString().padStart(2, '0');
-    } else {
-      // Default presentation
-      outputText = this.days.toString() + 'd ';
-      outputText += this.hours.toString() + 'h ';
-      outputText += this.minutes.toString() + 'm ';
-      outputText += this.seconds.toString() + 's';
-    }
+    outputText = this.hours.toString().padStart(2, '0') + ':';
+    outputText += this.minutes.toString().padStart(2, '0') + ':';
+    outputText += this.seconds.toString().padStart(2, '0');  
 
     this.renderer.setProperty(this.elt.nativeElement, 'innerHTML', outputText);
   }
@@ -205,27 +127,9 @@ export class TimerComponent implements AfterViewInit, OnDestroy {
    * @protected
    */
   protected computeTimeUnits() {
-    if (!this.maxTimeUnit || this.maxTimeUnit === 'day') {
-      this.seconds = Math.floor(this.tickCounter % 60);
-      this.minutes = Math.floor((this.tickCounter / 60) % 60);
-      this.hours = Math.floor((this.tickCounter / 3600) % 24);
-      this.days = Math.floor((this.tickCounter / 3600) / 24);
-    } else if (this.maxTimeUnit === 'second') {
-      this.seconds = this.tickCounter;
-      this.minutes = 0;
-      this.hours = 0;
-      this.days = 0;
-    } else if (this.maxTimeUnit === 'minute') {
-      this.seconds = Math.floor(this.tickCounter % 60);
-      this.minutes = Math.floor(this.tickCounter / 60);
-      this.hours = 0;
-      this.days = 0;
-    } else if (this.maxTimeUnit === 'hour') {
-      this.seconds = Math.floor(this.tickCounter % 60);
-      this.minutes = Math.floor((this.tickCounter / 60) % 60);
-      this.hours = Math.floor(this.tickCounter / 3600);
-      this.days = 0;
-    }
+    this.seconds = Math.floor(this.tickCounter % 60);
+    this.minutes = Math.floor((this.tickCounter / 60) % 60);
+    this.hours = Math.floor(this.tickCounter / 3600);
 
     this.renderText();
   }
@@ -238,50 +142,9 @@ export class TimerComponent implements AfterViewInit, OnDestroy {
     const that = this;
 
     that.timeoutId = setInterval(function () {
-      let counter;
-
-      if (that.countdown) {
-        // Compute finish counter for countdown
-        counter = that.tickCounter;
-
-        if (that.startTime > that.endTime) {
-          counter = that.tickCounter - that.endTime - 1;
-        }
-      } else {
-        // Compute finish counter for timer
-        counter = that.tickCounter - that.startTime;
-
-        if (that.endTime > that.startTime) {
-          counter = that.endTime - that.tickCounter - 1;
-        }
-      }
-
       that.computeTimeUnits();
 
-      const timer: TimeInterface = {
-        seconds: that.seconds,
-        minutes: that.minutes,
-        hours: that.hours,
-        days: that.days,
-        timer: that.timeoutId,
-        tick_count: that.tickCounter
-      };
-
-      that.onTick.emit(timer);
-
-      if (counter < 0) {
-        that.stop();
-
-        that.onComplete.emit(that);
-        return;
-      }
-
-      if (that.countdown) {
-        that.tickCounter--;
-      } else {
-        that.tickCounter++;
-      }
+      that.tickCounter++;
     }, 1000); // Each seconds
   }
-
 }

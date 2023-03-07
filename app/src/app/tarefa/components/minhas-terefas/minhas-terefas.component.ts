@@ -21,7 +21,7 @@ export class MinhasTerefasComponent extends BaseComponent implements OnInit {
 	public tarefasFixadas: Tarefa[] = [];
 	
 	public get possuiTarefas(): boolean {
-		return this.grupos.some(c => c.tarefas.length > 0);
+		return this.grupos.some(c => c.tarefas.length > 0) || this.tarefasFixadas.length > 0;
 	}
 
 	constructor(servicoConta: ContaService, private servicoTarefa: TarefaService) { 

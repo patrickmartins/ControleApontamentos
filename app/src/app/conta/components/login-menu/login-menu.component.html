@@ -1,5 +1,5 @@
 <div>
-	<div *ngIf="usuarioLogado">
+	<div *ngIf="usuarioLogado && !entrando">
 		<button mat-button [matMenuTriggerFor]="menuConta">
 			<span class="nome-usuario" fxHide.xs>{{ usuarioLogado.nomeCompleto }}</span>
 			<img *ngIf="fotoUsuarioLogado" class="foto-usuario" [src]="fotoUsuarioLogado">
