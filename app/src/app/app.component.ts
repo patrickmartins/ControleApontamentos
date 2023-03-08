@@ -12,20 +12,5 @@ export class AppComponent {
 
 	constructor(private temaService: TemaService) {
 		this.temaService.aplicarTemaAtual();
-		this.removerTokensAntigos();
-	}	
-
-	public removerTokensAntigos() {
-		let valor = localStorage.getItem(environment.chaveStorageToken);
-
-		if(!valor)
-			return;
-
-		let token = JSON.parse(valor);
-
-		if(typeof token.validade === 'number') {
-			localStorage.removeItem(environment.chaveStorageToken);
-			localStorage.removeItem(environment.chaveStorageUsuario);
-		}
 	}
 }
