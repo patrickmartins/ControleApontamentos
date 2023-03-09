@@ -7,6 +7,7 @@ import { ContadorSalvo } from 'src/app/core/models/contador-salvo';
 import { NovoApontamento } from '../../models/novo-apontamento';
 import { StatusContador } from '../../models/status-contador';
 import { ModalSalvarApontamentoComponent } from '../modal-salvar-apontamento/modal-salvar-apontamento.component';
+import { fromEvent, Observable, Subscription } from 'rxjs';
 import { TimerComponent } from 'src/libs/timer/timer.component';
 
 @Component({
@@ -32,8 +33,18 @@ export class ContadorTarefaComponent implements AfterViewInit {
 	public timer!: TimerComponent;
 
 	public status: StatusContador = StatusContador.naoiniciado;
+	public focusObservable?: Observable<Event>;
+	public focusSubscription?: Subscription;
 
-	constructor(private dialog: MatDialog) { }
+	private get _id(): string {
+		 return `contador-${this.colecao}-${this.idTarefa}`;
+	}
+
+	constructor(private dialog: MatDialog) 
+	{
+		this.focusObservable = fromEvent(window, "focus");  
+		this.focusSubscription = this.focusObservable.subscribe((evento: any) => this.recarregarContadorSalvo());
+	}
 
 	public ngAfterViewInit(): void {
 		this.carregarContadorSalvo();
@@ -89,10 +100,8 @@ export class ContadorTarefaComponent implements AfterViewInit {
 	}
 
 	public resetarContador(): void {
-		const chave = `contador-${this.colecao}-${this.idTarefa}`;
-
-		if (LocalStorageHelper.dadoExiste(chave)) {
-			LocalStorageHelper.removerDados(chave);			
+		if (LocalStorageHelper.dadoExiste(this._id)) {
+			LocalStorageHelper.removerDados(this._id);			
 		}
 
 		this.timer.startTime = 0;
@@ -103,7 +112,6 @@ export class ContadorTarefaComponent implements AfterViewInit {
 
 
 	private salvarContador(): void {
-		const chave = `contador-${this.colecao}-${this.idTarefa}`;
 		const tempoDecorrido = this.timer.get();
 
 		let contador = new ContadorSalvo();
@@ -112,15 +120,27 @@ export class ContadorTarefaComponent implements AfterViewInit {
 		contador.tempoDecorrido = tempoDecorrido.tick_count > 0 ? tempoDecorrido.tick_count - 1 : 0;
 		contador.dataStatus = Date.now();		
 
-		LocalStorageHelper.salvarDados(chave, contador);
+		LocalStorageHelper.salvarDados(this._id, contador);
+	}
+
+	private recarregarContadorSalvo(): void {
+		if(this.status != StatusContador.contando)
+			return;
+
+		if (LocalStorageHelper.dadoExiste(this._id)) {
+
+			const contador = LocalStorageHelper.obterDados<ContadorSalvo>(this._id, ContadorSalvo)!;
+
+			this.timer.setTickCounter(contador.tempoDecorrido + moment(Date.now()).diff(new Date(contador.dataStatus), 'seconds'));
+
+			console.log(contador.dataStatus);
+		}
 	}
 
 	private carregarContadorSalvo(): void {
-		const chave = `contador-${this.colecao}-${this.idTarefa}`;
+		if (LocalStorageHelper.dadoExiste(this._id)) {
 
-		if (LocalStorageHelper.dadoExiste(chave)) {
-
-			const contador = LocalStorageHelper.obterDados<ContadorSalvo>(chave, ContadorSalvo)!;
+			const contador = LocalStorageHelper.obterDados<ContadorSalvo>(this._id, ContadorSalvo)!;
 
 			if (contador.statusContador == StatusContador.contando) {
 				this.timer.startTime = contador.tempoDecorrido + moment(Date.now()).diff(new Date(contador.dataStatus), 'seconds');		
@@ -136,5 +156,4 @@ export class ContadorTarefaComponent implements AfterViewInit {
 			this.status = contador.statusContador;
 		}
 	}
-
 }

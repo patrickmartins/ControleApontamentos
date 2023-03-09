@@ -36,8 +36,7 @@
             ],
             "scripts": [
               "node_modules/chart.js/dist/chart.js"
-            ],
-            "webWorkerTsConfig": "tsconfig.worker.json"
+            ]
           },
           "configurations": {
             "production": {

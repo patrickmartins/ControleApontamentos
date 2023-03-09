@@ -1,5 +1,5 @@
 <div class="container" style="overflow: hidden;" [ngClass]="{'stop': status == 1, 'play': status == 2, 'pause': status == 3, 'habilitado': habilitado, 'desabilitado': !habilitado}">
-	<timer #timer class="contador" [ngStyle]="{'display': status != 0 ? 'flex' : 'none'}"></timer>	
+	<timer #timer format="hms" [autoStart]="false" class="contador" [ngStyle]="{'display': status != 0 ? 'flex' : 'none'}"></timer>
 	<div class="controles-contador">
 		<button mat-icon-button class="play" [title]="status != 3 ? 'Iniciar Contagem' : 'Continuar Contagem'" (click)="iniciarContagem()" [disabled]="!habilitado" *ngIf="status == 0 || status == 3">
 			<mat-icon class="nav-toolbar-icon-menu">play_arrow</mat-icon>
