@@ -59,17 +59,21 @@ export class QuadroTarefaComponent extends BaseComponent {
 		this.tarefaService
 			.salvarApontamento(novoApontamento).subscribe({
 				next: () => {
+					var usuario = this.usuarioLogado?.nomeUsuario.split('@')[0];
 
 					const apontamento = new ApontamentoTfs().criarNovo(
-						{
-							usuario: this.usuarioLogado?.nomeUsuario.split('@')[0],
-							comentario: novoApontamento.comentario,
-							tempo: novoApontamento.tempoTotal,
-							sincronizadoChannel: false,
-							data: new Date()
-						});
+					{
+						usuario: usuario,
+						comentario: novoApontamento.comentario,
+						tempo: novoApontamento.tempoTotal,
+						sincronizadoChannel: false,
+						data: novoApontamento.data
+					});
 
 					this.tarefa.adicionarApontamento(apontamento!);
+
+					this.tarefa.recalcularTempoTotalApontadoNaoSincronizadoChannel(usuario!);
+					this.tarefa.recalcularTempoTotalApontadoSincronizadoChannel(usuario!);
 
 					this.salvandoApontamento = false;
 

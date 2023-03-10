@@ -83,6 +83,7 @@ export class ContadorTarefaComponent implements AfterViewInit {
 			data: new NovoApontamento().criarNovo({
 				idTarefa: this.idTarefa,
 				colecao: this.colecao,
+				data: new Date(),
 				tempoTotal: tempoDecorrido.tick_count > 0 ? tempoDecorrido.tick_count - 1 : 0
 			})
 		});

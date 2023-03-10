@@ -41,18 +41,7 @@ export class ContaService extends BaseService {
     public login(): Observable<LoginSucesso> {
         this._onStatusLoginAlteradoSubscription.next(StatusLogin.Conectando);
 
-        var observable = this.post<LoginSucesso>(`${environment.urlApiBase}conta/login`, { }, undefined, LoginSucesso).pipe(map(this.onLoginSucesso, this));
-
-        observable.subscribe({
-            next: () => {
-                this._onStatusLoginAlteradoSubscription.next(StatusLogin.Conectado);
-            },
-            error: () => {
-                this._onStatusLoginAlteradoSubscription.next(StatusLogin.Desconectado);
-            }
-        });
-
-        return observable;
+        return this.post<LoginSucesso>(`${environment.urlApiBase}conta/login`, { }, undefined, LoginSucesso).pipe(map(this.onLoginSucesso, this));
     }
 
     public logout(): void {
@@ -90,7 +79,8 @@ export class ContaService extends BaseService {
 		LocalStorageHelper.salvarDados(environment.chaveStorageUsuario, sucess.usuario);
 
 		this._usuarioLogadoSubscription.next(sucess.usuario);
-		
+		this._onStatusLoginAlteradoSubscription.next(StatusLogin.Conectado);
+
         return sucess;
     }	
 }

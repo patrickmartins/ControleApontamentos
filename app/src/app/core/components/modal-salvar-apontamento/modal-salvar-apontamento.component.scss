@@ -20,7 +20,7 @@
 
 		& .tempo {
 			& ::ng-deep.mat-form-field-infix {
-				padding: 10px 0;
+				padding: 11px 0;
 				text-align: center;
 			}
 
@@ -42,6 +42,34 @@
 
 			.mat-icon {
 				font-size: 135%;
+			}
+		}
+
+		& .data {
+			margin-right: 1em;
+
+			& ::ng-deep.mat-form-field-label {
+				text-align: left;
+				transform: translateY(-1.67em) scale(0.84);
+			}
+
+			& ::ng-deep.mat-form-field-infix {
+				display: flex;
+				padding: 0;
+				text-align: center;
+			}
+
+			& ::ng-deep.mat-form-field-outline-start {
+				width: 6px;
+			}
+
+			& ::ng-deep.mat-form-field-outline-gap {				
+				border-top-color: rgba(0,0,0,0);
+				width: 143px !important;
+			}
+
+			& ::ng-deep.mat-datepicker-toggle {
+				z-index: 99;
 			}
 		}
 

@@ -12,10 +12,12 @@ import { NovoApontamento } from '../../models/novo-apontamento';
 export class ModalSalvarApontamentoComponent {
 
 	public form = new FormBase<NovoApontamento>(NovoApontamento);
-
+	public dataAtual: Date = new Date();
+	
 	constructor(public dialogRef: MatDialogRef<ModalSalvarApontamentoComponent>, @Inject(MAT_DIALOG_DATA) private data: NovoApontamento) {
 		this.form.formGroup.controls['idTarefa'].setValue(data.idTarefa);
 		this.form.formGroup.controls['colecao'].setValue(data.colecao);
+		this.form.formGroup.controls['data'].setValue(data.data);
 		this.form.formGroup.controls['tempoTotal'].setValue(data.formatarTempoTotal("HH:mm"));
 	}
 

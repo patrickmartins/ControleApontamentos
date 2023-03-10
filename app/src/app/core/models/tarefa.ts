@@ -66,20 +66,26 @@ export class Tarefa implements IModel<Tarefa> {
 	public obterLinkTfs(): string {
 		return `${environment.urlTfs}/${this.colecao}/${this.projeto}/_workitems?id=${this.id}&fullScreen=true`
 	}
-
-	public recalcularTempoTotalApontadoSincronizadoChannel(dataReferencia: Date, usuario: string): void {
-		this.tempoTotalApontadoSincronizadoChannel = this.obterTempoApontadoPorData(dataReferencia, usuario, true);
+	
+	public recalcularTempoTotalApontadoSincronizadoChannel(usuario: string): void;
+	public recalcularTempoTotalApontadoSincronizadoChannel(usuario: string, dataReferencia?: Date): void;
+	public recalcularTempoTotalApontadoSincronizadoChannel(usuario: string, dataReferencia?: Date): void {
+		this.tempoTotalApontadoSincronizadoChannel = this.obterTempoApontadoPorData(usuario, true, dataReferencia);
 	}
 
-	public recalcularTempoTotalApontadoNaoSincronizadoChannel(dataReferencia: Date, usuario: string): void {
-		this.tempoTotalApontadoNaoSincronizadoChannel = this.obterTempoApontadoPorData(dataReferencia, usuario, false);
+	public recalcularTempoTotalApontadoNaoSincronizadoChannel(usuario: string): void;
+	public recalcularTempoTotalApontadoNaoSincronizadoChannel(usuario: string, dataReferencia?: Date): void;
+	public recalcularTempoTotalApontadoNaoSincronizadoChannel(usuario: string, dataReferencia?: Date): void {
+		this.tempoTotalApontadoNaoSincronizadoChannel = this.obterTempoApontadoPorData(usuario, false, dataReferencia);
 	}
-
-	public obterTempoApontadoPorData(data: Date, usuario: string, sincronizado: boolean): number {
+	
+	public obterTempoApontadoPorData(usuario: string, sincronizado: boolean): number;
+	public obterTempoApontadoPorData(usuario: string, sincronizado: boolean, dataReferencia?: Date): number;
+	public obterTempoApontadoPorData(usuario: string, sincronizado?: boolean, dataReferencia?: Date): number {
 		var tempoTotal = 0;
 
 		this.apontamentos?.forEach(apontamento => {
-			tempoTotal += apontamento.usuario == usuario && apontamento.data.getTime() == data.getTime() && apontamento.sincronizadoChannel == sincronizado ? apontamento.tempo : 0;
+			tempoTotal += apontamento.usuario == usuario && (!dataReferencia || apontamento.data.getTime() == dataReferencia.getTime()) && apontamento.sincronizadoChannel == sincronizado ? apontamento.tempo : 0;
 		});
 
 		return tempoTotal;

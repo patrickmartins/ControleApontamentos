@@ -10,6 +10,13 @@
 		<form #formulario [formGroup]="form.formGroup" (submit)="salvarApontamento()" novalidate>
 			<input formControlName="colecao" name="colecao" id="colecao" type="hidden">
 			<div>
+				<mat-form-field appearance="outline" class="data">
+					<mat-label>Data do Apontamento:</mat-label>
+					<input matInput formControlName="data" name="data" id="data" [max]="dataAtual" [matDatepicker]="picker">
+					<mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+					<mat-datepicker #picker></mat-datepicker>
+					<mat-error *ngFor="let error of form.errors.data">{{ error.description }}</mat-error>
+				</mat-form-field>
 				<mat-form-field appearance="outline" class="tempo" [style.width.px]=170>
 					<mat-label>Tempo Total:</mat-label>
 					<input matInput formControlName="tempoTotal" name="tempoTotal" id="tempoTotal" min="00:01" type="time">		

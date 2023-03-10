@@ -10,6 +10,9 @@ namespace CA.Aplicacao.Models
         [Range(minimum: 1, maximum: int.MaxValue, ErrorMessage = "O número da tarefa é inválido!")]
         public int IdTarefa { get; set; }
 
+        [Required(ErrorMessage = "A data do apontamento não foi informado!")]
+        public DateTime Data { get; set; }
+
         [Range(minimum: 1, maximum: int.MaxValue, ErrorMessage = "O tempo total da tarefa é inválido!")]
         public int TempoTotal { get; set; }
 
@@ -26,7 +29,7 @@ namespace CA.Aplicacao.Models
             {
                 SincronizadoChannel = false,
                 Comentario = viewModel.Comentario,
-                DataApontamento = DateTime.Now.ConverterParaFusoBrasil().ToString("d"),
+                DataApontamento = viewModel.Data.ToString("d"),
                 DataCriacao = DateTime.UtcNow,
                 TempoApontamento = TimeSpan.FromMinutes(viewModel.TempoTotal).ToString("hh\\:mm"),
                 Usuario = viewModel.Usuario

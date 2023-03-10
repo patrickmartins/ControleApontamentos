@@ -38,17 +38,23 @@ export class LoginMenuComponent extends BaseComponent implements OnDestroy{
     }
 
 	public login(): void {
+		this.entrando = true;
+		
 		this.servicoMsal
 			.loginPopup({ ...this.msalGuardConfig.authRequest } as PopupRequest)
-			.subscribe((response: AuthenticationResult) => {
-				this.servicoMsal.instance.setActiveAccount(response.account);				
-				
-				this.servicoConta.login().subscribe({
-					next: () => {
-						this.router.navigate(["/tarefas"]);
-					}
-				});
-			});
+			.subscribe({
+                next: (response: AuthenticationResult) => {
+					this.servicoMsal.instance.setActiveAccount(response.account);				
+                    
+                    this.servicoConta.login().subscribe({
+                        next: () => {
+                            this.router.navigate(["/tarefas"]);
+                        },
+                        error: () => this.entrando = false
+                    });
+			    },
+                error: () => this.entrando = false
+            });
 	}
 
 	public logout(): void {

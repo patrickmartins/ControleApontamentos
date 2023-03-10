@@ -45,9 +45,9 @@ export class ApontamentosTfsDia implements IModel<ApontamentosTfsDia> {
 		this.tempoTotalApontadoSincronizadoChannel = 0;
 
 		this.tarefas?.forEach(tarefa => {
-			tarefa.recalcularTempoTotalApontadoSincronizadoChannel(this.dataReferencia, this.usuarioReferencia,);
+			tarefa.recalcularTempoTotalApontadoSincronizadoChannel(this.usuarioReferencia, this.dataReferencia);
 
-			this.tempoTotalApontadoSincronizadoChannel += tarefa.obterTempoApontadoPorData(this.dataReferencia, this.usuarioReferencia, true);
+			this.tempoTotalApontadoSincronizadoChannel += tarefa.obterTempoApontadoPorData(this.usuarioReferencia, true, this.dataReferencia);
 		});
 	}
 
@@ -55,9 +55,9 @@ export class ApontamentosTfsDia implements IModel<ApontamentosTfsDia> {
 		this.tempoTotalApontadoNaoSincronizadoChannel = 0;
 
 		this.tarefas?.forEach(tarefa => {
-			tarefa.recalcularTempoTotalApontadoNaoSincronizadoChannel(this.dataReferencia, this.usuarioReferencia,);
+			tarefa.recalcularTempoTotalApontadoNaoSincronizadoChannel(this.usuarioReferencia, this.dataReferencia);
 
-			this.tempoTotalApontadoNaoSincronizadoChannel += tarefa.obterTempoApontadoPorData(this.dataReferencia, this.usuarioReferencia, false);
+			this.tempoTotalApontadoNaoSincronizadoChannel += tarefa.obterTempoApontadoPorData(this.usuarioReferencia, false, this.dataReferencia);
 		});
 	}
 

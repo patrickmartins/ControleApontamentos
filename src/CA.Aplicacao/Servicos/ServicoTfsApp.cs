@@ -4,6 +4,7 @@ using CA.Aplicacao.Models;
 using CA.Core.Entidades.Tfs;
 using CA.Core.Interfaces.Tfs;
 using CA.Core.Valores;
+using CA.Util.Extensions;
 
 namespace CA.Aplicacao.Servicos
 {
@@ -20,6 +21,9 @@ namespace CA.Aplicacao.Servicos
         {
             if (apontamento is null)
                 return Task.FromResult(Resultado.DeErros(new Erro("O apontamento não foi informado.", nameof(apontamento))));
+
+            if (apontamento.Data.Date > DateTime.Now.ConverterParaFusoBrasil().Date)
+                return Task.FromResult(Resultado.DeErros(new Erro("A data informada deve ser menor ou igual a data atual.", nameof(apontamento.Data))));
 
             return _servico.AdicionarNovoApontamentoAsync(usuario, apontamento.Colecao, apontamento.IdTarefa, ApontamentoTfsNovoModel.ViewModelParaApontamento(apontamento));
         }
