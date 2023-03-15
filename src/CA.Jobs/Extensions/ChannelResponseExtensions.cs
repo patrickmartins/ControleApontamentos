@@ -80,7 +80,7 @@ namespace CA.Jobs.Channel.Extensions
                 Usuario = usuario,
                 Projeto = projeto,
                 Atividade = atividade,
-                Comentario = response.Comentario,                
+                Comentario = response.Comentario.ParaUTF8().RemoverCaracteresNaoReconhecidos(),                
                 TempoApontado = response.TempoApontado
             };
         }
