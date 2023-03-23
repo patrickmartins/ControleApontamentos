@@ -63,6 +63,11 @@ namespace CA.Core.Entidades.Channel
             Status = StatusApontamento.Excluido;
         }
 
+        public void Restaurar()
+        {
+            Status = StatusApontamento.Inserido;
+        }
+
         public override bool Equals(object? obj)
         {            
             if (obj is null || GetType() != obj.GetType()) 

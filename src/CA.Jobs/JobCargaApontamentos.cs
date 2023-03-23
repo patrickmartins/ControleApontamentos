@@ -51,10 +51,12 @@ namespace CA.Jobs.Channel
             var projetos = await _repositorioProjetos.ObterProjetosPorIdsAsync(apontamentosServico.Select(c => c.IdProjeto).Distinct().ToArray());
                         
             var apontamentosInseridos = ExtrairApontamentosInseridos(apontamentosServico, apontamentosBanco, projetos, usuarios);
+            var apontamentosRestaurados = ExtrairApontamentosRestaurados(apontamentosServico, apontamentosBanco, projetos, usuarios);
             var apontamentoAtualizados = ExtrairApontamentosAtualizados(apontamentosServico, apontamentosBanco, projetos, usuarios);
             var apontamentosExcluidos = ExtrairApontamentosExcluidos(apontamentosServico, apontamentosBanco);
 
             LogarInformacao($"{apontamentosInseridos.Count()} apontamentos serão inseridos.");
+            LogarInformacao($"{apontamentosRestaurados.Count()} apontamentos serão restaurados.");
             LogarInformacao($"{apontamentoAtualizados.Count()} apontamentos serão atualizados.");
             LogarInformacao($"{apontamentosExcluidos.Count()} apontamentos serão excluídos.");
 
@@ -64,6 +66,13 @@ namespace CA.Jobs.Channel
             }
 
             _repositorioApontamentos.AtualizarApontamentos(apontamentosExcluidos);
+
+            foreach (var apontamento in apontamentosRestaurados)
+            {
+                apontamento.Restaurar();
+            }
+
+            _repositorioApontamentos.AtualizarApontamentos(apontamentosRestaurados);
 
             foreach (var apontamento in apontamentosInseridos)
             {
@@ -109,6 +118,11 @@ namespace CA.Jobs.Channel
         private IEnumerable<ApontamentoChannel> ExtrairApontamentosInseridos(IEnumerable<ApontamentoResponse> apontamentosServico, IEnumerable<ApontamentoChannel> apontamentosBanco, IEnumerable<ProjetoChannel> projetos, IEnumerable<UsuarioChannel> usuarios)
         {
             return apontamentosServico.Where(c => !apontamentosBanco.Any(x => x.Id == c.Id)).ParaApontamentosChannel(projetos, usuarios);
+        }
+
+        private IEnumerable<ApontamentoChannel> ExtrairApontamentosRestaurados(IEnumerable<ApontamentoResponse> apontamentosServico, IEnumerable<ApontamentoChannel> apontamentosBanco, IEnumerable<ProjetoChannel> projetos, IEnumerable<UsuarioChannel> usuarios)
+        {
+            return apontamentosBanco.Where(c => apontamentosServico.Any(x => x.Id == c.Id) && c.Status == StatusApontamento.Excluido).ToList();
         }
 
         private IEnumerable<ApontamentoChannel> ExtrairApontamentosAtualizados(IEnumerable<ApontamentoResponse> apontamentosServico, IEnumerable<ApontamentoChannel> apontamentosBanco, IEnumerable<ProjetoChannel> projetos, IEnumerable<UsuarioChannel> usuarios)
