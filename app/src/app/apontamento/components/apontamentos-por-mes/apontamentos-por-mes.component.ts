@@ -227,24 +227,28 @@ export class ApontamentosPorMesComponent extends BaseComponent implements OnInit
 	}
 
 	private consolidarTarefasEAtividades(apontamentosTfs: ApontamentosTfsMes | undefined, apontamentosChannel: ApontamentosChannelMes | undefined): void {
-		if(!apontamentosTfs || !apontamentosChannel)
-			return;
+		if (apontamentosTfs && apontamentosChannel) {
+            var apontamentosChannelTfs = apontamentosChannel.obterApontamentosTfs();
+            
+            apontamentosChannelTfs.forEach(apontamento => {
+                var tarefas = apontamentosTfs.obterTarefasPorId(apontamento.idTarefaTfs);
 
-		var apontamentosChannelTfs = apontamentosChannel.obterApontamentosTfs();
-		
-		apontamentosChannelTfs.forEach(apontamento => {
-			var tarefas = apontamentosTfs.obterTarefasPorId(apontamento.idTarefaTfs);
+                tarefas.forEach(tarefa => {
+                    tarefa.removerApontamentoPorHash(apontamento.hash);
+                });
+            })
 
-			tarefas.forEach(tarefa => {
-				tarefa.removerApontamentoPorHash(apontamento.hash);
-			});
-		})
+            apontamentosChannel.removerApontamentosExcluidos();
+            apontamentosChannel.removerTarefasSemApontamentos();
+            apontamentosChannel.recalcularTempoTotalApontado();
 
-		apontamentosChannel.removerApontamentosExcluidos();
-		apontamentosChannel.removerTarefasSemApontamentos();
-		apontamentosChannel.recalcularTempoTotalApontado();
-
-		apontamentosTfs.removerTarefasSemApontamentos();
-		apontamentosTfs.recalcularTempoTotalApontado();
+            apontamentosTfs.removerTarefasSemApontamentos();
+            apontamentosTfs.recalcularTempoTotalApontado();
+        }
+        else if (!this.usuarioLogado?.possuiContaTfs && apontamentosChannel) {
+            apontamentosChannel.removerApontamentosExcluidos();
+            apontamentosChannel.removerTarefasSemApontamentos();
+            apontamentosChannel.recalcularTempoTotalApontado();
+        }
 	}
 }
