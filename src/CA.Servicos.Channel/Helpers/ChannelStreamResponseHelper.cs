@@ -24,8 +24,8 @@ namespace CA.Servicos.Channel.Helpers
 
                         var atividade = linha.Cell(10).Value.GetText();
                         var data = linha.Cell(2).Value.GetDateTime();
-                        var comentario = linha.Cell(12).Value.GetText();
-                        var tempoApontado = !linha.Cell(15).Value.IsBlank ? linha.Cell(15).Value.GetDateTime().TimeOfDay : TimeSpan.Zero;
+                        var comentario = linha.Cell(14).Value.GetText();
+                        var tempoApontado = !linha.Cell(17).Value.IsBlank ? linha.Cell(17).Value.GetDateTime().TimeOfDay : TimeSpan.Zero;
 
                         var codigoAtividade = atividade.Split(". ").Length > 1 ? atividade.Split(". ")[0] : string.Empty;
                         var nomeAtividade = atividade.Split(". ").Length > 1 ? string.Join(". ", atividade.Split(". ")[1..]) : string.Empty;
