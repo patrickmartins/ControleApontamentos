@@ -60,53 +60,81 @@ namespace CA.Jobs.Channel
             LogarInformacao($"{apontamentoAtualizados.Count()} apontamentos serão atualizados.");
             LogarInformacao($"{apontamentosExcluidos.Count()} apontamentos serão excluídos.");
 
-            foreach (var apontamento in apontamentosExcluidos)
+            if (apontamentosExcluidos.Any())
             {
-                apontamento.Excluir();
+                LogarInformacao($"===> Excluindo apontamentos <===");
+
+                foreach (var apontamento in apontamentosExcluidos)
+                {
+                    apontamento.Excluir();
+
+                    LogarInformacao($"Apontamento {apontamento.Id} excluído.");
+                }
+
+                _repositorioApontamentos.AtualizarApontamentos(apontamentosExcluidos);
             }
 
-            _repositorioApontamentos.AtualizarApontamentos(apontamentosExcluidos);
-
-            foreach (var apontamento in apontamentosRestaurados)
+            if (apontamentosRestaurados.Any())
             {
-                apontamento.Restaurar();
+                LogarInformacao($"===> Restaurando apontamentos <===");
+
+                foreach (var apontamento in apontamentosRestaurados)
+                {
+                    apontamento.Restaurar();
+
+                    LogarInformacao($"Apontamento {apontamento.Id} restaurado.");
+                }
+
+                _repositorioApontamentos.AtualizarApontamentos(apontamentosRestaurados);
             }
 
-            _repositorioApontamentos.AtualizarApontamentos(apontamentosRestaurados);
-
-            foreach (var apontamento in apontamentosInseridos)
+            if (apontamentosInseridos.Any())
             {
-                var resultado = apontamento.Validar();
+                LogarInformacao($"===> Inserindo apontamentos <===");
 
-                if (resultado.Sucesso)
+                foreach (var apontamento in apontamentosInseridos)
                 {
-                    await _repositorioApontamentos.InserirApontamentoAsync(apontamento);
-                }
-                else
-                {
-                    LogarInformacao($"Não foi possível inserir o apontamento {apontamento.Id}. Devido aos erros abaixo:");
+                    var resultado = apontamento.Validar();
 
-                    LogarErros(resultado.Erros.ToArray());
+                    if (resultado.Sucesso)
+                    {
+                        await _repositorioApontamentos.InserirApontamentoAsync(apontamento);
+
+                        LogarInformacao($"Apontamento {apontamento.Id} inserido.");
+                    }
+                    else
+                    {
+                        LogarInformacao($"Não foi possível inserir o apontamento {apontamento.Id}. Devido aos erros abaixo:");
+
+                        LogarErros(resultado.Erros.ToArray());
+                    }
                 }
             }
-                        
-            foreach (var apontamentoServico in apontamentoAtualizados)
+
+            if (apontamentoAtualizados.Any())
             {
-                var apontamentoBanco = apontamentosBanco.First(c => c.Id == apontamentoServico.Id);
+                LogarInformacao($"===> Atualizando apontamentos <===");
 
-                var resultado = apontamentoServico.Validar();
-
-                if (resultado.Sucesso)
+                foreach (var apontamentoServico in apontamentoAtualizados)
                 {
-                    apontamentoBanco.Atualizar(apontamentoServico);
+                    var apontamentoBanco = apontamentosBanco.First(c => c.Id == apontamentoServico.Id);
 
-                    _repositorioApontamentos.AtualizarApontamento(apontamentoBanco);
-                }
-                else
-                {
-                    LogarErros($"Não foi possível atualizar o apontamento {apontamentoServico.Id}. Devido aos erros abaixo:");
+                    var resultado = apontamentoServico.Validar();
 
-                    LogarErros(resultado.Erros.ToArray());
+                    if (resultado.Sucesso)
+                    {
+                        apontamentoBanco.Atualizar(apontamentoServico);
+
+                        _repositorioApontamentos.AtualizarApontamento(apontamentoBanco);
+
+                        LogarInformacao($"Apontamento {apontamentoBanco.Id} atualizado.");
+                    }
+                    else
+                    {
+                        LogarErros($"Não foi possível atualizar o apontamento {apontamentoServico.Id}. Devido aos erros abaixo:");
+
+                        LogarErros(resultado.Erros.ToArray());
+                    }
                 }
             }
 
