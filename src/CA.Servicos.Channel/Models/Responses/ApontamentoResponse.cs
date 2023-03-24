@@ -16,7 +16,7 @@ namespace CA.Servicos.Channel.Models.Responses
 
         public bool EhApontamentoTfs()
         {
-            return Regex.IsMatch(Comentario, "^\\[\\d*\\] - \\[.*\\] - ");
+            return Regex.Matches(Comentario, "\\[\\d*\\] - \\[.*?\\] - ").Count == 1 && Regex.IsMatch(Comentario, "^\\[\\d*\\] - \\[.*\\] - ");
         }
 
         public TipoApontamento ObterTipoDoApontamento()
@@ -46,7 +46,7 @@ namespace CA.Servicos.Channel.Models.Responses
             if (!EhApontamentoTfs())
                 return string.Empty;
 
-            return Regex.Replace(Comentario, "^\\[\\d*\\] - \\[.*\\] - ", string.Empty);
+            return Regex.Replace(Comentario, "^\\[\\d*\\] - \\[.*?\\] - ", string.Empty);
         }
     }
 }

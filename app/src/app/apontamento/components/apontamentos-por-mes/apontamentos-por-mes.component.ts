@@ -230,6 +230,8 @@ export class ApontamentosPorMesComponent extends BaseComponent implements OnInit
 		if (apontamentosTfs && apontamentosChannel) {
             var apontamentosChannelTfs = apontamentosChannel.obterApontamentosTfs();
             
+            apontamentosChannelTfs = apontamentosChannelTfs.filter((apontamento, i) => apontamentosChannelTfs.findIndex(c => c.hash === apontamento.hash) === i);
+
             apontamentosChannelTfs.forEach(apontamento => {
                 var tarefas = apontamentosTfs.obterTarefasPorId(apontamento.idTarefaTfs);
 

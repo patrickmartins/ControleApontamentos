@@ -161,24 +161,30 @@ export class ApontamentosPorDiaComponent extends BaseComponent implements OnInit
 	}
 
 	private consolidarTarefasEAtividades(apontamentosTfs: ApontamentosTfsDia | undefined, apontamentosChannel: ApontamentosChannelDia | undefined): void {
-		if(!apontamentosTfs || !apontamentosChannel)
-			return;
+		if (apontamentosTfs && apontamentosChannel) {
+            var apontamentosChannelTfs = apontamentosChannel.obterApontamentosTfs();
+            
+            apontamentosChannelTfs = apontamentosChannelTfs.filter((apontamento, i) => apontamentosChannelTfs.findIndex(c => c.hash === apontamento.hash) === i);
 
-		var apontamentosChannelTfs = apontamentosChannel.obterApontamentosTfs();
-		
-		apontamentosChannelTfs.forEach(apontamento => {
-			var tarefas = apontamentosTfs.obterTarefasPorId(apontamento.idTarefaTfs);
+            apontamentosChannelTfs.forEach(apontamento => {
+                var tarefas = apontamentosTfs.obterTarefasPorId(apontamento.idTarefaTfs);
 
-			tarefas.forEach(tarefa => {
-				tarefa.removerApontamentoPorHash(apontamento.hash);
-			});
-		})
-		
-		apontamentosChannel.removerApontamentosExcluidos();
-		apontamentosChannel.removerTarefasSemApontamentos();
-		apontamentosChannel.recalcularTempoTotalApontado();
+                tarefas.forEach(tarefa => {
+                    tarefa.removerApontamentoPorHash(apontamento.hash);
+                });
+            })
 
-		apontamentosTfs.removerTarefasSemApontamentos();
-		apontamentosTfs.recalcularTempoTotalApontado();	
+            apontamentosChannel.removerApontamentosExcluidos();
+            apontamentosChannel.removerTarefasSemApontamentos();
+            apontamentosChannel.recalcularTempoTotalApontado();
+
+            apontamentosTfs.removerTarefasSemApontamentos();
+            apontamentosTfs.recalcularTempoTotalApontado();
+        }
+        else if (!this.usuarioLogado?.possuiContaTfs && apontamentosChannel) {
+            apontamentosChannel.removerApontamentosExcluidos();
+            apontamentosChannel.removerTarefasSemApontamentos();
+            apontamentosChannel.recalcularTempoTotalApontado();
+        }
 	}
 }
