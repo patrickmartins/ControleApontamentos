@@ -49,13 +49,13 @@ namespace CA.Servicos.Channel.Cache
             });
         }
 
-        public Task<IEnumerable<UsuarioResponse>> ObterUsuariosAtivosAsync()
+        public Task<IEnumerable<UsuarioResponse>> ObterTodosUsuariosAsync()
         {
             return _cache.GetOrCreateAsync("usuarios_channel", (e) =>
             {
                 e.AbsoluteExpiration = DateTime.Now.AddMinutes(_configuracoes.TempoCacheUsuarios);
 
-                return _servico.ObterUsuariosAtivosAsync();
+                return _servico.ObterTodosUsuariosAsync();
             });
         }
 

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DateAdapter } from '@angular/material/core';
-import { tap } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
 import * as moment from 'moment';
 
 import { ApontamentoService } from '../../services/apontamento.service';
@@ -12,7 +12,6 @@ import { ContaService } from 'src/app/core/services/conta.service';
 import { BaseComponent } from 'src/app/common/components/base.component';
 import { ApontamentosChannelDia } from '../../models/apontamentos-channel-dia';
 import { JobInfo } from 'src/app/core/models/job-info';
-import { environment } from 'src/environments/environment';
 import { JobService } from 'src/app/core/services/job.service';
 
 @Component({
@@ -22,9 +21,7 @@ import { JobService } from 'src/app/core/services/job.service';
 })
 export class ApontamentosPorDiaComponent extends BaseComponent implements OnInit {
 
-	public get carregando(): boolean {
-		return this.carregandoApontamentosTfs || this.carregandoApontamentosChannel || this.carregandoBatidasPonto;
-	}
+	public carregando: boolean = true;
 
 	public get tempoTotalTrabalhadoNoDia() : number {
 		return this.batidas ? this.batidas.tempoTotalTrabalhadoNoDia : 0
@@ -49,10 +46,6 @@ export class ApontamentosPorDiaComponent extends BaseComponent implements OnInit
 	public get tempoTotalApontadoNaoSincronizadoNoDia() : number {
 		return this.apontamentosTfsDia ? this.apontamentosTfsDia.tempoTotalApontadoNaoSincronizadoChannel : 0;
 	}
-	
-	public carregandoApontamentosTfs: boolean = true;
-	public carregandoApontamentosChannel: boolean = true;
-	public carregandoBatidasPonto: boolean = true;
 
 	public dataAtual: Date = new Date();
 	public dataSelecionada: Date = new Date();
@@ -103,53 +96,25 @@ export class ApontamentosPorDiaComponent extends BaseComponent implements OnInit
 		this.apontamentosChannelDia = undefined;
 		this.apontamentosTfsDia = undefined;
 
-		this.carregandoApontamentosTfs = true;
-		this.carregandoApontamentosChannel = true;
-		this.carregandoBatidasPonto = true;
+		this.carregando = true;
 
-		if(this.usuarioLogado?.possuiContaTfs) {
-			this.servicoApontamento
-				.obterApontamentosTfsPorDia(data)
-				.pipe(tap((apontamentosTfsDia: ApontamentosTfsDia) => this.consolidarTarefasEAtividades(apontamentosTfsDia, this.apontamentosChannelDia)))
-				.subscribe({
-					next: (apontamentos) => {
-						this.apontamentosTfsDia = apontamentos;
-					},
-					complete: () => this.carregandoApontamentosTfs = false
-				});
-		}
-		else {
-			this.carregandoApontamentosTfs = false;
-		}
+        forkJoin({
+            apontamentosTfsDia: !this.usuarioLogado?.possuiContaTfs ? of(undefined) : this.servicoApontamento.obterApontamentosTfsPorDia(data),
+            apontamentosChannelDia: !this.usuarioLogado?.possuiContaChannel ? of(undefined) : this.servicoApontamento.obterApontamentosChannelPorDia(data),
+            batidas: !this.usuarioLogado?.possuiContaPonto ? of(undefined) : this.servicoPonto.obterBatidasPorDia(data),
+            infoJobCarga: this.servicoJob.obterJobCarga()
+        })		
+        .subscribe({ 
+            next: (resultado: any) => {
+                this.apontamentosTfsDia = resultado.apontamentosTfsMes;
+                this.apontamentosChannelDia = resultado.apontamentosChannelMes;
+                this.batidas = resultado.batidas;
+                this.infoJobCarga = resultado.jobInfo;
 
-		if(this.usuarioLogado?.possuiContaChannel) {
-			this.servicoApontamento
-				.obterApontamentosChannelPorDia(data)
-				.pipe(tap((apontamentosChannelDia: ApontamentosChannelDia) => this.consolidarTarefasEAtividades(this.apontamentosTfsDia, apontamentosChannelDia)))
-				.subscribe({
-					next: (apontamentos) => {
-						this.apontamentosChannelDia = apontamentos;
-					},
-					complete: () => this.carregandoApontamentosChannel = false
-				});
-		}
-		else {
-			this.carregandoApontamentosChannel = false;
-		}
-
-		if(this.usuarioLogado?.possuiContaPonto) {
-			this.servicoPonto
-				.obterBatidasPorDia(data)
-				.subscribe({
-					next: (batidas) => {
-						this.batidas = batidas;
-					},
-					complete: () => this.carregandoBatidasPonto = false
-				});
-		}
-		else {
-			this.carregandoBatidasPonto = false;
-		}		
+                this.servicoApontamento.consolidarTarefasEAtividadesDia(this.apontamentosTfsDia, this.apontamentosChannelDia);
+            },
+            complete: () => this.carregando = false
+        });		
 	}
 
 	public eHoje(data: Date): boolean {
@@ -158,27 +123,5 @@ export class ApontamentosPorDiaComponent extends BaseComponent implements OnInit
 		return data.getDate() == hoje.getDate() &&
 			data.getMonth() == hoje.getMonth() &&
 			data.getFullYear() == hoje.getFullYear()
-	}
-
-	private consolidarTarefasEAtividades(apontamentosTfs: ApontamentosTfsDia | undefined, apontamentosChannel: ApontamentosChannelDia | undefined): void {
-		if(!apontamentosTfs || !apontamentosChannel)
-			return;
-
-		var apontamentosChannelTfs = apontamentosChannel.obterApontamentosTfs();
-		
-		apontamentosChannelTfs.forEach(apontamento => {
-			var tarefas = apontamentosTfs.obterTarefasPorId(apontamento.idTarefaTfs);
-
-			tarefas.forEach(tarefa => {
-				tarefa.removerApontamentoPorHash(apontamento.hash);
-			});
-		})
-		
-		apontamentosChannel.removerApontamentosExcluidos();
-		apontamentosChannel.removerTarefasSemApontamentos();
-		apontamentosChannel.recalcularTempoTotalApontado();
-
-		apontamentosTfs.removerTarefasSemApontamentos();
-		apontamentosTfs.recalcularTempoTotalApontado();	
 	}
 }

@@ -17,5 +17,21 @@
         public DateTime DataReferencia { get; set; }
         public TimeSpan TempoTotalTrabalhadoNoDia { get; set; }
 
+        public void OcultarBatidas()
+        {
+            Entrada1 = TimeSpan.Zero;            
+            Saida1 = TimeSpan.Zero;
+            Entrada2 = TimeSpan.Zero;
+            Saida2 = TimeSpan.Zero;
+            Entrada3 = TimeSpan.Zero;
+            Saida3 = TimeSpan.Zero;
+            Entrada4 = TimeSpan.Zero;
+            Saida4 = TimeSpan.Zero;
+            Entrada5 = TimeSpan.Zero;
+            Saida5 = TimeSpan.Zero;
+            Entrada6 = TimeSpan.Zero;
+            Saida6 = TimeSpan.Zero;
+        }
+
     }
 }

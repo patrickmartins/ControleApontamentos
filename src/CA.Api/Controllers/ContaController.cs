@@ -1,5 +1,5 @@
-﻿using CA.Seguranca.Extensions;
-using CA.Seguranca.Interfaces;
+﻿using CA.Identity.Extensions;
+using CA.Identity.Interfaces;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

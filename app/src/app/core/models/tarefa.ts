@@ -57,7 +57,7 @@ export class Tarefa implements IModel<Tarefa> {
 	}
 
 	public removerApontamentoPorHash(hash: string): void {
-		var index = this.apontamentos.findIndex(c => c.hash == hash);
+		let index = this.apontamentos.findIndex(c => c.hash == hash);
 
 		if(index >= 0)			
 			this.apontamentos.splice(index, 1);
@@ -66,6 +66,10 @@ export class Tarefa implements IModel<Tarefa> {
 	public obterLinkTfs(): string {
 		return `${environment.urlTfs}/${this.colecao}/${this.projeto}/_workitems?id=${this.id}&fullScreen=true`
 	}
+
+    public obterApontamentosPorUsuario(usuario: string): ApontamentoTfs[] {
+        return this.apontamentos.filter(c => c.usuario == usuario);
+    }
 	
 	public recalcularTempoTotalApontadoSincronizadoChannel(usuario: string): void;
 	public recalcularTempoTotalApontadoSincronizadoChannel(usuario: string, dataReferencia?: Date): void;
@@ -82,7 +86,7 @@ export class Tarefa implements IModel<Tarefa> {
 	public obterTempoApontadoPorData(usuario: string, sincronizado: boolean): number;
 	public obterTempoApontadoPorData(usuario: string, sincronizado: boolean, dataReferencia?: Date): number;
 	public obterTempoApontadoPorData(usuario: string, sincronizado?: boolean, dataReferencia?: Date): number {
-		var tempoTotal = 0;
+		let tempoTotal = 0;
 
 		this.apontamentos?.forEach(apontamento => {
 			tempoTotal += apontamento.usuario == usuario && (!dataReferencia || apontamento.data.getTime() == dataReferencia.getTime()) && apontamento.sincronizadoChannel == sincronizado ? apontamento.tempo : 0;

@@ -94,16 +94,14 @@
 						line-height: 24px !important;
 					}
 				}
-			}
-
-			
+			}			
 		}
 
 		& .informacoes {
-			& > ul {
-				padding: 1.3em 1.4em 1em 1.3em;
-				margin: 0;	
-			}
+            & > resumo-apontamentos > ul {
+                padding: 1.3em 1.4em 1em 1.3em;
+                margin: 0;	
+            }
 		}
 	}
 }

@@ -7,7 +7,7 @@ namespace CA.Servicos.Channel.Interfaces
         Task<ProjetoResponse?> ObterProjetoPorIdAsync(int idProjeto);
         Task<IEnumerable<ProjetoResponse>> ObterProjetosAsync();        
         Task<IEnumerable<AtividadeResponse>> ObterAtividadesPorProjetoAsync(int idProjeto);
-        Task<IEnumerable<UsuarioResponse>> ObterUsuariosAtivosAsync();
+        Task<IEnumerable<UsuarioResponse>> ObterTodosUsuariosAsync();
         Task<IEnumerable<ApontamentoResponse>> ObterApontamentosPorPeriodoAsync(DateOnly inicio, DateOnly fim);
     }
 }

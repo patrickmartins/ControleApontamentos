@@ -1,5 +1,6 @@
 ﻿using CA.Core.Valores;
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace CA.Core.Entidades.Channel
 {

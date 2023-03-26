@@ -2,79 +2,51 @@
 using CA.Core.Interfaces.Channel;
 using CA.Repositorios.Channel.Contexto;
 using CA.Util.Extensions;
-using Microsoft.EntityFrameworkCore;
 
 namespace CA.Repositorios.Channel
 {
-    public class RepositorioUsuariosChannel : IRepositorioUsuariosChannel
+    public class RepositorioUsuariosChannel : RepositorioBase, IRepositorioUsuariosChannel
     {
-        private readonly ContextoDadosChannel _contexto;
-        private readonly DbSet<UsuarioChannel> _set;
-
-        private bool _disposed;
-
-        public RepositorioUsuariosChannel(ContextoDadosChannel contexto)
-        {
-            _contexto = contexto;
-
-            _set = contexto.Set<UsuarioChannel>();
-        }
+        public RepositorioUsuariosChannel(ContextoDadosCA contexto) : base(contexto) { }
 
         public void AtualizarUsuario(UsuarioChannel apontamento)
         {
-            _set.Add(apontamento);
+            Atualizar(apontamento);
         }
 
         public void AtualizarUsuarios(IEnumerable<UsuarioChannel> usuarios)
         {
-            _set.UpdateRange(usuarios);
+            Atualizar(usuarios);
         }
 
-        public async Task InserirUsuarioAsync(UsuarioChannel usuario)
+        public Task InserirUsuarioAsync(UsuarioChannel usuario)
         {
-            await _set.AddAsync(usuario);
+            return InserirAsync(usuario);
         }
 
-        public async Task InserirUsuariosAsync(IEnumerable<UsuarioChannel> usuarios)
+        public Task InserirUsuariosAsync(IEnumerable<UsuarioChannel> usuarios)
         {
-            await _set.AddRangeAsync(usuarios);
+            return InserirAsync(usuarios);
         }
 
         public Task<IEnumerable<UsuarioChannel>> ObterTodosUsuariosAsync()
         {
-            return _set.ToIListAsync();
+            return Set<UsuarioChannel>().ToIListAsync();
+        }
+
+        public Task<IEnumerable<UsuarioChannel>> ObterUsuariosAtivosAsync()
+        {
+            return Set<UsuarioChannel>().Where(C => C.Ativo).ToIListAsync();
         }
 
         public UsuarioChannel? ObterUsuarioPorEmail(string email)
         {
-            return _set.FirstOrDefault(c => c.Email.ToLower().Equals(email.ToLower()));
+            return Set<UsuarioChannel>().FirstOrDefault(c => c.Email.ToLower().Equals(email.ToLower()));
         }
 
         public UsuarioChannel? ObterUsuarioPorNomeCompleto(string nomeCompleto)
         {
-            return _set.FirstOrDefault(c => c.NomeCompleto.ToLower().Equals(nomeCompleto.ToLower()));
-        }
-
-        public Task<int> SalvarAlteracoesAsync()
-        {
-            return _contexto.SaveChangesAsync();
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (_disposed)
-                return;
-
-            if (disposing)
-                _contexto.Dispose();
-
-            _disposed = true;
+            return Set<UsuarioChannel>().FirstOrDefault(c => c.NomeCompleto.ToLower().Equals(nomeCompleto.ToLower()));
         }
     }
 }

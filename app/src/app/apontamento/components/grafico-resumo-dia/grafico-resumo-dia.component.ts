@@ -21,16 +21,14 @@ export class GraficoResumoDiaComponent implements OnChanges {
 			x: {
 				display: false,
 				grid: {
-					display: false,
-					drawBorder: false
+					display: false                    
 				},
 				stacked: true
 			},
 			y: {
 				display: false,
 				grid: {
-					display: false,
-					drawBorder: false
+					display: false
 				},
 				stacked: true
 			}
@@ -145,23 +143,17 @@ export class GraficoResumoDiaComponent implements OnChanges {
 	}
 
 	public atualizarGrafico(): void {
-		if(this.batidas) {
-			this.dadosGrafico.datasets[0].data = [this.batidas.tempoTotalTrabalhadoNoDia];
-			this.dadosGrafico.datasets[0].hidden = this.batidas.tempoTotalTrabalhadoNoDia <= 0;
-		}
+		this.dadosGrafico.datasets[0].data = this.batidas ? [this.batidas.tempoTotalTrabalhadoNoDia] : [];
+		this.dadosGrafico.datasets[0].hidden = !this.batidas || this.batidas.tempoTotalTrabalhadoNoDia <= 0;		
 
-		if(this.apontamentosChannel) {
-			this.dadosGrafico.datasets[1].data = [0, this.apontamentosChannel.tempoTotalApontadoNoDia];
-			this.dadosGrafico.datasets[1].hidden = this.apontamentosChannel.tempoTotalApontadoNoDia <= 0;
-		}
+        this.dadosGrafico.datasets[1].data = this.apontamentosChannel ? [0, this.apontamentosChannel.tempoTotalApontadoNoDia] : [];
+        this.dadosGrafico.datasets[1].hidden = !this.apontamentosChannel || this.apontamentosChannel.tempoTotalApontadoNoDia <= 0;
 
-		if(this.apontamentosTfs) {
-			this.dadosGrafico.datasets[2].data = [0, this.apontamentosTfs.tempoTotalApontadoSincronizadoChannel];
-			this.dadosGrafico.datasets[2].hidden = this.apontamentosTfs.tempoTotalApontadoSincronizadoChannel <= 0;
+        this.dadosGrafico.datasets[2].data = this.apontamentosTfs ? [0, this.apontamentosTfs.tempoTotalApontadoSincronizadoChannel] : [];
+        this.dadosGrafico.datasets[2].hidden = !this.apontamentosTfs || this.apontamentosTfs.tempoTotalApontadoSincronizadoChannel <= 0;
 
-			this.dadosGrafico.datasets[3].data = [0, this.apontamentosTfs.tempoTotalApontadoNaoSincronizadoChannel];
-			this.dadosGrafico.datasets[3].hidden = this.apontamentosTfs.tempoTotalApontadoNaoSincronizadoChannel <= 0;
-		}
+        this.dadosGrafico.datasets[3].data = this.apontamentosTfs ? [0, this.apontamentosTfs.tempoTotalApontadoNaoSincronizadoChannel]: [];
+        this.dadosGrafico.datasets[3].hidden = !this.apontamentosTfs || this.apontamentosTfs.tempoTotalApontadoNaoSincronizadoChannel <= 0;		
 
 		this.grafico?.update();
 	}

@@ -4,6 +4,7 @@
     {
         public int MesReferencia { get; set; }
         public int AnoReferencia { get; set; }
+        public int DiasApontados { get; set; }
         public TimeSpan TempoTotalApontadoNoMes { get; set; }
         public IEnumerable<ApontamentosChannelDiaModel> ApontamentosDiarios { get; set; }
 

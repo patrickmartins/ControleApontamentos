@@ -6,6 +6,7 @@ export class ApontamentosChannelMes implements IModel<ApontamentosChannelMes> {
 
 	public mesReferencia: number = 0;
 	public anoReferencia: number = 0;
+    public diasApontados: number = 0;
 	public tempoTotalApontadoNoMes: number = 0;
 	public apontamentosDiarios: ApontamentosChannelDia[] = [];
 
@@ -18,6 +19,7 @@ export class ApontamentosChannelMes implements IModel<ApontamentosChannelMes> {
 		if (params) {
 			apontamentos.mesReferencia = params.mesReferencia;
 			apontamentos.anoReferencia = params.anoReferencia;
+            apontamentos.diasApontados = params.diasApontados;
 			apontamentos.tempoTotalApontadoNoMes = params.tempoTotalApontadoNoMes;
 
 			apontamentos.apontamentosDiarios = Array.isArray(params.apontamentosDiarios) ? Array.from(params.apontamentosDiarios).map(item => new ApontamentosChannelDia().criarNovo(item)!) : [];
@@ -41,7 +43,7 @@ export class ApontamentosChannelMes implements IModel<ApontamentosChannelMes> {
 	}
 
 	public obterApontamentosTfs(): ApontamentoChannel[] {		
-		var apontamentos: ApontamentoChannel[] = [];
+		let apontamentos: ApontamentoChannel[] = [];
 
 		this.apontamentosDiarios.forEach(apontamentosDia => {			
 			apontamentosDia.obterApontamentosTfs().forEach(apontamento => {

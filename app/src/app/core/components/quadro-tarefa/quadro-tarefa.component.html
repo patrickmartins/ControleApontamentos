@@ -28,7 +28,7 @@
 					<mat-icon class="nav-toolbar-icon-menu">{{ tarefa.fixada ? 'bookmark' : 'bookmark_outlined' }}</mat-icon>
 				</button>
 			</div>
-			<div *ngIf="tarefa.apontamentoHabilitado && habilitarApontamento" class="contador-container">
+			<div *ngIf="tarefa.apontamentoHabilitado && permiteApontar" class="contador-container">
 				<contador-tarefa #contador class="contador" [habilitado]="!salvandoApontamento" [idTarefa]="tarefa.id" [colecao]="tarefa.colecao" (onApontamentoSalvo)="onApontamentoSalvo($event)"></contador-tarefa>
 			</div>
 		</div>	

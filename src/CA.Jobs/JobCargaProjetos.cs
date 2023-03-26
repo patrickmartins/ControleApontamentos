@@ -1,14 +1,14 @@
 ﻿using CA.Core.Entidades.Channel;
 using CA.Core.Interfaces.Channel;
-using CA.Jobs.Channel.Extensions;
-using CA.Jobs.Channel.Interfaces;
+using CA.Jobs.Extensions;
+using CA.Jobs.Interfaces;
 using CA.Servicos.Channel.Interfaces;
 using CA.Util.Extensions;
 using Microsoft.Extensions.Logging;
 
-namespace CA.Jobs.Channel
+namespace CA.Jobs
 {
-    public class JobCargaProjetos : JobChannel<ProjetoChannel>
+    public class JobCargaProjetos : Job<ProjetoChannel>
     {
         private readonly IRepositorioProjetos _repositorioProjetos;
 
@@ -46,7 +46,7 @@ namespace CA.Jobs.Channel
             LogarInformacao($"{idsProjetosInserir.Count} projetos serão inseridos.");
             LogarInformacao($"{idsProjetosAtualizar.Count} projetos serão atualizados.");
 
-            foreach (var id in idsProjetosInserir) 
+            foreach (var id in idsProjetosInserir)
             {
                 await ImportarProjetoPorIdAsync(id);
             }
@@ -89,8 +89,8 @@ namespace CA.Jobs.Channel
         private async Task AtualizarProjetoAsync(ProjetoChannel projetoBanco)
         {
             var response = await _servico.ObterProjetoPorIdAsync(projetoBanco.Id);
-            
-            if(response == null)
+
+            if (response == null)
                 return;
 
             var projetoServico = response.ParaProjetoChannel();
@@ -110,7 +110,7 @@ namespace CA.Jobs.Channel
 
             if (projetoServico == projetoBanco)
                 return;
-            
+
             projetoBanco.Atualizar(projetoServico);
 
             _repositorioProjetos.AtualizarProjeto(projetoBanco);

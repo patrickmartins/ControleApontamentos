@@ -1,16 +1,31 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace CA.Servicos.Channel.Models.Responses
 {
+    public class ConsultaUsuariosResponse
+    {
+        [JsonPropertyName("count")]
+        public int Quantidade { get; set; }
+
+        [JsonPropertyName("rows")]
+        public IEnumerable<UsuarioResponse> Resultados { get; set; }
+    }
+
     public class UsuarioResponse
     {
-        [JsonProperty("id")]
+        [JsonPropertyName("legacyRef")]
         public int Id { get; set; }
 
-        [JsonProperty("nomeUsuario")]
-        public string Nome { get; set; }
+        [JsonPropertyName("username")]
+        public string NomeUsuario { get; set; }
 
-        [JsonProperty("contaLoginEmail")]
+        [JsonPropertyName("name")]
+        public string NomeCompleto { get; set; }
+
+        [JsonPropertyName("email")]
         public string Email { get; set; }
+
+        [JsonPropertyName("status")]
+        public string Status { get; set; }
     }
 }

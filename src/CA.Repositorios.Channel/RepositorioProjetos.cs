@@ -6,101 +6,88 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CA.Repositorios.Channel
 {
-    public class RepositorioProjetos : IRepositorioProjetos
+    public class RepositorioProjetos : RepositorioBase, IRepositorioProjetos
     {
-        private readonly ContextoDadosChannel _contexto;
+        public RepositorioProjetos(ContextoDadosCA contexto) : base(contexto) {  }
 
-        private readonly DbSet<ProjetoChannel> _setProjetos;
-        private readonly DbSet<AtividadeChannel> _setAtividades;
-
-        private bool _disposed;
-
-        public RepositorioProjetos(ContextoDadosChannel contexto)
+        public Task InserirProjetoAsync(ProjetoChannel projeto)
         {
-            _contexto = contexto;
-
-            _setProjetos = contexto.Set<ProjetoChannel>();
-            _setAtividades = contexto.Set<AtividadeChannel>();
+            return InserirAsync(projeto);
         }
 
-        public async Task InserirProjetoAsync(ProjetoChannel projeto)
+        public Task InserirProjetosAsync(IEnumerable<ProjetoChannel> projetos)
         {
-            await _setProjetos.AddAsync(projeto);
-        }
-
-        public async Task InserirProjetosAsync(IEnumerable<ProjetoChannel> projetos)
-        {
-            await _setProjetos.AddRangeAsync(projetos);
+            return InserirAsync(projetos);
         }
 
         public void AtualizarProjeto(ProjetoChannel projeto)
         {
-            _setProjetos.Update(projeto);
+            Atualizar(projeto);
         }
 
         public void AtualizarProjetos(IEnumerable<ProjetoChannel> projetos)
         {
-            _setProjetos.UpdateRange(projetos);
+            Atualizar(projetos);
         }
 
-        public async Task InserirAtividadeAsync(AtividadeChannel atividade)
+        public Task InserirAtividadeAsync(AtividadeChannel atividade)
         {
-            await _setAtividades.AddAsync(atividade);
+            return InserirAsync(atividade);
         }
 
-        public async Task InserirAtividadesAsync(IEnumerable<AtividadeChannel> atividades)
+        public Task InserirAtividadesAsync(IEnumerable<AtividadeChannel> atividades)
         {
-            await _setAtividades.AddRangeAsync(atividades);
+            return InserirAsync(atividades);
         }
 
         public void AtualizarAtividade(AtividadeChannel atividade)
         {
-            _setAtividades.Update(atividade);
+            Atualizar(atividade);
         }
 
         public void AtualizarAtividades(IEnumerable<AtividadeChannel> atividades)
         {
-            _setAtividades.UpdateRange(atividades);
+            Atualizar(atividades);
         }
 
         public Task<IEnumerable<ProjetoChannel>> ObterTodosProjetosAsync()
         {
-            return _setProjetos.Include(c => c.Atividades).ToIListAsync();
+            return Set<ProjetoChannel>().Include(c => c.Atividades).ToIListAsync();
         }
 
         public Task<IEnumerable<ProjetoChannel>> ObterProjetosPorIdsAsync(params int[] idsProjetos)
         {
-            return _setProjetos.Include(c => c.Atividades).Where(c => idsProjetos.Contains(c.Id)).ToIListAsync();
+            return Set<ProjetoChannel>().Include(c => c.Atividades).Where(c => idsProjetos.Contains(c.Id)).ToIListAsync();
         }
 
         public Task<IEnumerable<ProjetoChannel>> ObterTodosProjetosAtivosAsync()
         {
-            return _setProjetos.Where(c => c.Status != StatusProjeto.Finalizado).ToIListAsync();
+            return Set<ProjetoChannel>().Where(c => c.Status != StatusProjeto.Finalizado).ToIListAsync();
         }
 
         public Task<IEnumerable<AtividadeChannel>> ObterTodasAtividadesAsync()
         {
-            return _setAtividades.ToIListAsync();
+            return Set<AtividadeChannel>().ToIListAsync();
         }
 
         public Task<IEnumerable<AtividadeChannel>> ObterAtividadesPorIdsAsync(params int[] ids)
         {
-            return _setAtividades.Where(c => ids.Contains(c.Id)).Include(c => c.Projeto).ToIListAsync();
+            return Set<AtividadeChannel>().Where(c => ids.Contains(c.Id)).Include(c => c.Projeto).ToIListAsync();
         }
 
         public Task<IEnumerable<AtividadeChannel>> ObterAtividadesPorCodigoAsync(string codigo)
         {
-            return _setAtividades.Where(c => c.Codigo == codigo).ToIListAsync();
+            return Set<AtividadeChannel>().Where(c => c.Codigo == codigo).ToIListAsync();
         }
 
         public Task<IEnumerable<AtividadeChannel>> ObterAtividadesPorProjetoAsync(params int[] idsProjetos)
         {
-            return _setAtividades.Where(c => idsProjetos.Contains(c.Projeto.Id)).Include(c => c.Projeto).ToIListAsync();
+            return Set<AtividadeChannel>().Where(c => idsProjetos.Contains(c.Projeto.Id)).Include(c => c.Projeto).ToIListAsync();
         }
 
         public Task<IEnumerable<AtividadeChannel>> ObterAtividadesApontadasPorPorUsuarioPorDiaAsync(int idUsuario, DateOnly data)
         {
-            return _setAtividades
+            return Set<AtividadeChannel>()
                         .Include(c => c.Projeto)
                         .Include(c => c.Apontamentos.Where(a => a.Usuario.Id == idUsuario
                                         && a.Data == data.ToDateTime(new TimeOnly(0))))
@@ -110,35 +97,13 @@ namespace CA.Repositorios.Channel
 
         public Task<IEnumerable<AtividadeChannel>> ObterAtividadesApontadasPorPorUsuarioPorPeriodoAsync(int idUsuario, DateOnly inicio, DateOnly fim)
         {
-            return _setAtividades
+            return Set<AtividadeChannel>()
                         .Include(c => c.Projeto)
                         .Include(c => c.Apontamentos.Where(a => a.Usuario.Id == idUsuario
                                         && a.Data >= inicio.ToDateTime(new TimeOnly(0))
                                         && a.Data <= fim.ToDateTime(new TimeOnly(0))))
                         .ThenInclude(c => c.Usuario)
                         .ToIListAsync();
-        }
-
-        public Task<int> SalvarAlteracoesAsync()
-        {
-            return _contexto.SaveChangesAsync();
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (_disposed)
-                return;
-
-            if (disposing)
-                _contexto.Dispose();
-
-            _disposed = true;
         }
     }
 }

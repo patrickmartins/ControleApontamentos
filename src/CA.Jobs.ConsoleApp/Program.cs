@@ -1,11 +1,11 @@
 ﻿using CA.Container.IoC;
 using CA.Core.Entidades.Channel;
-using CA.Jobs.Channel.Configuracoes;
-using CA.Jobs.Channel.Interfaces;
 using CA.Jobs.ConsoleApp.Configuracoes;
+using CA.Jobs.Interfaces;
 using CA.Polly;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using CA.Jobs.Configuracoes;
 
 var servicos = new ServiceCollection();
 
@@ -28,9 +28,9 @@ servicos.AdicionarJobsChannel();
 
 var provider = servicos.BuildServiceProvider();
 
-var jobUsuarios = provider.GetService<IJobChannel<UsuarioChannel>>();
-var jobProjetos = provider.GetService<IJobChannel<ProjetoChannel>>();
-var jobApontamentos = provider.GetService<IJobChannel<ApontamentoChannel>>();
+var jobUsuarios = provider.GetService<IJob<UsuarioChannel>>();
+var jobProjetos = provider.GetService<IJob<ProjetoChannel>>();
+var jobApontamentos = provider.GetService<IJob<ApontamentoChannel>>();
 
 await jobUsuarios.ExecutarAsync();
 await jobProjetos.ExecutarAsync();

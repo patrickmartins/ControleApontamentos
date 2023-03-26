@@ -6,7 +6,7 @@ import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { BaseService } from 'src/app/common/services/base.service';
 import { LocalStorageHelper } from 'src/app/helpers/local-storage.helper';
-import { Usuario } from 'src/app/conta/models/usuario';
+import { Usuario } from 'src/app/core/models/usuario';
 import { LoginSucesso } from 'src/app/conta/models/login-sucess';
 import { JwtToken } from 'src/app/conta/models/jwt.token';
 import { StatusLogin } from '../models/status-login';

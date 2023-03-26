@@ -1,22 +1,21 @@
 import { Component, NgZone, OnInit } from '@angular/core';
 import { DateAdapter } from '@angular/material/core';
+import { MatDatepicker } from '@angular/material/datepicker';
+import { ActivatedRoute, Router } from '@angular/router';
+import * as moment from 'moment';
+import { forkJoin, of, tap } from 'rxjs';
 
-import { ApontamentoService } from '../../services/apontamento.service';
-import { PontoService } from '../../services/ponto.service';
-import { ContaService } from 'src/app/core/services/conta.service';
+import { BaseComponent } from 'src/app/common/components/base.component';
+import { JobService } from 'src/app/core/services/job.service';
+import { JobInfo } from 'src/app/core/models/job-info';
+import { ApontamentosChannelDia } from '../../models/apontamentos-channel-dia';
+import { ApontamentosChannelMes } from '../../models/apontamentos-channel-mes';
 import { BatidasPontoMes } from '../../models/batidas-ponto-mes';
 import { ApontamentosTfsMes } from '../../models/apontamentos-tfs-mes';
 import { ApontamentosTfsDia } from '../../models/apontamentos-tfs-dia';
-import { MatDatepicker } from '@angular/material/datepicker';
-import { BaseComponent } from 'src/app/common/components/base.component';
-import { ApontamentosChannelDia } from '../../models/apontamentos-channel-dia';
-import { ApontamentosChannelMes } from '../../models/apontamentos-channel-mes';
-import { ActivatedRoute, Router } from '@angular/router';
-import * as moment from 'moment';
-import { tap } from 'rxjs';
-import { JobService } from 'src/app/core/services/job.service';
-import { JobInfo } from 'src/app/core/models/job-info';
-import { environment } from 'src/environments/environment';
+import { ApontamentoService } from '../../services/apontamento.service';
+import { PontoService } from '../../services/ponto.service';
+import { ContaService } from 'src/app/core/services/conta.service';
 
 @Component({
 	selector: 'app-apontamentos-por-mes',
@@ -25,9 +24,7 @@ import { environment } from 'src/environments/environment';
 })
 export class ApontamentosPorMesComponent extends BaseComponent implements OnInit {
 
-	public get carregando(): boolean {
-		return this.carregandoApontamentosTfs || this.carregandoApontamentosChannel || this.carregandoBatidasPonto;
-	}
+	public carregando: boolean = true;
 	
 	public get tempoTotalTrabalhadoNoMes() : number {
 		return this.batidas ? this.batidas.tempoTotalTrabalhadoNoMes : 0
@@ -131,59 +128,32 @@ export class ApontamentosPorMesComponent extends BaseComponent implements OnInit
 		this.apontamentosChannelMes = undefined;
 		this.apontamentosTfsMes = undefined;
 
-		this.carregandoApontamentosTfs = true;
-		this.carregandoApontamentosChannel = true;
-		this.carregandoBatidasPonto = true;
+        this.carregando = true;
 		
 		let mes = data.getMonth() + 1;
 		let ano = data.getFullYear();
+        this.apontamentosChannelMes = undefined;
+        this.apontamentosTfsMes = undefined;       
 
-		if(this.usuarioLogado?.possuiContaTfs) {
-			this.servicoApontamento
-				.obterApontamentosTfsPorMes(mes, ano)
-				.pipe(tap((apontamentosTfsMes: ApontamentosTfsMes) => this.consolidarTarefasEAtividades(apontamentosTfsMes, this.apontamentosChannelMes)))
-				.subscribe({
-					next: (apontamentos) => {
-						this.apontamentosTfsMes = apontamentos;
+        forkJoin({
+            apontamentosTfsMes: !this.usuarioLogado?.possuiContaTfs ? of(undefined) : this.servicoApontamento.obterApontamentosTfsPorMes(mes, ano),
+            apontamentosChannelMes: !this.usuarioLogado?.possuiContaChannel ? of(undefined) : this.servicoApontamento.obterApontamentosChannelPorMes(mes, ano),
+            batidas: !this.usuarioLogado?.possuiContaPonto ? of(undefined) : this.servicoPonto.obterBatidasPorMes(mes, ano),
+            infoJobCarga: this.servicoJob.obterJobCarga()
+        })		
+        .subscribe({ 
+            next: (resultado: any) => {
+                this.apontamentosTfsMes = resultado.apontamentosTfsMes;
+                this.apontamentosChannelMes = resultado.apontamentosChannelMes;
+                this.batidas = resultado.batidas;
+                this.infoJobCarga = resultado.jobInfo;
 
-						this.selecionarUltimosApontamentos();
-					},
-					complete: () => this.carregandoApontamentosTfs = false
-				});
-		}
-		else {
-			this.carregandoApontamentosTfs = false;
-		}
+                this.servicoApontamento.consolidarTarefasEAtividadesMes(this.apontamentosTfsMes, this.apontamentosChannelMes);
 
-		if(this.usuarioLogado?.possuiContaChannel) {
-			this.servicoApontamento
-				.obterApontamentosChannelPorMes(mes, ano)
-				.pipe(tap((apontamentosChannelMes: ApontamentosChannelMes) => this.consolidarTarefasEAtividades(this.apontamentosTfsMes, apontamentosChannelMes)))
-				.subscribe({
-					next: (apontamentos) => {
-						this.apontamentosChannelMes = apontamentos;
-
-						this.selecionarUltimosApontamentos();
-					},
-					complete: () => this.carregandoApontamentosChannel = false
-				});
-		}
-		else {
-			this.carregandoApontamentosChannel = false;
-		}
-
-		if(this.usuarioLogado?.possuiContaPonto) {
-			this.servicoPonto
-				.obterBatidasPorMes(mes, ano).subscribe({
-					next: (batidas) => {
-						this.batidas = batidas;
-					},
-					complete: () => this.carregandoBatidasPonto = false
-				});
-		}
-		else {
-			this.carregandoBatidasPonto = false;
-		}
+                this.selecionarUltimosApontamentos();
+            },
+            complete: () => this.carregando = false
+        });
 	}
 
 	public eHoje(data: Date): boolean {
@@ -224,27 +194,5 @@ export class ApontamentosPorMesComponent extends BaseComponent implements OnInit
 		
 		if(this.diaSelecionado)
 			this.onDiaClicado(this.diaSelecionado.getDate());
-	}
-
-	private consolidarTarefasEAtividades(apontamentosTfs: ApontamentosTfsMes | undefined, apontamentosChannel: ApontamentosChannelMes | undefined): void {
-		if(!apontamentosTfs || !apontamentosChannel)
-			return;
-
-		var apontamentosChannelTfs = apontamentosChannel.obterApontamentosTfs();
-		
-		apontamentosChannelTfs.forEach(apontamento => {
-			var tarefas = apontamentosTfs.obterTarefasPorId(apontamento.idTarefaTfs);
-
-			tarefas.forEach(tarefa => {
-				tarefa.removerApontamentoPorHash(apontamento.hash);
-			});
-		})
-
-		apontamentosChannel.removerApontamentosExcluidos();
-		apontamentosChannel.removerTarefasSemApontamentos();
-		apontamentosChannel.recalcularTempoTotalApontado();
-
-		apontamentosTfs.removerTarefasSemApontamentos();
-		apontamentosTfs.recalcularTempoTotalApontado();
 	}
 }

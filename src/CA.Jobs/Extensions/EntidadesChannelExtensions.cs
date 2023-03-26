@@ -1,16 +1,27 @@
 ﻿using CA.Core.Entidades.Channel;
 
-namespace CA.Jobs.Channel.Extensions
+namespace CA.Jobs.Extensions
 {
     internal static class EntidadesChannelExtensions
     {
         public static void Atualizar(this ProjetoChannel projeto1, ProjetoChannel projeto2)
         {
-            if(projeto1 is null || projeto2 is null) 
+            if (projeto1 is null || projeto2 is null)
                 return;
 
             projeto1.Nome = projeto2.Nome;
             projeto1.Status = projeto2.Status;
+        }
+
+        public static void Atualizar(this UsuarioChannel usuario1, UsuarioChannel usuario2)
+        {
+            if (usuario1 is null || usuario1 is null)
+                return;
+
+            usuario1.Email = usuario2.Email;
+            usuario1.NomeUsuario = usuario2.NomeUsuario; ;
+            usuario1.NomeCompleto = usuario2.NomeCompleto;
+            usuario1.Ativo = usuario2.Ativo;
         }
 
         public static void Atualizar(this AtividadeChannel atividade1, AtividadeChannel atividade2)
@@ -19,7 +30,7 @@ namespace CA.Jobs.Channel.Extensions
                 return;
 
             atividade1.Nome = atividade2.Nome;
-            atividade1.Codigo = atividade2.Codigo; 
+            atividade1.Codigo = atividade2.Codigo;
             atividade1.Projeto = atividade2.Projeto;
         }
 
@@ -28,15 +39,15 @@ namespace CA.Jobs.Channel.Extensions
             if (apontamento1 is null || apontamento1 is null)
                 return;
 
-            if (apontamento1.ApontamentoTfs)
+            if (apontamento1.Hash != apontamento2.Hash)
                 apontamento1.Status = StatusApontamento.Alterado;
-                        
+
             apontamento1.Data = apontamento2.Data;
             apontamento1.Comentario = apontamento2.Comentario;
             apontamento1.TempoApontado = apontamento2.TempoApontado;
             apontamento1.Tipo = apontamento2.Tipo;
             apontamento1.Projeto = apontamento2.Projeto;
-            apontamento1.Atividade= apontamento2.Atividade;
+            apontamento1.Atividade = apontamento2.Atividade;
         }
     }
 }

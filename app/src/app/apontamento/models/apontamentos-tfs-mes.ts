@@ -7,6 +7,7 @@ export class ApontamentosTfsMes implements IModel<ApontamentosTfsMes> {
 	public usuarioReferencia: string = "";
 	public mesReferencia: number = 0;
 	public anoReferencia: number = 0;
+    public diasApontados: number = 0;
 	public tempoTotalApontadoNoMes: number = 0;
 	public tempoTotalApontadoSincronizadoChannel: number = 0;
 	public tempoTotalApontadoNaoSincronizadoChannel: number = 0;
@@ -22,6 +23,7 @@ export class ApontamentosTfsMes implements IModel<ApontamentosTfsMes> {
 			apontamentos.usuarioReferencia = params.usuarioReferencia;
 			apontamentos.mesReferencia = params.mesReferencia;
 			apontamentos.anoReferencia = params.anoReferencia;
+            apontamentos.diasApontados = params.diasApontados;
 			apontamentos.tempoTotalApontadoNoMes = params.tempoTotalApontadoNoMes;
 			apontamentos.tempoTotalApontadoSincronizadoChannel = params.tempoTotalApontadoSincronizadoChannel;
 			apontamentos.tempoTotalApontadoNaoSincronizadoChannel = params.tempoTotalApontadoNaoSincronizadoChannel;
@@ -47,7 +49,7 @@ export class ApontamentosTfsMes implements IModel<ApontamentosTfsMes> {
 	}
 	
 	public obterTarefasPorId(id: number): Tarefa[] {		
-		var tarefas: Tarefa[] = [];
+		let tarefas: Tarefa[] = [];
 
 		this.apontamentosDiarios.forEach(apontamentosDia => {			
 			apontamentosDia.obterTarefasPorId(id).forEach(tarefa => {

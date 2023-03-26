@@ -22,7 +22,7 @@ export class QuadroTarefaComponent extends BaseComponent {
 	public tarefa!: Tarefa;
 
 	@Input()
-	public habilitarApontamento: boolean = true;
+	public permiteApontar: boolean = true;
 
 	@Input()
 	public permiteFixar: boolean = true;
@@ -59,7 +59,7 @@ export class QuadroTarefaComponent extends BaseComponent {
 		this.tarefaService
 			.salvarApontamento(novoApontamento).subscribe({
 				next: () => {
-					var usuario = this.usuarioLogado?.nomeUsuario.split('@')[0];
+					let usuario = this.usuarioLogado?.nomeUsuario.split('@')[0];
 
 					const apontamento = new ApontamentoTfs().criarNovo(
 					{

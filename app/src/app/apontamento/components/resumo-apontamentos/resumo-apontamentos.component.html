@@ -1,0 +1,35 @@
+<ul>
+    <div *ngIf="exibirTempoTrabalhado">
+        <li *ngIf="tempoTrabalhado == 0">
+            Não registrou pontos.
+        </li>
+
+        <li *ngIf="tempoTrabalhado > 0">
+            <span>{{ tempoTrabalhado | tempoTrabalhado }}</span>	
+        </li>
+    </div>
+
+    <div *ngIf="exibirTempoApontado">
+        <li *ngIf="tempoTotalApontado == 0">
+            Não fez apontamentos.
+        </li>
+
+        <li *ngIf="tempoApontadoNaoSincronizado == 0 && tempoApontadoSincronizado > 0 ">
+            <span>{{ tempoTotalApontado | tempoApontado : 'sync':'apt'  }}</span>
+        </li>
+
+        <li *ngIf="tempoApontadoSincronizado == 0  && tempoApontadoNaoSincronizado > 0">
+            <span>{{ tempoApontadoNaoSincronizado | tempoApontado : 'nsync':'apt' }}</span>
+        </li>
+
+        <li *ngIf="tempoApontadoSincronizado > 0 && tempoApontadoNaoSincronizado > 0">
+            <span>
+                {{ tempoTotalApontado | tempoApontado : 'sync':'apt'  }} ({{ tempoApontadoNaoSincronizado | tempoApontado : 'nsync':'napt' }})
+            </span>
+        </li>
+
+        <li *ngIf="tempoTotalApontado > 0 && tempoApontadoSincronizado === 0 && tempoApontadoNaoSincronizado == 0">							
+            <span>{{ tempoTotalApontado | tempoApontado : 'sync':'apt' }}</span>
+        </li>
+    </div>
+</ul>

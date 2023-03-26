@@ -25,7 +25,7 @@ namespace CA.Api.Controllers
         {
             using (var connection = JobStorage.Current.GetConnection())
             {
-                var job = connection.GetRecurringJobs().FirstOrDefault(p => p.Id == _configs.IdJobCargaCompleta);
+                var job = connection.GetRecurringJobs().FirstOrDefault(p => p.Id == _configs.IdJobCargaCompleta && p.LastJobState == "Succeeded");
 
                 if (job != null)
                 {
@@ -38,7 +38,7 @@ namespace CA.Api.Controllers
                     });
                 }
                 else
-                    return NotFound();
+                    return NoContent();
             }
         }
     }

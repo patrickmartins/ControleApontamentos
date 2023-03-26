@@ -47,6 +47,10 @@ export class Atividade implements IModel<Atividade> {
 		return this.apontamentos.filter(c => c.apontamentoTfs);
 	}
 
+    public apontamentosTfsExiste(hash: string): boolean {
+        return this.apontamentos.some(c => c.apontamentoTfs && c.hash == hash);
+    }
+
 	public removerApontamentosExcluidos(): void {
 		this.apontamentos = this.apontamentos.filter(c => c.status != StatusApontamento.Excluido);
 	}
@@ -56,7 +60,7 @@ export class Atividade implements IModel<Atividade> {
 	}
 
 	public obterTempoApontadoPorData(data: Date): number {
-		var tempoTotal = 0;
+		let tempoTotal = 0;
 
 		this.apontamentos?.forEach(apontamento => {
 			tempoTotal += apontamento.data.getTime() == data.getTime() ? apontamento.tempo : 0;

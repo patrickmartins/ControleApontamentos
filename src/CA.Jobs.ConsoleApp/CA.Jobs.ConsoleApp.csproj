@@ -30,7 +30,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CA.Container.IoC\CA.Container.IoC.csproj" />
-    <ProjectReference Include="..\CA.Jobs\CA.Jobs.Channel.csproj" />
+    <ProjectReference Include="..\CA.Jobs\CA.Jobs.csproj" />
     <ProjectReference Include="..\CA.Polly\CA.Polly.csproj" />
   </ItemGroup>
 

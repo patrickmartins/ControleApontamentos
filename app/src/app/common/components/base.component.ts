@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from "@angular/core";
 import { DomSanitizer } from "@angular/platform-browser";
 import { Subscription } from "rxjs";
-import { Usuario } from "src/app/conta/models/usuario";
+import { Usuario } from "src/app/core/models/usuario";
 import { ContaService } from "src/app/core/services/conta.service";
 
 @Component({ 

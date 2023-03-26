@@ -3,7 +3,7 @@ using CA.Servicos.Channel.Models.Responses;
 using CA.Util.Extensions;
 using CA.Util.Helpers;
 
-namespace CA.Jobs.Channel.Extensions
+namespace CA.Jobs.Extensions
 {
     internal static class ChannelResponseExtensions
     {
@@ -12,8 +12,10 @@ namespace CA.Jobs.Channel.Extensions
             return new UsuarioChannel
             {
                 Id = response.Id,
-                Email = response.Email.DecodificarHtml().Trim().Truncar(50).ParaUTF8().RemoverCaracteresNaoReconhecidos().RemoverQuebrasDeLinha().ToLower(),
-                NomeCompleto = response.Nome.DecodificarHtml().Trim().Truncar(200).ParaUTF8().RemoverCaracteresNaoReconhecidos().RemoverQuebrasDeLinha().ToLower()
+                Email = response.Email,
+                NomeUsuario = response.NomeUsuario,
+                NomeCompleto = response.NomeCompleto,
+                Ativo = response.Status.Equals("ACTIVED")
             };
         }
 
@@ -28,7 +30,7 @@ namespace CA.Jobs.Channel.Extensions
             {
                 Id = response.Id,
                 Status = response.Status,
-                Nome = response.Nome.DecodificarHtml().Trim().Truncar(200).ParaUTF8().RemoverCaracteresNaoReconhecidos().RemoverQuebrasDeLinha()                
+                Nome = response.Nome.DecodificarHtml().Trim().Truncar(200).ParaUTF8().RemoverCaracteresNaoReconhecidos().RemoverQuebrasDeLinha()
             };
 
             projeto.Atividades = response.Atividades.ParaAtividadesChannel(projeto).ToList();
@@ -71,7 +73,7 @@ namespace CA.Jobs.Channel.Extensions
 
             return new ApontamentoChannel
             {
-                Hash = Sha1Helper.GerarHashPorString($"{response.ObterIdDaTarefaTfs()} - {response.ObterComentarioDoApontamentoTfs()} - {DateOnly.FromDateTime(response.Data)} - {response.TempoApontado}"),
+                Hash = Sha1Helper.GerarHashPorString($"{response.ObterIdDaTarefaTfs()} - {usuario.NomeUsuario} - {response.ObterComentarioDoApontamentoTfs()} - {DateOnly.FromDateTime(response.Data)} - {response.TempoApontado}"),
                 ApontamentoTfs = response.EhApontamentoTfs(),
                 IdTarefaTfs = response.ObterIdDaTarefaTfs(),
                 Tipo = response.ObterTipoDoApontamento(),
@@ -80,7 +82,7 @@ namespace CA.Jobs.Channel.Extensions
                 Usuario = usuario,
                 Projeto = projeto,
                 Atividade = atividade,
-                Comentario = response.Comentario,                
+                Comentario = response.Comentario.ParaUTF8().RemoverCaracteresNaoReconhecidos(),
                 TempoApontado = response.TempoApontado
             };
         }

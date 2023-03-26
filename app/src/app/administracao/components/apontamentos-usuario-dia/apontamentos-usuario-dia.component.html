@@ -1,0 +1,97 @@
+<div *ngIf="usuarioLogado">
+    <mat-card class="borda-1 usuarios-card">
+        <mat-form-field appearance="outline" class="usuarios-form">
+            <input type="text"
+                placeholder="Selecione um usuário"
+                aria-label="Number"
+                matInput
+                [formControl]="formUsuario"
+                [matAutocomplete]="auto">
+            <mat-autocomplete class="usuarios" autoActiveFirstOption #auto="matAutocomplete" [displayWith]="obterNomeCompletoUsuario">
+                <mat-option *ngFor="let usuario of usuariosFiltrado" [value]="usuario">{{ usuario.nomeCompleto }}</mat-option>
+            </mat-autocomplete>
+        </mat-form-field>
+    </mat-card>
+	
+	<div *ngIf="usuarioSelecionado && (usuarioLogado.possuiContaTfs || usuarioLogado.possuiContaPonto || usuarioLogado.possuiContaChannel)">
+        <mat-card class="quadro-aviso" *ngIf="!usuarioSelecionado.possuiContaPonto">
+            <h4>Os dados do usuário selecionado não foram encontrados no sistema de ponto.</h4>
+        </mat-card>
+    
+        <mat-card class="quadro-aviso" *ngIf="!usuarioSelecionado.possuiContaTfs">
+            <h4>Os dados do usuário selecionado não foram encontrados no TFS.</h4>
+        </mat-card>
+    
+        <mat-card class="quadro-aviso" *ngIf="!usuarioSelecionado.possuiContaChannel">
+            <h4>Os dados do usuário selecionado não foram encontrados no Channel.</h4>
+        </mat-card>
+
+		<mat-expansion-panel class="boasvindas borda-1" [expanded]="true">
+			<mat-expansion-panel-header class="cabecalho" matRipple>		
+					<h2 *ngIf="dataAtual.getHours() >= 6 && dataAtual.getHours() < 12" class="nome-usuario">Bom dia, {{ usuarioLogado.nomeCompleto.split(' ')[0] }}!</h2>	
+					<h2 *ngIf="dataAtual.getHours() >= 12 && dataAtual.getHours() < 18" class="nome-usuario">Boa tarde, {{ usuarioLogado.nomeCompleto.split(' ')[0] }}!</h2>	
+					<h2 *ngIf="dataAtual.getHours() >= 18 || dataAtual.getHours() < 6" class="nome-usuario">Boa noite, {{ usuarioLogado.nomeCompleto.split(' ')[0] }}!</h2>	
+			</mat-expansion-panel-header>
+
+			<ng-template matExpansionPanelContent>
+				<div class="corpo">
+					<section class="mensagem">				
+						<h2 *ngIf="eHoje(dataSelecionada)">Resumo de {{ usuarioSelecionado.nomeCompleto.split(' ')[0] }} de hoje</h2>
+						<h2 *ngIf="!eHoje(dataSelecionada)">Resumo de {{ usuarioSelecionado.nomeCompleto.split(' ')[0] }} do dia {{ dataSelecionada | date : "d 'de' MMMM 'de' yyyy" }}</h2>
+
+						<mat-form-field appearance="fill" class="datepicker">
+							<input matInput [matDatepicker]="picker" [max]="dataAtual" (dateChange)="onDataAlterada($event.value)" [formControl]="formDataSelecionada">
+							<mat-datepicker #picker></mat-datepicker>
+						</mat-form-field>
+						<button mat-icon-button (click)="picker.open()" class="btn-editar-data">
+							<mat-icon>edit_calendar</mat-icon>
+						</button>
+						<button mat-icon-button (click)="obterBatidasEApontamentosPorDia(usuarioSelecionado.id, dataSelecionada)" title="Atualizar" class="btn-refresh">
+							<mat-icon>refresh</mat-icon>
+						</button>
+					</section>
+					<section *ngIf="!carregando" class="informacoes">
+                        <resumo-apontamentos [tempoApontadoNaoSincronizado]="tempoTotalApontadoNaoSincronizadoNoDia"
+                                             [tempoApontadoSincronizado]="tempoTotalApontadoSincronizadoNoDia"
+                                             [tempoTrabalhado]="tempoTotalTrabalhadoNoDia">
+                        </resumo-apontamentos>
+									
+						<div *ngIf="(tempoTotalApontadoNoDia > 0 ||  tempoTotalTrabalhadoNoDia > 0)">
+							<grafico-resumo-dia	[apontamentosTfs]="apontamentosTfsDia"
+												[apontamentosChannel]="apontamentosChannelDia"
+												[batidas]="batidas"></grafico-resumo-dia>	
+													
+							<span class="observacao">
+								Obs.: os apontamentos do Channel são atualizados a cada {{ (infoJobCarga ? infoJobCarga.intervaloExecucao : 30) | tempo }}.
+								<span *ngIf="infoJobCarga"> Última atualização as {{ infoJobCarga.ultimaExecucao | date : 'HH:mm \'do dia\' dd \'de\' LLLL \'de\' yyyy' }}.</span>
+							</span>
+						</div>
+					</section>			
+					<section *ngIf="carregando">
+						<grafico-resumo-dia-loader style="height: 182px;"></grafico-resumo-dia-loader>
+					</section>			
+				</div>		
+			</ng-template>
+		</mat-expansion-panel>
+
+		<div *ngIf="!carregando">
+			<div *ngIf="apontamentosChannelDia">
+				<quadro-atividade *ngFor="let atividade of apontamentosChannelDia.atividades"
+								class="fade-in-left tarefa"
+								[atividade]="atividade"></quadro-atividade>
+			</div>
+
+			<div *ngIf="apontamentosTfsDia">
+				<quadro-tarefa *ngFor="let tarefa of apontamentosTfsDia.tarefas"
+								class="fade-in-left tarefa"
+								[tarefa]="tarefa" 
+								[permiteFixar]="false"
+                                [permiteApontar]="false"></quadro-tarefa>
+			</div>
+		</div>
+
+		<div *ngIf="carregando">	
+			<quadro-tarefa-loader class="tarefa" style="display: block;" *ngFor="let index of [].constructor(4)"></quadro-tarefa-loader>
+		</div>
+	</div>
+</div>
