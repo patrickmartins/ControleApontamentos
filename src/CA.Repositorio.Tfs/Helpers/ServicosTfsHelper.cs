@@ -6,6 +6,7 @@ using CA.Repositorios.Tfs.Models;
 using CA.Servicos.Tfs.Entidades;
 using CA.Servicos.Tfs.Models.Responses;
 using CA.Util.Helpers;
+using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -212,7 +213,12 @@ namespace CA.Repositorios.Tfs.Helpers
                     }
                     else if (campoApotamentosSuportado is not null && valorIdCampo is not null && campoApotamentosSuportado.Id == (int)valorIdCampo)
                     {
-                        workitem.ListaApontamentos = valorTextoLongo is not null ? XmlHelper.DesserializarDeString<ListaApontamentos>((string)valorTextoLongo) : new ListaApontamentos();
+                        if (valorTextoLongo is not null)
+                        {
+                            var valorTextoLongoTratado = TratarXmlApontamento((string)valorTextoLongo);
+
+                            workitem.ListaApontamentos = XmlHelper.DesserializarDeString<ListaApontamentos>(valorTextoLongoTratado);
+                        }
                     }
 
                 }
@@ -323,5 +329,16 @@ namespace CA.Repositorios.Tfs.Helpers
             return tabelaRegistros;
         }
 
+        private static string TratarXmlApontamento(string xml)
+        {
+            var matches = Regex.Matches(xml, "(?<=Comments=\")(.*?)(?=\")");
+
+            foreach(Match match in matches)
+            {
+                xml = xml.Replace(match.Value, XmlHelper.TratarCaracteresDeEscape(match.Value));
+            }
+
+            return xml;
+        }
     }
 }

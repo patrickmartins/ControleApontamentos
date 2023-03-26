@@ -1,5 +1,4 @@
-﻿using System.Text;
-using System.Xml;
+﻿using System.Xml;
 using System.Xml.Serialization;
 
 namespace CA.Util.Helpers
@@ -69,6 +68,11 @@ namespace CA.Util.Helpers
             }
 
             return doc.DocumentElement;
+        }
+
+        public static string TratarCaracteresDeEscape(string xml)
+        {
+            return xml.Replace("\"", "&quot;").Replace("'", "&apos;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("&", "&amp;");
         }
     }
 }
