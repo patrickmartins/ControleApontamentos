@@ -368,3 +368,4 @@ FodyWeavers.xsd
 /src/CA.Api/Properties/ServiceDependencies
 /src/CA.Jobs.ConsoleApp/appsettings.Development.json
 /src/CA.Api/hanfgire.db
+/src/CA.Api/hanfgire.db-journal

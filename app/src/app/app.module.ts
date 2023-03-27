@@ -1,4 +1,4 @@
-import { MsalGuard, MsalInterceptor, MsalService, MSAL_GUARD_CONFIG, MSAL_INSTANCE, MSAL_INTERCEPTOR_CONFIG } from '@azure/msal-angular';
+import { MsalBroadcastService, MsalGuard, MsalInterceptor, MsalService, MSAL_GUARD_CONFIG, MSAL_INSTANCE, MSAL_INTERCEPTOR_CONFIG } from '@azure/msal-angular';
 import { MsalFactory } from './conta/factories/msal.factory';
 import { APP_INITIALIZER, LOCALE_ID, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -97,7 +97,8 @@ registerLocaleData(localePT);
 			useValue: 'pt-BR'
 		},
 		MsalService,
-		MsalGuard
+		MsalGuard,
+        MsalBroadcastService
 	],
 	bootstrap: [AppComponent]
 })

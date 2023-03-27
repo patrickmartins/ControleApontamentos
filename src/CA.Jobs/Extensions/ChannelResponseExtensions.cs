@@ -73,7 +73,7 @@ namespace CA.Jobs.Extensions
 
             return new ApontamentoChannel
             {
-                Hash = Sha1Helper.GerarHashPorString($"{response.ObterIdDaTarefaTfs()} - {usuario.NomeUsuario} - {response.ObterComentarioDoApontamentoTfs()} - {DateOnly.FromDateTime(response.Data)} - {response.TempoApontado}"),
+                Hash = Sha1Helper.GerarHashPorString($"{response.ObterIdDaTarefaTfs()} - {usuario.NomeUsuario} - {response.ObterComentarioDoApontamentoTfs().Trim().RemoverEspacosDuplicados()} - {DateOnly.FromDateTime(response.Data)} - {response.TempoApontado}"),
                 ApontamentoTfs = response.EhApontamentoTfs(),
                 IdTarefaTfs = response.ObterIdDaTarefaTfs(),
                 Tipo = response.ObterTipoDoApontamento(),
@@ -82,7 +82,7 @@ namespace CA.Jobs.Extensions
                 Usuario = usuario,
                 Projeto = projeto,
                 Atividade = atividade,
-                Comentario = response.Comentario.ParaUTF8().RemoverCaracteresNaoReconhecidos(),
+                Comentario = response.Comentario.Trim().RemoverCaracteresNaoReconhecidos(),
                 TempoApontado = response.TempoApontado
             };
         }

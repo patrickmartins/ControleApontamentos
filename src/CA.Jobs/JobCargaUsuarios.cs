@@ -34,6 +34,7 @@ namespace CA.Jobs
             var usuariosAtualizar = usuariosServico.Where(c => usuariosBanco.Any(x => x.Id == c.Id)).ParaUsuariosChannel().Where(c => usuariosBanco.Any(x => x.Id == c.Id && c != x)).ToList();
 
             LogarInformacao($"{usuariosInserir.Count} usuários serão inseridos.");
+            LogarInformacao($"{usuariosAtualizar.Count} usuários serão atualizados.");
 
             foreach (var usuario in usuariosInserir)
             {
@@ -65,7 +66,7 @@ namespace CA.Jobs
                 }
                 else
                 {
-                    LogarInformacao(@$"Não foi possível inserir o usuário {usuarioServico.Id}. Devido aos erros abaixo:");
+                    LogarInformacao(@$"Não foi possível atualizar o usuário {usuarioServico.Id}. Devido aos erros abaixo:");
 
                     LogarErros(resultado.Erros.ToArray());
                 }
