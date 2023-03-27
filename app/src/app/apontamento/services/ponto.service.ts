@@ -19,7 +19,15 @@ export class PontoService extends BaseService {
         return this.get<any>(`${environment.urlApiBase}ponto/por-dia`, BatidasPontoDia, { }, { data: `${data.getFullYear()}-${data.getMonth()+1}-${data.getDate()}` });
     }
 
+    public obterBatidasDeUsuarioPorDia(id: string, data: Date): Observable<BatidasPontoDia> {
+        return this.get<any>(`${environment.urlApiBase}ponto/${id}/por-dia`, BatidasPontoDia, { }, { data: `${data.getFullYear()}-${data.getMonth()+1}-${data.getDate()}` });
+    }
+
 	public obterBatidasPorMes(mes: number, ano: number): Observable<BatidasPontoMes> {
         return this.get<any>(`${environment.urlApiBase}ponto/por-mes`, BatidasPontoMes, { }, { mes: mes, ano: ano });
+    }
+
+    public obterBatidasDeUsuarioPorMes(id: string, mes: number, ano: number): Observable<BatidasPontoMes> {
+        return this.get<any>(`${environment.urlApiBase}ponto/${id}/por-mes`, BatidasPontoMes, { }, { mes: mes, ano: ano });
     }
 }

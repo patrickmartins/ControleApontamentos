@@ -9,6 +9,8 @@ import { NgChartsModule } from 'ng2-charts';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
+import annotationPlugin from 'chartjs-plugin-annotation';
+import { Chart } from 'chart.js';
 
 import { ApontamentosPorDiaComponent } from './components/apontamentos-por-dia/apontamentos-por-dia.component';
 import { ApontamentoRoutingModule } from './apontamento-routing.module';
@@ -18,32 +20,44 @@ import { GraficoResumoMesComponent } from './components/grafico-resumo-mes/grafi
 import { LoaderModule } from '../loader/loader.module';
 import { ApontamentoService } from './services/apontamento.service';
 import { PontoService } from './services/ponto.service';
+import { ResumoApontamentosComponent } from './components/resumo-apontamentos/resumo-apontamentos.component';
 
 @NgModule({
-	declarations: [
-		ApontamentosPorDiaComponent,
-		ApontamentosPorMesComponent,
-		GraficoResumoDiaComponent,
-		GraficoResumoMesComponent		
-	],
-	imports: [
-		CoreModule,
-		CommonModule,
-		FormsModule,
-		LoaderModule,
-		ReactiveFormsModule,
-		ApontamentoRoutingModule,
-		MatExpansionModule,
-		MatDatepickerModule,
-		MatInputModule,
-		MatButtonModule,
-		MatIconModule,
-		MatCardModule,
-		NgChartsModule
-	],
-	providers: [
-		ApontamentoService,
-		PontoService
-	]
+    declarations: [
+        ApontamentosPorDiaComponent,
+        ApontamentosPorMesComponent,
+        GraficoResumoDiaComponent,
+        GraficoResumoMesComponent,
+        ResumoApontamentosComponent
+    ],
+    imports: [
+        CoreModule,
+        CommonModule,
+        FormsModule,
+        LoaderModule,
+        ReactiveFormsModule,
+        ApontamentoRoutingModule,
+        MatExpansionModule,
+        MatDatepickerModule,
+        MatInputModule,
+        MatButtonModule,
+        MatIconModule,
+        MatCardModule,
+        NgChartsModule
+    ],
+    exports: [
+        GraficoResumoDiaComponent,
+        GraficoResumoMesComponent,
+        ResumoApontamentosComponent
+    ],
+    providers: [
+        ApontamentoService,
+        PontoService
+    ]
 })
-export class ApontamentoModule { }
+export class ApontamentoModule {
+
+    constructor() {
+        Chart.register(annotationPlugin);        
+    }
+}

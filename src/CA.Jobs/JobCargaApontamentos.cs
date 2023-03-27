@@ -1,15 +1,15 @@
 ﻿using CA.Core.Entidades.Channel;
 using CA.Core.Interfaces.Channel;
-using CA.Jobs.Channel.Extensions;
-using CA.Jobs.Channel.Interfaces;
+using CA.Jobs.Extensions;
+using CA.Jobs.Interfaces;
 using CA.Servicos.Channel.Interfaces;
 using CA.Servicos.Channel.Models.Responses;
 using CA.Util.Extensions;
 using Microsoft.Extensions.Logging;
 
-namespace CA.Jobs.Channel
+namespace CA.Jobs
 {
-    public class JobCargaApontamentos : JobChannel<ApontamentoChannel>
+    public class JobCargaApontamentos : Job<ApontamentoChannel>
     {
         private readonly IRepositorioApontamentos _repositorioApontamentos;
         private readonly IRepositorioUsuariosChannel _repositorioUsuarios;
@@ -17,9 +17,9 @@ namespace CA.Jobs.Channel
 
         private readonly IServicoChannelHttp _servico;
 
-        public JobCargaApontamentos(IRepositorioApontamentos repositorioApontamentos, 
-                                    IRepositorioUsuariosChannel repositorioUsuarios, 
-                                    IRepositorioProjetos repositorioProjetos, 
+        public JobCargaApontamentos(IRepositorioApontamentos repositorioApontamentos,
+                                    IRepositorioUsuariosChannel repositorioUsuarios,
+                                    IRepositorioProjetos repositorioProjetos,
                                     IServicoChannelHttp servico,
                                     ILogger<ApontamentoChannel> logger) : base(logger)
         {
@@ -49,7 +49,7 @@ namespace CA.Jobs.Channel
 
             var usuarios = await _repositorioUsuarios.ObterTodosUsuariosAsync();
             var projetos = await _repositorioProjetos.ObterProjetosPorIdsAsync(apontamentosServico.Select(c => c.IdProjeto).Distinct().ToArray());
-                        
+
             var apontamentosInseridos = ExtrairApontamentosInseridos(apontamentosServico, apontamentosBanco, projetos, usuarios);
             var apontamentosRestaurados = ExtrairApontamentosRestaurados(apontamentosServico, apontamentosBanco, projetos, usuarios);
             var apontamentoAtualizados = ExtrairApontamentosAtualizados(apontamentosServico, apontamentosBanco, projetos, usuarios);

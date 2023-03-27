@@ -3,7 +3,7 @@ using CA.Aplicacao.Models;
 using CA.Core.Entidades.Tfs;
 using CA.Core.Extensions;
 using CA.Core.Valores;
-using CA.Seguranca.Extensions;
+using CA.Identity.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

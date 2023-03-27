@@ -5,6 +5,6 @@ namespace CA.Servicos.Tfs.Interfaces
 {
     public interface IServicoIdentidadeTfsSoap
     {
-        Task<ReadIdentitiesResponse> ObterIdentidadeDeUsuarioTfs(ReadIdentitiesRequest request, string colecao);
+        Task<ReadIdentitiesResponse> BuscarUsuariosTfs(ReadIdentitiesRequest request, string colecao);
     }
 }

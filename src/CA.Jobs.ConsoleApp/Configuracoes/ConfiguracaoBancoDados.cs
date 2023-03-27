@@ -9,9 +9,9 @@ namespace CA.Jobs.ConsoleApp.Configuracoes
     {
         public static void AdicionarContextoDeDados(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<ContextoDadosChannel>(options =>
+            services.AddDbContext<ContextoDadosCA>(options =>
             {
-                options.UseSqlServer(configuration.GetConnectionString("ConexaoBd"), options => options.MigrationsAssembly("CA.Repositorios.Channel"));
+                options.UseSqlServer(configuration.GetConnectionString("ConexaoBd"), options => options.MigrationsAssembly("CA.Repositorios"));
             });
         }
     }

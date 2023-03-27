@@ -59,7 +59,14 @@ namespace CA.Util.Extensions
 
         public static string RemoverEspacosDuplicados(this string texto)
         {
-            return texto.Replace("  ", " ");
+            var resultado = texto.Replace("  ", " ");
+
+            while(resultado.Contains("  "))
+            {
+                resultado = resultado.Replace("  ", " ");
+            }
+
+            return resultado;
         }
     }
 }

@@ -37,37 +37,11 @@
 					</section>
 
 					<section [ngStyle]="{'display': carregando ? 'none' : 'block'}" class="informacoes">
-						<ul>
-							<li *ngIf="tempoTotalTrabalhadoNoMes == 0 && usuarioLogado.possuiContaPonto">
-								Você não registrou pontos.
-							</li>
+                        <resumo-apontamentos [tempoApontadoNaoSincronizado]="tempoTotalApontadoNaoSincronizadoNoMes"
+                                             [tempoApontadoSincronizado]="tempoTotalApontadoSincronizadoNoMes"
+                                             [tempoTrabalhado]="tempoTotalTrabalhadoNoMes">
+                        </resumo-apontamentos>
 						
-							<li *ngIf="tempoTotalTrabalhadoNoMes > 0 && usuarioLogado.possuiContaPonto">
-								<span>{{ tempoTotalTrabalhadoNoMes | tempoTrabalhado }}</span>	
-							</li>
-						
-							<li *ngIf="tempoTotalApontadoNoMes == 0">
-								Você não fez apontamentos.
-							</li>
-						
-							<li *ngIf="tempoTotalApontadoNaoSincronizadoNoMes == 0 && tempoTotalApontadoSincronizadoNoMes > 0 ">
-								<span>{{ tempoTotalApontadoNoMes | tempoApontado : 'sync':'apt'  }}</span>
-							</li>
-						
-							<li *ngIf="tempoTotalApontadoSincronizadoNoMes == 0  && tempoTotalApontadoNaoSincronizadoNoMes > 0">
-								<span>{{ tempoTotalApontadoNaoSincronizadoNoMes | tempoApontado : 'nsync':'apt' }}</span>
-							</li>
-						
-							<li *ngIf="tempoTotalApontadoSincronizadoNoMes > 0 && tempoTotalApontadoNaoSincronizadoNoMes > 0">
-								<span>{{ tempoTotalApontadoNoMes | tempoApontado : 'sync':'apt'  }} ({{ tempoTotalApontadoNaoSincronizadoNoMes | tempoApontado : 'nsync':'napt' }})
-								</span>
-							</li>
-
-							<li *ngIf="tempoTotalApontadoNoMes > 0 && tempoTotalApontadoSincronizadoNoMes === 0 && tempoTotalApontadoNaoSincronizadoNoMes == 0">							
-								<span>{{ tempoTotalApontadoNoMes | tempoApontado : 'sync':'apt' }}</span>
-							</li>
-						</ul>
-
 						<div *ngIf="tempoTotalApontadoNoMes > 0 || tempoTotalTrabalhadoNoMes > 0">
 							<grafico-resumo-mes (onDiaClicado)="onDiaClicado($event)"
 												[dataReferencia]="mesSelecionado"

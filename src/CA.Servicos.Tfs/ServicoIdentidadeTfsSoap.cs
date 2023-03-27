@@ -16,7 +16,7 @@ namespace CA.Servicos.Tfs
             _configuracoes = configuracoes;
         }
 
-        public Task<ReadIdentitiesResponse> ObterIdentidadeDeUsuarioTfs(ReadIdentitiesRequest request, string colecao)
+        public Task<ReadIdentitiesResponse> BuscarUsuariosTfs(ReadIdentitiesRequest request, string colecao)
         {
             var url = $"{_configuracoes.UrlTfs}{colecao}{_configuracoes.UrlServicoIdentidade}";
 

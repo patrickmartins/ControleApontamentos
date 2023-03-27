@@ -10,6 +10,7 @@ namespace CA.Core.Interfaces.Channel
         void AtualizarUsuarios(IEnumerable<UsuarioChannel> usuarios);
 
         Task<IEnumerable<UsuarioChannel>> ObterTodosUsuariosAsync();
+        Task<IEnumerable<UsuarioChannel>> ObterUsuariosAtivosAsync();
         UsuarioChannel? ObterUsuarioPorEmail(string email);
         UsuarioChannel? ObterUsuarioPorNomeCompleto(string nomeCompleto);
     }

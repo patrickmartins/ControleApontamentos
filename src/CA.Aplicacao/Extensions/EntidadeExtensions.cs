@@ -50,8 +50,9 @@ namespace CA.Aplicacao.Extensions
             return new BatidasPontoMesModel
             {
                 MesReferencia = mes,
-                AnoReferencia = ano,
+                AnoReferencia = ano,                
                 BatidasDiarias = batidasPonto,
+                DiasTrabalhados = batidasPonto.Where(c => c.TempoTotalTrabalhadoNoDia.Ticks > 0).Count(),
                 TempoTotalTrabalhadoNoMes = TimeSpan.FromTicks(batidasPonto.Sum(c => c.TempoTotalTrabalhadoNoDia.Ticks))
             };
         }
@@ -70,7 +71,27 @@ namespace CA.Aplicacao.Extensions
             var designadoMatch = Regex.Matches(itemTrabalho.Designado, "((^.*)(?=\\<))|((?<=\\\\)(.*?)(?=\\>))");
 
             var tituloItemTrabalho = itemTrabalho.Titulo.RemoverQuebrasDeLinha().RemoverTabulacoes().Trim().Replace(";", ",");
-            var tituloItemTrabalhoPai = itemTrabalho.TituloItemTrabalhoPai.RemoverQuebrasDeLinha().RemoverTabulacoes().Trim().Replace(";", ",");            
+            var tituloItemTrabalhoPai = itemTrabalho.TituloItemTrabalhoPai.RemoverQuebrasDeLinha().RemoverTabulacoes().Trim().Replace(";", ",");
+
+            var apontamentos = itemTrabalho.
+                                ListaApontamentos.Apontamentos.OrderByDescending(c => c.DataCriacao).Select(c =>
+                                {
+                                    var comentario = c.Comentario.Trim().RemoverEspacosDuplicados().Replace(";", ",");
+
+                                    DateOnly.TryParse(c.DataApontamento, out var data);
+                                    TimeSpan.TryParse(c.TempoApontamento, out var tempo);
+
+                                    return new ApontamentoTfsModel
+                                    {
+                                        Data = data,
+                                        Tempo = tempo,
+                                        Usuario = c.Usuario,
+                                        Comentario = c.Comentario.Trim(),
+                                        SincronizadoChannel = c.SincronizadoChannel,
+                                        Hash = Sha1Helper.GerarHashPorString($"{itemTrabalho.IdItemTrabalho} - {c.Usuario} - {comentario} - {data} - {tempo}")
+                                    };
+                                })
+                                .ToList();
 
             var tarefa = new TarefaModel
             {
@@ -88,26 +109,8 @@ namespace CA.Aplicacao.Extensions
                 Projeto = itemTrabalho.Projeto,
                 Tags = itemTrabalho.Tags.Split(';', StringSplitOptions.RemoveEmptyEntries),
                 Status = itemTrabalho.Status,
-                ApontamentoHabilitado = itemTrabalho.ApontamentoHabilitado,                
-                Apontamentos = itemTrabalho.
-                                ListaApontamentos.Apontamentos.OrderByDescending(c => c.DataCriacao).Select(c =>
-                                {
-                                    var comentario = c.Comentario.RemoverEspacosDuplicados().Trim().Replace(";", ",");
-
-                                    DateOnly.TryParse(c.DataApontamento, out var data);
-                                    TimeSpan.TryParse(c.TempoApontamento, out var tempo);
-
-                                    return new ApontamentoTfsModel
-                                    {   
-                                        Data = data,
-                                        Tempo = tempo,
-                                        Usuario = c.Usuario,
-                                        Comentario = c.Comentario.Trim(),                                        
-                                        SincronizadoChannel = c.SincronizadoChannel,                                        
-                                        Hash = Sha1Helper.GerarHashPorString($"{itemTrabalho.IdItemTrabalho} - {comentario} - {data} - {tempo}")
-                                    };
-                                })
-                                .ToList()
+                ApontamentoHabilitado = itemTrabalho.ApontamentoHabilitado,
+                Apontamentos = apontamentos                
             };
 
             tarefa.TempoTotalApontadoSincronizadoChannel = new TimeSpan(tarefa.Apontamentos.Where(c => (c.Data == dataReferencia || dataReferencia is null) && c.Usuario.Equals(usuario) && c.SincronizadoChannel).Sum(c => c.Tempo.Ticks));
@@ -180,6 +183,7 @@ namespace CA.Aplicacao.Extensions
                 UsuarioReferencia = usuario,
                 MesReferencia = mes,
                 AnoReferencia = ano,
+                DiasApontados = apontamentosDiarios.Where(c => c.TempoTotalApontadoNoDia.Ticks > 0).Count(),
                 ApontamentosDiarios = apontamentosDiarios.OrderBy(c => c.DataReferencia).ToList(),
                 TempoTotalApontadoNoMes = new TimeSpan(apontamentosDiarios.Sum(c => c.TempoTotalApontadoNoDia.Ticks)),
                 TempoTotalApontadoSincronizadoChannel = new TimeSpan(apontamentosDiarios.Sum(c => c.TempoTotalApontadoSincronizadoChannel.Ticks)),
@@ -326,6 +330,7 @@ namespace CA.Aplicacao.Extensions
             {
                 MesReferencia = mes,
                 AnoReferencia = ano,
+                DiasApontados = apontamentosDiarios.Where(c => c.TempoTotalApontadoNoDia.Ticks > 0).Count(),
                 ApontamentosDiarios = apontamentosDiarios.OrderBy(c => c.DataReferencia).ToList(),
                 TempoTotalApontadoNoMes = new TimeSpan(apontamentosDiarios.Sum(c => c.TempoTotalApontadoNoDia.Ticks))
             };
@@ -355,6 +360,7 @@ namespace CA.Aplicacao.Extensions
             {
                 MesReferencia = mes,
                 AnoReferencia = ano,
+                DiasApontados = apontamentosDiarios.Where(c => c.TempoTotalApontadoNoDia.Ticks > 0).Count(),
                 ApontamentosDiarios = apontamentosDiarios.OrderBy(c => c.DataReferencia).ToList(),
                 TempoTotalApontadoNoMes = new TimeSpan(apontamentosDiarios.Sum(c => c.TempoTotalApontadoNoDia.Ticks))                
             };

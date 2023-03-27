@@ -1,6 +1,6 @@
 import { IModel } from "src/app/common/models/model";
 import { JwtToken } from "./jwt.token";
-import { Usuario } from "./usuario";
+import { Usuario } from "../../core/models/usuario";
 
 export class LoginSucesso implements IModel<LoginSucesso> {
     public usuario?: Usuario;

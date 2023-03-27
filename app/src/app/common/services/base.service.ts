@@ -79,7 +79,7 @@ export abstract class BaseService {
 			let entity = new returnType();
 
 			if(Array.isArray(response)) {			
-				var array = new Array<TType>();
+				let array = new Array<TType>();
 				
 				response.forEach(item => array.push(entity.criarNovo(item)));
 

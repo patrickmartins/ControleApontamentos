@@ -16,7 +16,7 @@
 										[ngClass]="{ 'fade-in-left': tarefa.fixada, 'fade-out-left': !tarefa.fixada}"
 										[tarefa]="tarefa" 
 										[permiteFixar]="true" 
-										[habilitarApontamento]="tarefa.apontamentoHabilitado"
+										[permiteApontar]="tarefa.apontamentoHabilitado"
 										[ngStyle]="{ 'animation-delay': tarefa.fixada ? ((i * 0.1) + 's') : '0s', 'opacity': tarefa.fixada ? 0 : 1 }"						 			
 										*ngFor="let tarefa of tarefasFixadas; let i = index">
 					</quadro-tarefa>

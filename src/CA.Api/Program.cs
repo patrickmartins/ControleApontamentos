@@ -1,5 +1,5 @@
 using CA.Api.Configuracoes;
-using CA.Jobs.Channel.Configuracoes;
+using CA.Jobs.Configuracoes;
 using Hangfire;
 
 var builder = WebApplication.CreateBuilder(args);

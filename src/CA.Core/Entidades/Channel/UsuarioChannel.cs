@@ -5,8 +5,10 @@ namespace CA.Core.Entidades.Channel
     public class UsuarioChannel
     {
         public int Id { get; set; }
+        public string NomeUsuario { get; set; }
         public string NomeCompleto { get; set; }
         public string Email { get; set; }
+        public bool Ativo { get; set; }
 
         public IEnumerable<ApontamentoChannel> Apontamentos { get; set; }
 
@@ -16,6 +18,9 @@ namespace CA.Core.Entidades.Channel
 
             if (Id <= 0)
                 erros.Add(new Erro("O id não foi informado.", nameof(Id)));
+
+            if (string.IsNullOrEmpty(NomeUsuario))
+                erros.Add(new Erro("O nome de usuário não foi informado.", nameof(NomeUsuario)));
 
             if (string.IsNullOrEmpty(NomeCompleto))
                 erros.Add(new Erro("O nome completo do usuário não foi informado.", nameof(NomeCompleto)));
@@ -41,12 +46,14 @@ namespace CA.Core.Entidades.Channel
 
             return usuario.Id == Id &&
                     usuario.NomeCompleto == NomeCompleto &&
-                    usuario.Email == Email;
+                    usuario.NomeUsuario == NomeUsuario &&
+                    usuario.Email == Email &&
+                    usuario.Ativo == Ativo;
         }
 
         public override int GetHashCode()
         {
-            return Tuple.Create(Id, NomeCompleto, Email).GetHashCode();
+            return Tuple.Create(Id, NomeUsuario, NomeCompleto, Email, Ativo).GetHashCode();
         }
 
         public static bool operator ==(UsuarioChannel usuario1, UsuarioChannel usuario2)

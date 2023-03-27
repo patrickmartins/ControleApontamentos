@@ -4,6 +4,7 @@ namespace CA.Core.Interfaces.Tfs
 {
     public interface IRepositorioUsuariosTfs : IRepositorioTfs
     {
-        Task<UsuarioTfs?> ObterUsuarioAsync(string colecao, string usuario);
+        Task<IEnumerable<UsuarioTfs>> ObterTodosUsuariosAsync(string colecao);
+        Task<UsuarioTfs?> ObterUsuarioAsync(string colecao, string usuario);        
     }
 }

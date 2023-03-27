@@ -33,7 +33,7 @@ export class TemaService {
 			return true;
 		}
 		else {
-			var ehTemaEscuro = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+			let ehTemaEscuro = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 
 			if (ehTemaEscuro) {
 				return true;
@@ -70,7 +70,7 @@ export class TemaService {
 			this.aplicarTemaEscuro();
 		}
 		else {
-			var ehTemaEscuro = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+			let ehTemaEscuro = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 
 			if (ehTemaEscuro) {
 				this.aplicarTemaEscuro();

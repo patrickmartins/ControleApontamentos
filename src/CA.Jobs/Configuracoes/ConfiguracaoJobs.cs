@@ -1,16 +1,16 @@
 ﻿using CA.Core.Entidades.Channel;
-using CA.Jobs.Channel.Interfaces;
+using CA.Jobs.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CA.Jobs.Channel.Configuracoes
+namespace CA.Jobs.Configuracoes
 {
     public static class ConfiguracaoJobs
     {
         public static void AdicionarJobsChannel(this IServiceCollection services)
         {
-            services.AddScoped<IJobChannel<UsuarioChannel>, JobCargaUsuarios>();
-            services.AddScoped<IJobChannel<ApontamentoChannel>, JobCargaApontamentos>();
-            services.AddScoped<IJobChannel<ProjetoChannel>, JobCargaProjetos>();
+            services.AddScoped<IJob<UsuarioChannel>, JobCargaUsuarios>();
+            services.AddScoped<IJob<ApontamentoChannel>, JobCargaApontamentos>();
+            services.AddScoped<IJob<ProjetoChannel>, JobCargaProjetos>();
         }
     }
 }

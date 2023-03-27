@@ -13,6 +13,7 @@ namespace CA.Api.Configuracoes
     {
         public static string SecaoConfig = "Hangfire";
 
+        public bool HabilitarJobs { get; set; }
         public string IdJobCargaCompleta { get; set; }
         public string UsuarioDashboard { get; set; }
         public string SenhaDashboard { get; set; }

@@ -37,38 +37,11 @@
 						</button>
 					</section>
 					<section *ngIf="!carregando" class="informacoes">
-						<ul>
-							<li *ngIf="tempoTotalTrabalhadoNoDia == 0 && usuarioLogado.possuiContaPonto">
-								Você não registrou pontos.
-							</li>
-						
-							<li *ngIf="tempoTotalTrabalhadoNoDia > 0 && usuarioLogado.possuiContaPonto">
-								<span>{{ tempoTotalTrabalhadoNoDia | tempoTrabalhado }}</span>	
-							</li>
-						
-							<li *ngIf="tempoTotalApontadoNoDia == 0">
-								Você não fez apontamentos.
-							</li>
-						
-							<li *ngIf="tempoTotalApontadoNaoSincronizadoNoDia == 0 && tempoTotalApontadoSincronizadoNoDia > 0 ">								
-								<span>{{ tempoTotalApontadoNoDia | tempoApontado : 'sync':'apt'  }}&nbsp;</span>
-							</li>
-						
-							<li *ngIf="tempoTotalApontadoSincronizadoNoDia == 0  && tempoTotalApontadoNaoSincronizadoNoDia > 0">							
-								<span>{{ tempoTotalApontadoNaoSincronizadoNoDia | tempoApontado : 'nsync':'apt' }}</span>
-							</li>
-						
-							<li *ngIf="tempoTotalApontadoSincronizadoNoDia > 0 && tempoTotalApontadoNaoSincronizadoNoDia > 0">								
-								<span>
-									{{ tempoTotalApontadoNoDia | tempoApontado : 'sync':'apt'  }} ({{ tempoTotalApontadoNaoSincronizadoNoDia | tempoApontado : 'nsync':'napt' }})
-								</span>
-							</li>
-
-							<li *ngIf="tempoTotalApontadoNoDia > 0 && tempoTotalApontadoSincronizadoNoDia === 0 && tempoTotalApontadoNaoSincronizadoNoDia == 0">							
-								<span>{{ tempoTotalApontadoNoDia | tempoApontado : 'sync':'apt' }}</span>
-							</li>
-						</ul>
-			
+                        <resumo-apontamentos [tempoApontadoNaoSincronizado]="tempoTotalApontadoSincronizadoNoDia"
+                                             [tempoApontadoSincronizado]="tempoTotalApontadoSincronizadoNoDia"
+                                             [tempoTrabalhado]="tempoTotalTrabalhadoNoDia">
+                        </resumo-apontamentos>
+									
 						<div *ngIf="(tempoTotalApontadoNoDia > 0 ||  tempoTotalTrabalhadoNoDia > 0)">
 							<grafico-resumo-dia	[apontamentosTfs]="apontamentosTfsDia"
 												[apontamentosChannel]="apontamentosChannelDia"

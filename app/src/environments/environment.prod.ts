@@ -1,5 +1,5 @@
 export const environment = {
-	production: false,
+	production: true,
 	intervaloExecucaoJob: 30,
 	urlApiBase: "https://apontamento-vixteam-api.azurewebsites.net/api/",
 	urlTfs: "http://tfs.vixteam.com.br:8080/tfs/",

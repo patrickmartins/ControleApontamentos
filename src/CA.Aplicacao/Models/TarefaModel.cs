@@ -14,7 +14,7 @@ namespace CA.Aplicacao.Models
         public DesignadoModel Designado { get; set; }
         public string Projeto { get; set; } = string.Empty;
         public string[] Tags { get; set; } = new string[0];
-        public bool ApontamentoHabilitado { get; set; }        
+        public bool ApontamentoHabilitado { get; set; }
         public TimeSpan TempoTotalApontadoSincronizadoChannel { get; set; }
         public TimeSpan TempoTotalApontadoNaoSincronizadoChannel { get; set; }
 

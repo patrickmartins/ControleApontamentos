@@ -27,7 +27,7 @@ export class ApontamentosChannelDia implements IModel<ApontamentosChannelDia> {
 	}
 
 	public obterApontamentosTfs(): ApontamentoChannel[] {		
-		var apontamentos: ApontamentoChannel[] = [];
+		let apontamentos: ApontamentoChannel[] = [];
 
 		this.atividades.forEach(atividade => {			
 			atividade.obterApontamentosTfs().forEach(tarefa => {

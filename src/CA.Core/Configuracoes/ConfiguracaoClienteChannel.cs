@@ -2,7 +2,7 @@
 {
     public class ConfiguracaoClienteChannel
     {
-        public string UrlAutenticacao { get; set; } = string.Empty;
+        public string UrlCloud { get; set; } = string.Empty;
         public string UrlBase { get; set; } = string.Empty;
         public string Usuario { get; set; } = string.Empty;
         public string Senha { get; set; } = string.Empty;
@@ -14,7 +14,7 @@
 
         public void Validar()
         {
-            if (string.IsNullOrEmpty(UrlAutenticacao))
+            if (string.IsNullOrEmpty(UrlCloud))
                 throw new ArgumentException("A url de autenticação do Channel não foi configurada.");
 
             if (string.IsNullOrEmpty(Usuario))

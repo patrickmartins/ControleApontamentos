@@ -87,7 +87,7 @@ namespace CA.Servicos.Channel
         {
             var token = _policy.ExecuteAsync(async () =>
             {
-                return await _configuracoes.UrlAutenticacao
+                return await _configuracoes.UrlCloud
                                             .AppendPathSegment("api/auth")
                                             .PostJsonAsync(new LoginRequest
                                             {
@@ -107,50 +107,26 @@ namespace CA.Servicos.Channel
             return token;
         }
 
-        public async Task<IEnumerable<UsuarioResponse>> ObterUsuariosAtivosAsync()
+        public async Task<IEnumerable<UsuarioResponse>> ObterTodosUsuariosAsync()
         {
             var resultado = await _policy.ExecuteAsync(() =>
             {
-                var cookies = ObterCookies().ParaCookieJar();
+                var token = ObterTokenJwt();
 
-                var parametros = "callCount=1" + Environment.NewLine;
-                parametros += "windowName=c0-param0" + Environment.NewLine;
-                parametros += "c0-scriptName=UsuarioAjax" + Environment.NewLine;
-                parametros += "c0-methodName=listarUsuariosAssociarProjeto" + Environment.NewLine;
-                parametros += "c0-id=0" + Environment.NewLine;
-                parametros += "c0-e1=number:0" + Environment.NewLine;
-                parametros += "c0-e2=string:-1" + Environment.NewLine;
-                parametros += "c0-e3=string:u.nome" + Environment.NewLine;
-                parametros += "c0-e4=string:ASC" + Environment.NewLine;
-                parametros += "c0-e5=string:" + Environment.NewLine;
-                parametros += "c0-e6=string:" + Environment.NewLine;
-                parametros += "c0-e7=string:-1" + Environment.NewLine;
-                parametros += "c0-e8=number:" + Environment.NewLine;
-                parametros += "c0-e9=boolean:false" + Environment.NewLine;
-                parametros += "c0-param0=Object_Object:{start:reference:c0-e1, limit:reference:c0-e2, colunaOrdenacao:reference:c0-e3, direcaoOrdenacao:reference:c0-e4, usuario:reference:c0-e5, papel:reference:c0-e6, idArea:reference:c0-e7, idProjeto:reference:c0-e8, somenteAssociados:reference:c0-e9}" + Environment.NewLine;
-                parametros += "batchId=16" + Environment.NewLine;
-                parametros += "instanceId=0" + Environment.NewLine;
-                parametros += "page=%2Fchannel%2Fprojeto.do%3Faction%3DcarregarAssociarUsuarios%26idProjeto%3D1226" + Environment.NewLine;
-                parametros += "scriptSessionId=CHtB$MR6zt7mRjGTp0q*kuHiVno/1nLgXno-UTVbW8EEt" + Environment.NewLine;
-
-                return _configuracoes.UrlBase
-                                    .AppendPathSegment("dwr/call/plaincall/UsuarioAjax.listarUsuariosAssociarProjeto.dwr")
-                                    .WithCookies(cookies)
-                                    .OnRedirect(c =>
-                                    {
-                                        RemoverCookies();
-
-                                        throw new FlurlHttpException(c);
-                                    })
+                return _configuracoes.UrlCloud
+                                    .AppendPathSegment("api/iam/users")
+                                    .SetQueryParam("page", 0)
+                                    .SetQueryParam("query", "query")
+                                    .SetQueryParam("limit", 100000)
+                                    .WithOAuthBearerToken(token.TokenAcesso)
                                     .OnError(c =>
                                     {
                                         RemoverCookies();
                                     })
-                                    .PostStringAsync(parametros)
-                                    .ReceiveString();
+                                    .GetJsonAsync<ConsultaUsuariosResponse>();
             });
 
-            return ChannelStringResponseHelper.DesserializarResultado<UsuarioResponse>(resultado);
+            return resultado.Resultados.Where(c => c.Id > 0);
         }
 
         public async Task<IEnumerable<ProjetoResponse>> ObterProjetosAsync()
