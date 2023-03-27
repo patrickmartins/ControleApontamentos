@@ -81,7 +81,6 @@ namespace CA.Core.Entidades.Channel
 
             return apontamento.Id == Id &&
                     apontamento.Data == Data &&
-                    apontamento.ApontamentoTfs == ApontamentoTfs &&
                     apontamento.TempoApontado.Ticks == TempoApontado.Ticks &&
                     apontamento.Tipo == Tipo &&
                     apontamento.Projeto == Projeto &&
