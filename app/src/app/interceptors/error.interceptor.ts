@@ -17,12 +17,14 @@ export class ErrorInterceptor implements HttpInterceptor {
         return next.handle(request)
                     .pipe(catchError((response: HttpErrorResponse) => {								
                                 let error = new Erro();
-                        
-                                if (response.status === 0) {
-                                    error.source = "app";
-                                    error.description = "Ocorreu um erro desconhecido. Verifique sua conexão com a internet.";
 
-									this.snackBar.open(error.description, "OK",  {
+                                error.codigo = response.status;
+
+                                if (response.status === 0) {
+                                    error.origem = "app";
+                                    error.descricao = "Ocorreu um erro desconhecido. Verifique sua conexão com a internet.";                                    
+                                    
+									this.snackBar.open(error.descricao, "OK",  {
 										duration: 5000,
 										verticalPosition: "top", 
 										horizontalPosition: "center",
@@ -40,29 +42,42 @@ export class ErrorInterceptor implements HttpInterceptor {
 										this.router.navigate(["/login"]);
 									}
 									else {
-                                        this.contaService.logout();
-										this.router.navigate(["/login"]);
+                                        this.router.navigate(["/acesso-negado"]);
 									}
 
                                     return throwError([response]);
                                 }
                         
                                 if (response.status === 500) {
-                                    error.source = "app";
-                                    error.description = "Ocorreu um erro interno. Tente novamente mais tarde.";
+                                    error.origem = "app";
+                                    error.descricao = "Ocorreu um erro interno. Tente novamente mais tarde.";
 
-									this.snackBar.open(error.description, "OK",  {
+									this.snackBar.open(error.descricao, "OK",  {
 										duration: 5000,
 										verticalPosition: "top", 
 										horizontalPosition: "center",
 										panelClass: "erro"
 									});
+                                
                                     return throwError([error]);
                                 }   
                                 
-                                if(response.error)
-                                    return throwError(response.error);
-                                
+                                if(response.status === 400) {
+                                    var erros = response.error;
+
+                                    if(Array.isArray(erros)) {
+                                        erros.forEach((erro: Erro) => {
+                                            erro.codigo = response.status;
+                                        });
+                                    }
+
+                                    return throwError(erros);                                
+                                }
+
+                                if(response.error) {
+                                    return throwError(erros);                                
+                                }
+
                                 return throwError(response);
                             })
                     );

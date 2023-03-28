@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DateAdapter } from '@angular/material/core';
-import { forkJoin, of } from 'rxjs';
+import { catchError, forkJoin, of } from 'rxjs';
 import * as moment from 'moment';
 
 import { ApontamentoService } from '../../services/apontamento.service';
@@ -13,6 +13,7 @@ import { BaseComponent } from 'src/app/common/components/base.component';
 import { ApontamentosChannelDia } from '../../models/apontamentos-channel-dia';
 import { JobInfo } from 'src/app/core/models/job-info';
 import { JobService } from 'src/app/core/services/job.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
 	selector: 'app-apontamentos-por-dia',
@@ -57,6 +58,7 @@ export class ApontamentosPorDiaComponent extends BaseComponent implements OnInit
 	public infoJobCarga?: JobInfo;
 	
 	constructor(servicoConta: ContaService,
+        snackBar: MatSnackBar,
 		private servicoApontamento: ApontamentoService,
 		private servicoPonto: PontoService,
 		private servicoJob: JobService,
@@ -64,7 +66,7 @@ export class ApontamentosPorDiaComponent extends BaseComponent implements OnInit
 		private activeRoute: ActivatedRoute, 
 		private router: Router) {
 
-		super(servicoConta);
+		super(servicoConta, snackBar);
 		this.dataAdapter.setLocale('pt-br');
 	}
 	
@@ -99,9 +101,9 @@ export class ApontamentosPorDiaComponent extends BaseComponent implements OnInit
 		this.carregando = true;
 
         forkJoin({
-            apontamentosTfsDia: !this.usuarioLogado?.possuiContaTfs ? of(undefined) : this.servicoApontamento.obterApontamentosTfsPorDia(data),
-            apontamentosChannelDia: !this.usuarioLogado?.possuiContaChannel ? of(undefined) : this.servicoApontamento.obterApontamentosChannelPorDia(data),
-            batidas: !this.usuarioLogado?.possuiContaPonto ? of(undefined) : this.servicoPonto.obterBatidasPorDia(data),
+            apontamentosTfsDia: this.usuarioLogado?.possuiContaTfs ? this.servicoApontamento.obterApontamentosTfsPorDia(data).pipe(catchError(e => this.pipeErrosDeNegocio(e))) : of(undefined),
+            apontamentosChannelDia: this.usuarioLogado?.possuiContaChannel ? this.servicoApontamento.obterApontamentosChannelPorDia(data).pipe(catchError(e => this.pipeErrosDeNegocio(e))) : of(undefined),
+            batidas: this.usuarioLogado?.possuiContaPonto ? this.servicoPonto.obterBatidasPorDia(data).pipe(catchError(e => this.pipeErrosDeNegocio(e))) : of(undefined),
             infoJobCarga: this.servicoJob.obterJobCarga()
         })		
         .subscribe({ 
@@ -109,7 +111,7 @@ export class ApontamentosPorDiaComponent extends BaseComponent implements OnInit
                 this.apontamentosTfsDia = resultado.apontamentosTfsMes;
                 this.apontamentosChannelDia = resultado.apontamentosChannelMes;
                 this.batidas = resultado.batidas;
-                this.infoJobCarga = resultado.jobInfo;
+                this.infoJobCarga = resultado.infoJobCarga;
 
                 this.servicoApontamento.consolidarTarefasEAtividadesDia(this.apontamentosTfsDia, this.apontamentosChannelDia);
             },

@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DateAdapter } from '@angular/material/core';
 import { FormControl } from '@angular/forms';
-import { forkJoin, of } from 'rxjs';
+import { catchError, forkJoin, of } from 'rxjs';
 import * as moment from 'moment';
 
 import { ApontamentosChannelDia } from 'src/app/apontamento/models/apontamentos-channel-dia';
@@ -16,6 +16,7 @@ import { ContaService } from 'src/app/core/services/conta.service';
 import { JobService } from 'src/app/core/services/job.service';
 import { UsuarioService } from '../../services/usuario.service';
 import { Usuario } from 'src/app/core/models/usuario';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-apontamentos-usuario-dia',
@@ -66,6 +67,7 @@ export class ApontamentosUsuarioDiaComponent extends BaseComponent implements On
     public usuarioSelecionado?: Usuario;
     
 	constructor(servicoConta: ContaService,
+        snackBar: MatSnackBar,
 		private servicoApontamento: ApontamentoService,
 		private servicoPonto: PontoService,
         private usuarioService: UsuarioService,
@@ -74,7 +76,7 @@ export class ApontamentosUsuarioDiaComponent extends BaseComponent implements On
 		private activeRoute: ActivatedRoute, 
 		private router: Router) {
 
-		super(servicoConta);
+		super(servicoConta, snackBar);
 		this.dataAdapter.setLocale('pt-br');
 	}
 	
@@ -139,9 +141,9 @@ export class ApontamentosUsuarioDiaComponent extends BaseComponent implements On
 		this.carregando = true;
 
         forkJoin({
-            apontamentosTfsDia: !this.usuarioSelecionado?.possuiContaTfs ? of(undefined) : this.servicoApontamento.obterApontamentosTfsDeUsuarioPorDia(idUsuario, data),
-            apontamentosChannelDia: !this.usuarioSelecionado?.possuiContaChannel ? of(undefined) : this.servicoApontamento.obterApontamentosChannelDeUsuarioPorDia(idUsuario, data),
-            batidas: !this.usuarioSelecionado?.possuiContaPonto ? of(undefined) : this.servicoPonto.obterBatidasDeUsuarioPorDia(idUsuario, data),
+            apontamentosTfsDia: this.usuarioSelecionado?.possuiContaTfs ? this.servicoApontamento.obterApontamentosTfsDeUsuarioPorDia(idUsuario, data).pipe(catchError(e => this.pipeErrosDeNegocio(e))) : of(undefined),
+            apontamentosChannelDia: this.usuarioSelecionado?.possuiContaChannel ? this.servicoApontamento.obterApontamentosChannelDeUsuarioPorDia(idUsuario, data).pipe(catchError(e => this.pipeErrosDeNegocio(e))) : of(undefined),
+            batidas: this.usuarioSelecionado?.possuiContaPonto ? this.servicoPonto.obterBatidasDeUsuarioPorDia(idUsuario, data).pipe(catchError(e => this.pipeErrosDeNegocio(e))) : of(undefined),
             infoJobCarga: this.servicoJob.obterJobCarga()
         })		
         .subscribe({

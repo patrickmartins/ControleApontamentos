@@ -6,6 +6,7 @@ import { TarefaService } from '../../../core/services/tarefa.service';
 import { TarefaHelper } from 'src/app/helpers/tarefa.helper';
 import { BaseComponent } from 'src/app/common/components/base.component';
 import { ContaService } from 'src/app/core/services/conta.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
 	selector: 'app-minhas-terefas',
@@ -24,8 +25,8 @@ export class MinhasTerefasComponent extends BaseComponent implements OnInit {
 		return this.grupos.some(c => c.tarefas.length > 0) || this.tarefasFixadas.length > 0;
 	}
 
-	constructor(servicoConta: ContaService, private servicoTarefa: TarefaService) { 
-		super(servicoConta);
+	constructor(servicoConta: ContaService, snackBar: MatSnackBar, private servicoTarefa: TarefaService) { 
+		super(servicoConta, snackBar);
 	}
 
 	public ngOnInit(): void {

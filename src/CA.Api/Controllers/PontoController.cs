@@ -83,6 +83,9 @@ namespace CA.Api.Controllers
 
             var resultado = await _servico.ObterBatidasPorMesAsync(pis, mes, ano);
 
+            if(!resultado.Sucesso)
+                return BadRequest(resultado.Erros);
+
             var batidas = resultado.Valor;
 
             batidas.OcultarBatidas();

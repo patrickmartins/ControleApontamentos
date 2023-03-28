@@ -3,7 +3,7 @@ import { MatDatepicker } from '@angular/material/datepicker';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DateAdapter } from '@angular/material/core';
 import * as moment from 'moment';
-import { forkJoin, map, of, startWith, tap } from 'rxjs';
+import { catchError, forkJoin, map, Observable, of, startWith, tap } from 'rxjs';
 
 import { ApontamentosChannelDia } from 'src/app/apontamento/models/apontamentos-channel-dia';
 import { ApontamentosChannelMes } from 'src/app/apontamento/models/apontamentos-channel-mes';
@@ -19,6 +19,7 @@ import { JobService } from 'src/app/core/services/job.service';
 import { FormControl } from '@angular/forms';
 import { UsuarioService } from '../../services/usuario.service';
 import { Usuario } from 'src/app/core/models/usuario';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
     selector: 'app-apontamentos-usuario-mes',
@@ -75,6 +76,7 @@ export class ApontamentosUsuarioMesComponent extends BaseComponent implements On
     public usuarioSelecionado?: Usuario;
 
     constructor(servicoConta: ContaService,
+        snackBar: MatSnackBar,
         private servicoApontamento: ApontamentoService,
         private servicoPonto: PontoService,
         private usuarioService: UsuarioService,
@@ -84,7 +86,7 @@ export class ApontamentosUsuarioMesComponent extends BaseComponent implements On
         private activeRoute: ActivatedRoute,
         private router: Router) {
 
-        super(servicoConta);
+        super(servicoConta, snackBar);
 
         this.dataAdapter.setLocale('pt-br');
     }
@@ -165,9 +167,9 @@ export class ApontamentosUsuarioMesComponent extends BaseComponent implements On
         let ano = dataReferencia.getFullYear();
 
         forkJoin({
-            apontamentosTfsMes: !this.usuarioSelecionado?.possuiContaTfs ? of(undefined) : this.servicoApontamento.obterApontamentosTfsDeUsuarioPorMes(idUsuario, mes, ano),
-            apontamentosChannelMes: !this.usuarioSelecionado?.possuiContaChannel ? of(undefined) : this.servicoApontamento.obterApontamentosChannelDeUsuarioPorMes(idUsuario, mes, ano),
-            batidas: !this.usuarioSelecionado?.possuiContaPonto ? of(undefined) : this.servicoPonto.obterBatidasDeUsuarioPorMes(idUsuario, mes, ano),
+            apontamentosTfsMes: this.usuarioSelecionado?.possuiContaTfs ? this.servicoApontamento.obterApontamentosTfsDeUsuarioPorMes(idUsuario, mes, ano).pipe(catchError(e => this.pipeErrosDeNegocio(e))) : of(undefined),
+            apontamentosChannelMes: this.usuarioSelecionado?.possuiContaChannel ? this.servicoApontamento.obterApontamentosChannelDeUsuarioPorMes(idUsuario, mes, ano).pipe(catchError(e => this.pipeErrosDeNegocio(e))) : of(undefined),
+            batidas: this.usuarioSelecionado?.possuiContaPonto ? this.servicoPonto.obterBatidasDeUsuarioPorMes(idUsuario, mes, ano).pipe(catchError(e => this.pipeErrosDeNegocio(e))) : of(undefined),
             infoJobCarga: this.servicoJob.obterJobCarga()
         })		
         .subscribe({ 

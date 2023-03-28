@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { BaseComponent } from 'src/app/common/components/base.component';
 
 import { ContaService } from 'src/app/core/services/conta.service';
@@ -17,7 +18,7 @@ export class QuadroAtividadeComponent extends BaseComponent {
 
 	public apontamentosExpandido: boolean = false;
 	
-	constructor(servicoConta: ContaService) {
-		super(servicoConta);
+	constructor(servicoConta: ContaService, snackBar: MatSnackBar) {
+		super(servicoConta, snackBar);
 	}
 }

@@ -8,6 +8,7 @@ import { BaseComponent } from 'src/app/common/components/base.component';
 import { StatusLogin } from 'src/app/core/models/status-login';
 import { ContaService } from 'src/app/core/services/conta.service';
 import { Subscription } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
 	selector: 'login-menu',
@@ -22,11 +23,12 @@ export class LoginMenuComponent extends BaseComponent implements OnDestroy{
 	public onStatusLoginAlteradoSubscription: Subscription;
 
 	constructor(servicoConta: ContaService, 
+        snackBar: MatSnackBar,
 		private router: Router, 		
 		private servicoMsal: MsalService,
 		private sanitizer: DomSanitizer,
 		@Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration) {
-			super(servicoConta);
+			super(servicoConta, snackBar);
 
 			this.onStatusLoginAlteradoSubscription = this.servicoConta.onStatusLoginAlterado.subscribe((status: StatusLogin) => this.onStatusLoginAlterado(status))
 	}

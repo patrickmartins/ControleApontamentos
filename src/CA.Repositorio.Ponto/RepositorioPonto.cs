@@ -31,5 +31,12 @@ namespace CA.Repositorios.Ponto
 
             return funcionarios.FirstOrDefault(c => c.Nome.ToLower().Equals(nome.ToLower()));
         }
+
+        public async Task<Funcionario?> ObterFuncionarioPorPisAsync(string pisFuncionario)
+        {
+            var funcionarios = await _servico.ObterFuncionariosAsync();
+
+            return funcionarios.FirstOrDefault(c => c.NumeroPis.Equals(pisFuncionario));
+        }
     }
 }

@@ -21,6 +21,7 @@ import { CoreModule } from '../core/core.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoaderModule } from '../loader/loader.module';
 import { ContaModule } from '../conta/conta.module';
+import { NgChartsModule } from 'ng2-charts';
 
 @NgModule({
 	declarations: [
@@ -48,7 +49,8 @@ import { ContaModule } from '../conta/conta.module';
 		MatInputModule,
 		MatCheckboxModule,
 		MatRadioModule,
-		CoreModule		
+		CoreModule,
+        NgChartsModule	
 	],
 	exports: [
 		MenuComponent

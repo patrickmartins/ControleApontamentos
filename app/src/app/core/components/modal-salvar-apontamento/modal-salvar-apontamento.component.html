@@ -15,20 +15,20 @@
 					<input matInput formControlName="data" name="data" id="data" [max]="dataAtual" [matDatepicker]="picker">
 					<mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
 					<mat-datepicker #picker></mat-datepicker>
-					<mat-error *ngFor="let error of form.errors.data">{{ error.description }}</mat-error>
+					<mat-error *ngFor="let error of form.errors.data">{{ error.descricao }}</mat-error>
 				</mat-form-field>
 				<mat-form-field appearance="outline" class="tempo" [style.width.px]=170>
 					<mat-label>Tempo Total:</mat-label>
 					<input matInput formControlName="tempoTotal" name="tempoTotal" id="tempoTotal" min="00:01" type="time">		
 					<mat-icon matSuffix>av_timer</mat-icon>			
-					<mat-error *ngFor="let error of form.errors.tempoTotal">{{ error.description }}</mat-error>
+					<mat-error *ngFor="let error of form.errors.tempoTotal">{{ error.descricao }}</mat-error>
 				</mat-form-field>
 			</div>
 			<div>
 				<mat-form-field appearance="outline" class="comentario" [style.height.px]=135>
 					<mat-label>Comentário:</mat-label>
 					<textarea matInput formControlName="comentario" name="comentario" id="comentario" rows="6"></textarea>
-					<mat-error *ngFor="let error of form.errors.comentario">{{ error.description }}</mat-error>
+					<mat-error *ngFor="let error of form.errors.comentario">{{ error.descricao }}</mat-error>
 				</mat-form-field>
 			</div>
 			<mat-divider style="margin-top: 45px;"></mat-divider>

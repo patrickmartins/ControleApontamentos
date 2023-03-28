@@ -6,6 +6,7 @@ import { StatusTarefa } from 'src/app/core/models/status-tarefa';
 import { ContaService } from 'src/app/core/services/conta.service';
 import { TemaService } from 'src/app/core/services/tema.service';
 import { Tema } from 'src/app/core/models/configuracoes';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
 	selector: 'menu',
@@ -44,8 +45,8 @@ export class MenuComponent extends BaseComponent {
 
 	public temaAplicacaoAtual: Tema;
 
-	constructor(servicoConta: ContaService, private servicoTema: TemaService, private router: Router) {
-		super(servicoConta);
+	constructor(servicoConta: ContaService, snackBar: MatSnackBar, private servicoTema: TemaService, private router: Router) {
+		super(servicoConta, snackBar);
 
 		this.temaAplicacaoAtual = this.servicoTema.obterTemaAtual();
 	}

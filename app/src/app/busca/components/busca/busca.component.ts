@@ -1,5 +1,6 @@
 import { Component, Injectable, OnInit } from '@angular/core';
 import { MatPaginatorIntl, PageEvent } from '@angular/material/paginator';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { BaseComponent } from 'src/app/common/components/base.component';
@@ -45,8 +46,8 @@ export class BuscaComponent extends BaseComponent implements OnInit {
 	public filtro: FiltroBusca = new FiltroBusca();
 	public pagina: PaginaBusca = new PaginaBusca();
 
-	constructor(servicoConta: ContaService, private servicoTarefa: TarefaService, private activeRoute: ActivatedRoute, private router: Router) { 
-		super(servicoConta);
+	constructor(servicoConta: ContaService, snackBar: MatSnackBar, private servicoTarefa: TarefaService, private activeRoute: ActivatedRoute, private router: Router) { 
+		super(servicoConta, snackBar);
 	}
 
 	public ngOnInit() {

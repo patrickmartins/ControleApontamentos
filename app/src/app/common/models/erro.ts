@@ -1,4 +1,5 @@
 export class Erro {
-    source: string = '';
-    description: string = '';
+    origem: string = '';
+    descricao: string = '';
+    codigo: number = 0;
 }

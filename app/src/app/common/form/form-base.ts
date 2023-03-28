@@ -41,7 +41,7 @@ export class FormBase<TModel extends FormModel<TModel>> {
     }
 
     public addValidationError(error: Erro) {
-        let key = error.source.toLowerCase();
+        let key = error.origem.toLowerCase();
 
         this.setFormValidationErrors(this.formGroup, [error]);
 
@@ -81,8 +81,8 @@ export class FormBase<TModel extends FormModel<TModel>> {
                     Object.keys(inputErrors).forEach(id => {  
                         let error = new Erro();
 
-                        error.source = input;
-                        error.description = inputErrors ? inputErrors[id].errorMessage : "";   
+                        error.origem = input;
+                        error.descricao = inputErrors ? inputErrors[id].errorMessage : "";   
                         
                         errors[input].push(error);
                     });
@@ -95,10 +95,10 @@ export class FormBase<TModel extends FormModel<TModel>> {
 
     private setFormValidationErrors(form: FormGroup, errors: Erro[]) {
         Object.keys(form.controls).forEach(input => {
-            let inputErrors = errors.filter(c => c.source.toLowerCase() == input.toLowerCase());
+            let inputErrors = errors.filter(c => c.origem.toLowerCase() == input.toLowerCase());
 
             inputErrors.forEach(error => {  
-                form.controls[input].setErrors({'app': error.description})
+                form.controls[input].setErrors({'app': error.descricao})
             });  
         });
     }

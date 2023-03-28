@@ -33,8 +33,8 @@ export class QuadroTarefaComponent extends BaseComponent {
 	public apontamentosExpandido: boolean = false;
 	public salvandoApontamento: boolean = false;	
 	
-	constructor(servicoConta: ContaService, private tarefaService: TarefaService, private snackBar: MatSnackBar) {
-		super(servicoConta);
+	constructor(servicoConta: ContaService, snackBar: MatSnackBar, private tarefaService: TarefaService) {
+		super(servicoConta, snackBar);
 	}
 
 	public fixarTarefa(): void {
