@@ -16,7 +16,7 @@ namespace CA.Servicos.Channel.Models.Responses
 
         public bool EhApontamentoTfs()
         {
-            return Regex.Matches(Comentario, "\\[\\d*\\] - \\[.*\\] - ").Count == 1 && Regex.IsMatch(Comentario, "^\\[\\d*\\] - \\[.*\\] - ");
+            return Regex.Matches(Comentario, "\\[\\d*\\] - \\[.*?\\] - ").Count == 1 && Regex.IsMatch(Comentario, "^\\[\\d*\\] - \\[.*?\\] - ");
         }
 
         public TipoApontamento ObterTipoDoApontamento()
