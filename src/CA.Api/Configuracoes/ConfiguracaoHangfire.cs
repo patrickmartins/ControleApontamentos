@@ -83,9 +83,6 @@ namespace CA.Api.Configuracoes
         public static void UsarHangfire(this IApplicationBuilder app)
         {
             var configs = app.ApplicationServices.GetService<ConfiguracaoHangfire>();
-
-            Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo("pt-BR");
-            Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("pt-BR");
             
             RecurringJob.AddOrUpdate<JobCargaCompletaChannel>(recurringJobId: configs.IdJobCargaCompleta, job => job.ExecutarAsync(null), $"*/{configs.IntervaloExecucao} * * * *");
         }

@@ -1,5 +1,6 @@
 using CA.Api.Configuracoes;
 using CA.Jobs.Configuracoes;
+using Flurl.Http;
 using Hangfire;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +26,7 @@ builder.Services.AdicionarCors();
 var app = builder.Build();
 
 app.UsarCulturaBr();
+app.ConfigurarFlurl();
 
 app.UseRouting();
 app.UseCors("default");

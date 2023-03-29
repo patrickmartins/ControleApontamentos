@@ -45,13 +45,13 @@ namespace CA.Servicos.Channel
             }
         }
 
-        private IEnumerable<ChannelCookie> ObterCookies()
+        private IEnumerable<ChannelCookie> ObterCookies(ChannelJwt token)
         {
             lock (_lock)
             {
                 if (_cookies is null)
                 {
-                    _cookies = ObterCookiesAcesso();
+                    _cookies = ObterCookiesAcesso(token);
                 }
 
                 return _cookies;
@@ -63,12 +63,10 @@ namespace CA.Servicos.Channel
             _cookies = null;
         }
 
-        private IEnumerable<ChannelCookie> ObterCookiesAcesso()
+        private IEnumerable<ChannelCookie> ObterCookiesAcesso(ChannelJwt token)
         {
             var result = _policy.ExecuteAsync(() =>
             {
-                var token = ObterTokenJwt();
-
                 return token.ObterUrlAutenticacao()
                                 .WithAutoRedirect(false)
                                 .GetAsync();
@@ -133,7 +131,8 @@ namespace CA.Servicos.Channel
         {
             var resultado = await _policy.ExecuteAsync(() =>
             {
-                var cookies = ObterCookies().ParaCookieJar();
+                var token = ObterTokenJwt();
+                var cookies = ObterCookies(token).ParaCookieJar();
 
                 var parametros = "callCount=1" + Environment.NewLine;
                 parametros += "windowName=c0-e13" + Environment.NewLine;
@@ -190,7 +189,8 @@ namespace CA.Servicos.Channel
         {
             var resultado = await _policy.ExecuteAsync(() =>
             {
-                var cookies = ObterCookies().ParaCookieJar();
+                var token = ObterTokenJwt();
+                var cookies = ObterCookies(token).ParaCookieJar();
 
                 return _configuracoes.UrlBase
                                     .AppendPathSegment($"api/escopo/{idProjeto}")
@@ -218,7 +218,8 @@ namespace CA.Servicos.Channel
         {
             var resultado = await _policy.ExecuteAsync(() =>
             {
-                var cookies = ObterCookies().ParaCookieJar();
+                var token = ObterTokenJwt();
+                var cookies = ObterCookies(token).ParaCookieJar();
 
                 return _configuracoes.UrlBase
                                     .AppendPathSegment($"api/escopo/{idProjeto}")
@@ -250,7 +251,8 @@ namespace CA.Servicos.Channel
         {
             var stream = await _policy.ExecuteAsync(() =>
             {
-                var cookies = ObterCookies().ParaCookieJar();
+                var token = ObterTokenJwt();
+                var cookies = ObterCookies(token).ParaCookieJar();
 
                 return _configuracoes.UrlBase
                                     .AppendPathSegment("apontamento.do")
