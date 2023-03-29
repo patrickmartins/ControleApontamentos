@@ -28,8 +28,8 @@ namespace CA.Api.Configuracoes
             {
                 config.UseFilter(new AutomaticRetryAttribute
                 {
-                    DelaysInSeconds = new int [] { 300, 600 },
-                    Attempts = 3,
+                    DelaysInSeconds = new int [] { 600 },
+                    Attempts = 1,
                 });
 
                 config.UseSQLiteStorage(configuracoes.GetConnectionString("ConexaoBdHangfire"));

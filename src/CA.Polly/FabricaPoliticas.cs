@@ -8,7 +8,7 @@ namespace CA.Polly
         {
             var circuitBreaker = Policy
                           .Handle<Exception>()
-                          .CircuitBreakerAsync(6, TimeSpan.FromMinutes(5));
+                          .CircuitBreakerAsync(3, TimeSpan.FromMinutes(10));
 
             var retry = Policy
                             .Handle<Exception>()
@@ -27,7 +27,7 @@ namespace CA.Polly
         {
             var circuitBreaker = Policy
                           .Handle<Exception>()
-                          .CircuitBreakerAsync(6, TimeSpan.FromMinutes(5));
+                          .CircuitBreakerAsync(3, TimeSpan.FromMinutes(10));
 
             var retry = Policy
                             .Handle<Exception>()
@@ -46,7 +46,7 @@ namespace CA.Polly
         {
             var circuitBreaker = Policy
                           .Handle<Exception>()
-                          .CircuitBreakerAsync(6, TimeSpan.FromMinutes(5));
+                          .CircuitBreakerAsync(3, TimeSpan.FromMinutes(45));
 
             var retry = Policy
                             .Handle<Exception>()
