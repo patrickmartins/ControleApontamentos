@@ -7,7 +7,7 @@ using System.Text;
 
 namespace CA.Api.Configuracoes
 {
-    public static class ConfiguracoesAutenticacao
+    public static class ConfiguracaoAutenticacao
     {
         public static void AdicionarAutenticacao(this IServiceCollection services, IConfiguration configuration)
         {

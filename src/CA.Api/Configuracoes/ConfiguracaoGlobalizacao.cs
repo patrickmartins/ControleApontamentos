@@ -2,7 +2,7 @@
 
 namespace CA.Api.Configuracoes
 {
-    public static class ConfiguracoesGlobalizacao
+    public static class ConfiguracaoGlobalizacao
     {
         public static void UsarCulturaBr(this IApplicationBuilder app)
         {

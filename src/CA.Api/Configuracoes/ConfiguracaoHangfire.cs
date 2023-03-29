@@ -25,7 +25,13 @@ namespace CA.Api.Configuracoes
         public static void AdicionarHangfire(this IServiceCollection servicos, IConfiguration configuracoes)
         {
             servicos.AddHangfire(config =>
-            {                
+            {
+                config.UseFilter(new AutomaticRetryAttribute
+                {
+                    DelaysInSeconds = new int [] { 300, 600 },
+                    Attempts = 3,
+                });
+
                 config.UseSQLiteStorage(configuracoes.GetConnectionString("ConexaoBdHangfire"));
                 config.UseConsole(new ConsoleOptions
                 {

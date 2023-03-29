@@ -2,7 +2,7 @@
 
 namespace CA.Api.Configuracoes
 {
-    public static class ConfiguracoesPoliticasPolly
+    public static class ConfiguracaoPoliticasPolly
     {
         public static void AdicionarPoliticasPolly(this IServiceCollection services)
         {
