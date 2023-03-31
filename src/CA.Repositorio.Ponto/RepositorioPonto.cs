@@ -1,6 +1,7 @@
 ﻿using CA.Core.Entidades.Ponto;
 using CA.Core.Interfaces.Ponto;
 using CA.Servicos.Secullum.Interfaces;
+using CA.Util.Extensions;
 
 namespace CA.Repositorios.Ponto
 {
@@ -29,7 +30,7 @@ namespace CA.Repositorios.Ponto
         {
             var funcionarios = await _servico.ObterFuncionariosAsync();
 
-            return funcionarios.FirstOrDefault(c => c.Nome.ToLower().Equals(nome.ToLower()));
+            return funcionarios.FirstOrDefault(c => c.Nome.Trim().RemoverEspacosDuplicados().ToLower().Equals(nome.ToLower()));
         }
 
         public async Task<Funcionario?> ObterFuncionarioPorPisAsync(string pisFuncionario)
