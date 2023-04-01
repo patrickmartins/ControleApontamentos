@@ -33,6 +33,7 @@ namespace CA.Api.Configuracoes
                 });
 
                 config.UseSQLiteStorage(configuracoes.GetConnectionString("ConexaoBdHangfire"));
+
                 config.UseConsole(new ConsoleOptions
                 {
                     BackgroundColor = "#0d3163",

@@ -1,5 +1,6 @@
 ﻿using CA.Core.Entidades.Ponto;
 using CA.Core.Interfaces.Ponto;
+using CA.Core.Valores;
 using CA.Servicos.Secullum.Interfaces;
 using CA.Util.Extensions;
 
@@ -14,14 +15,17 @@ namespace CA.Repositorios.Ponto
             _servico = servico;
         }
 
-        public async Task<BatidasPontoDia?> ObterBatidasPorDataAsync(string pisFuncionario, DateOnly data)
+        public async Task<Resultado<BatidasPontoDia?>> ObterBatidasPorDataAsync(string pisFuncionario, DateOnly data)
         {
-            var batidas = await _servico.ObterBatidasPorPeriodoAsync(pisFuncionario, data, data);
+            var resultado = await _servico.ObterBatidasPorPeriodoAsync(pisFuncionario, data, data);
 
-            return batidas.FirstOrDefault();
+            if(!resultado.Sucesso)            
+                return Resultado.DeErros<BatidasPontoDia?>(resultado.Erros);            
+
+            return Resultado.DeValor(resultado.Valor.FirstOrDefault());
         }
 
-        public Task<IEnumerable<BatidasPontoDia>> ObterBatidasPorPeriodoAsync(string pisFuncionario, DateOnly inicio, DateOnly fim)
+        public Task<Resultado<IEnumerable<BatidasPontoDia>>> ObterBatidasPorPeriodoAsync(string pisFuncionario, DateOnly inicio, DateOnly fim)
         {
             return _servico.ObterBatidasPorPeriodoAsync(pisFuncionario, inicio, fim);
         }

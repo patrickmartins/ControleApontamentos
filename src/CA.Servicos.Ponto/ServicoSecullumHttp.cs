@@ -1,6 +1,7 @@
 ﻿using CA.Core.Configuracoes;
 using CA.Core.Entidades.Ponto;
 using CA.Core.Interfaces.Ponto;
+using CA.Core.Valores;
 using CA.Servicos.Secullum.Entidades;
 using CA.Servicos.Secullum.Interfaces;
 using CA.Util.Extensions;
@@ -48,9 +49,9 @@ namespace CA.Servicos.Secullum
             return funcionarios;
         }
 
-        public Task<IEnumerable<BatidasPontoDia>> ObterBatidasPorPeriodoAsync(string pisFuncionario, DateOnly inicio, DateOnly fim)
+        public async Task<Resultado<IEnumerable<BatidasPontoDia>>> ObterBatidasPorPeriodoAsync(string pisFuncionario, DateOnly inicio, DateOnly fim)
         {
-            var lista = _policy.ExecuteAsync(() =>
+            var resposta = await _policy.ExecuteAsync(() =>
             {
                 var token = ObterTokenJwt();
 
@@ -60,15 +61,22 @@ namespace CA.Servicos.Secullum
                                             .SetQueryParam("DataInicio", inicio.ToString("yyyy-MM-dd"))
                                             .SetQueryParam("DataFim", fim.ToString("yyyy-MM-dd"))
                                             .SetQueryParam("FuncionarioPis", pisFuncionario)
+                                            .AllowHttpStatus("400")
                                             .OnError(c =>
                                             {
                                                 if (c.HttpResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
                                                     RemoverTokenJwt();
-                                            })
-                                            .GetJsonAsync<IEnumerable<BatidasPontoDia>>();
+                                            }).GetAsync();
             });
 
-            return lista;
+            if (resposta.StatusCode == (int)HttpStatusCode.BadRequest)
+            {
+                var erros = await resposta.GetJsonAsync<IEnumerable<ErroRequisicao>>();
+
+                return Resultado.DeErros<IEnumerable<BatidasPontoDia>>(erros.Select(c => new Erro(c.Mensagem, c.Propriedade)).ToArray());
+            }
+
+            return Resultado.DeValor((await resposta.GetJsonAsync<IEnumerable<BatidasPontoDia>>()).OrderBy(c => c.Data).AsEnumerable());
         }
 
         private SecullumJwt ObterTokenJwt()

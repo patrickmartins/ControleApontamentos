@@ -15,17 +15,20 @@ namespace CA.Core.Servicos.Ponto
 
         public async Task<Resultado<BatidasPontoDia?>> ObterBatidasPorDataAsync(string pisFuncionario, DateOnly data)
         {
-            var resultado = await ObterFuncionarioPorPisAsync(pisFuncionario);
+            var resultadoFuncionario = await ObterFuncionarioPorPisAsync(pisFuncionario);
 
-            if (!resultado.Sucesso)
-                return Resultado.DeErros<BatidasPontoDia?>(resultado.Erros);
+            if (!resultadoFuncionario.Sucesso)
+                return Resultado.DeErros<BatidasPontoDia?>(resultadoFuncionario.Erros);
 
             if (string.IsNullOrEmpty(pisFuncionario))
                 return Resultado.DeErros<BatidasPontoDia?>(new Erro("O pis do funcionário não foi informado.", nameof(pisFuncionario)));
 
-            var batidas = await _repositorio.ObterBatidasPorDataAsync(pisFuncionario, data);
+            var resultadoBatidas = await _repositorio.ObterBatidasPorDataAsync(pisFuncionario, data);
 
-            return Resultado.DeValor(batidas);
+            if (!resultadoBatidas.Sucesso)
+                return Resultado.DeErros<BatidasPontoDia?>(resultadoBatidas.Erros);
+
+            return Resultado.DeValor(resultadoBatidas.Valor);
         }
 
         public async Task<Resultado<IEnumerable<BatidasPontoDia>>> ObterBatidasPorPeriodoAsync(string pisFuncionario, DateOnly inicio, DateOnly fim)
@@ -38,9 +41,12 @@ namespace CA.Core.Servicos.Ponto
             if (string.IsNullOrEmpty(pisFuncionario))
                 return Resultado.DeErros<IEnumerable<BatidasPontoDia>>(new Erro("O pis do funcionário não foi informado.", nameof(pisFuncionario)));
 
-            var batidas = (await _repositorio.ObterBatidasPorPeriodoAsync(pisFuncionario, inicio, fim)).OrderBy(c => c.Data).ToList();
+            var resultadoBatidas = await _repositorio.ObterBatidasPorPeriodoAsync(pisFuncionario, inicio, fim);
 
-            return Resultado.DeValor<IEnumerable<BatidasPontoDia>>(batidas);
+            if (!resultadoBatidas.Sucesso)
+                return Resultado.DeErros<IEnumerable<BatidasPontoDia>>(resultadoBatidas.Erros);
+
+            return resultadoBatidas;
         }
 
         public async Task<Resultado<Funcionario?>> ObterFuncionarioPorNomeAsync(string nome)
@@ -61,10 +67,7 @@ namespace CA.Core.Servicos.Ponto
             var funcionario = await _repositorio.ObterFuncionarioPorPisAsync(pisFuncionario);
 
             if (funcionario is null)
-                return Resultado.DeErros<Funcionario?>(new Erro("O funcionário informado não foi encontrado no sistema.", nameof(funcionario)));
-
-            if (funcionario.FoiDemitido())
-                return Resultado.DeErros<Funcionario?>(new Erro("O funcionário informado não faz mais parte do quadro de funcionários da empresa.", nameof(funcionario)));
+                return Resultado.DeErros<Funcionario?>(new Erro("O funcionário informado não foi encontrado no sistema de ponto.", nameof(funcionario)));
 
             return Resultado.DeValor(funcionario);
         }

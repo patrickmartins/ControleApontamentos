@@ -1,5 +1,6 @@
 ﻿using CA.Core.Configuracoes;
 using CA.Core.Entidades.Ponto;
+using CA.Core.Valores;
 using CA.Servicos.Secullum.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -19,7 +20,7 @@ namespace CA.Servicos.Secullum.Cache
             _configuracoes = configuracoes;
         }
 
-        public Task<IEnumerable<BatidasPontoDia>> ObterBatidasPorPeriodoAsync(string pisFuncionario, DateOnly inicio, DateOnly fim)
+        public Task<Resultado<IEnumerable<BatidasPontoDia>>> ObterBatidasPorPeriodoAsync(string pisFuncionario, DateOnly inicio, DateOnly fim)
         {
             return _servico.ObterBatidasPorPeriodoAsync(pisFuncionario, inicio, fim);
         }

@@ -41,7 +41,7 @@ namespace CA.Api.Hangfire.Jobs
                 }
                 else
                 {
-                    _logger.LogInformation("===> A execução Jobs foi desabilitada. <===");
+                    _logger.LogInformation("===> A execução dos Jobs de Carga do Channel foi desabilitada. <===");
                 }
             }
         }
