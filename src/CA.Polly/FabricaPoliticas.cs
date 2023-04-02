@@ -13,7 +13,7 @@ namespace CA.Polly
             var retry = Policy
                             .Handle<Exception>()
                             .WaitAndRetryAsync(
-                                retryCount: 3,
+                                retryCount: 2,
                                 sleepDurationProvider: (count) =>
                                 {
                                     return TimeSpan.FromSeconds(count);
@@ -32,7 +32,7 @@ namespace CA.Polly
             var retry = Policy
                             .Handle<Exception>()
                             .WaitAndRetryAsync(
-                                retryCount: 3,
+                                retryCount: 2,
                                 sleepDurationProvider: (count) =>
                                 {
                                     return TimeSpan.FromSeconds(count);
@@ -46,12 +46,12 @@ namespace CA.Polly
         {
             var circuitBreaker = Policy
                           .Handle<Exception>()
-                          .CircuitBreakerAsync(3, TimeSpan.FromMinutes(45));
+                          .CircuitBreakerAsync(2, TimeSpan.FromMinutes(30));
 
             var retry = Policy
                             .Handle<Exception>()
                             .WaitAndRetryAsync(
-                                retryCount: 3,
+                                retryCount: 2,
                                 sleepDurationProvider: (count) =>
                                 {
                                     return TimeSpan.FromSeconds(count);
