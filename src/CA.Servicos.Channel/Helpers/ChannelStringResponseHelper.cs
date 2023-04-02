@@ -1,6 +1,4 @@
-﻿using CA.Core.Entidades.Channel;
-using ClosedXML.Excel;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System.Text.RegularExpressions;
 
 namespace CA.Servicos.Channel.Helpers
