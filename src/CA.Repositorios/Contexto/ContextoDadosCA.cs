@@ -23,8 +23,11 @@ namespace CA.Repositorios.Channel.Contexto
                         .ValueGeneratedNever();
 
             modelBuilder.Entity<ApontamentoChannel>()
-                        .Property(c => c.Data)
+                        .Property(c => c.Data)                        
                         .IsRequired();
+
+            modelBuilder.Entity<ApontamentoChannel>()
+                        .HasIndex(c => c.Data);
 
             modelBuilder.Entity<ApontamentoChannel>()
                         .Property(c => c.IdTarefaTfs);

@@ -4,6 +4,7 @@ using CA.Repositorios.Channel.Contexto;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CA.Repositorios.Migrations
 {
     [DbContext(typeof(ContextoDadosCA))]
-    partial class ContextoDadosCAModelSnapshot : ModelSnapshot
+    [Migration("20230404010243_add_indice_data_apontamento")]
+    partial class add_indice_data_apontamento
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
