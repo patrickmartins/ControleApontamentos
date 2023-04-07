@@ -77,9 +77,6 @@ export class ApontamentoService extends BaseService {
                         apontamentosTfs.removerApontamentoPorHash(apontamentoChannelTfs.hash);
                     }
                 }
-                else {
-                    apontamentosTfs.removerApontamentoPorHash(apontamentoTfs.hash);
-                }
             }
 
             apontamentosChannel.removerApontamentosExcluidos();
