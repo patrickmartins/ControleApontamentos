@@ -1,9 +1,9 @@
 import { IModel } from "src/app/common/models/model";
 import { ApontamentoChannel } from "src/app/core/models/apontamento-channel";
 import { ApontamentosChannelDia } from "./apontamentos-channel-dia";
+import { IColecaoApontamentosChannel } from "./colecao-apontamentos";
 
-export class ApontamentosChannelMes implements IModel<ApontamentosChannelMes> {
-
+export class ApontamentosChannelMes implements IModel<ApontamentosChannelMes>, IColecaoApontamentosChannel {
 	public mesReferencia: number = 0;
 	public anoReferencia: number = 0;
     public diasApontados: number = 0;
@@ -42,35 +42,49 @@ export class ApontamentosChannelMes implements IModel<ApontamentosChannelMes> {
 		return undefined;
 	}
 
+    public obterTodosApontamentos(): ApontamentoChannel[] {
+        let apontamentos: ApontamentoChannel[] = [];
+
+		for (let apontamentosDia of this.apontamentosDiarios) {				
+			apontamentos.push(...apontamentosDia.obterTodosApontamentos());
+		}
+
+		return apontamentos;
+    }
+
 	public obterApontamentosTfs(): ApontamentoChannel[] {		
 		let apontamentos: ApontamentoChannel[] = [];
 
-		this.apontamentosDiarios.forEach(apontamentosDia => {			
-			apontamentosDia.obterApontamentosTfs().forEach(apontamento => {
-				apontamentos.push(apontamento);
-			});
-		});
+		for (let apontamentosDia of this.apontamentosDiarios) {				
+			apontamentos.push(...apontamentosDia.obterApontamentosTfs());
+		}
 
 		return apontamentos;
 	}
 
 	public removerApontamentosExcluidos(): void {
-		this.apontamentosDiarios.forEach(apontamentosDia => {			
+		for (let apontamentosDia of this.apontamentosDiarios) {			
 			apontamentosDia.removerApontamentosExcluidos();
-		});
+		}
 	}
 
 	public recalcularTempoTotalApontado(): void {
 		this.tempoTotalApontadoNoMes = 0;
 
-		this.apontamentosDiarios?.forEach(apontamentoDia => {
-			apontamentoDia.recalcularTempoTotalApontado();
+		for (let apontamentosDia of this.apontamentosDiarios) {
+			apontamentosDia.recalcularTempoTotalApontado();
 
-			this.tempoTotalApontadoNoMes += apontamentoDia.tempoTotalApontadoNoDia;
-		});
+			this.tempoTotalApontadoNoMes += apontamentosDia.tempoTotalApontadoNoDia;
+		}
 	}
 
-	public removerTarefasSemApontamentos(): void {
-		this.apontamentosDiarios.forEach(c => c.removerTarefasSemApontamentos());
+	public removerAtividadesSemApontamentos(): void {
+		this.apontamentosDiarios.forEach(c => c.removerAtividadesSemApontamentos());
+	}
+
+    public removerApontamentoPorHash(hash: string): void {
+        for (let apontamentosDia of this.apontamentosDiarios) {		
+			apontamentosDia.removerApontamentoPorHash(hash);               
+		}
 	}
 }

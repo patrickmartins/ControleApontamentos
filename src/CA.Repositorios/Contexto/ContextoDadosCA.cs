@@ -13,8 +13,6 @@ namespace CA.Repositorios.Channel.Contexto
         {
             #region Channel
 
-            modelBuilder.Entity<ApontamentoChannel>().HasQueryFilter(c => (!c.ApontamentoTfs && c.Status != StatusApontamento.Excluido) || (c.ApontamentoTfs && c.Status != StatusApontamento.Inserido));
-
             modelBuilder.Entity<ApontamentoChannel>()
                         .HasKey(c => c.Id);
 

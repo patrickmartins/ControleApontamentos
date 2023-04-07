@@ -35,7 +35,7 @@ namespace CA.Jobs
             LogarInformacao("Iniciando a execução do Job de Carga de Apontamentos.");
 
             var dataFim = DateOnly.FromDateTime(DateTime.Now.ConverterParaFusoBrasil());
-            var dataInicio = dataFim.AddDays(-30);
+            var dataInicio = dataFim.AddDays(-40);
 
             LogarInformacao($"Data de início: {dataInicio:d}.");
             LogarInformacao($"Data de fim: {dataFim:d}.");

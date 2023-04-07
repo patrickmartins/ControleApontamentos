@@ -3,9 +3,9 @@ import { IModel } from "src/app/common/models/model";
 import { ApontamentoChannel } from "src/app/core/models/apontamento-channel";
 
 import { Atividade } from "../../core/models/atividade";
+import { IColecaoApontamentosChannel } from "./colecao-apontamentos";
 
-export class ApontamentosChannelDia implements IModel<ApontamentosChannelDia> {
-
+export class ApontamentosChannelDia implements IModel<ApontamentosChannelDia>, IColecaoApontamentosChannel {
 	public dataReferencia: Date = new Date();
 	public tempoTotalApontadoNoDia: number = 0;
 	public atividades: Atividade[] = [];
@@ -26,14 +26,22 @@ export class ApontamentosChannelDia implements IModel<ApontamentosChannelDia> {
 		return apontamento;
 	}
 
+    public obterTodosApontamentos(): ApontamentoChannel[] {
+        let apontamentos: ApontamentoChannel[] = [];
+
+		for (let atividade of this.atividades) {		
+            apontamentos.push(...atividade.obterTodosApontamentos());
+		}
+
+		return apontamentos;
+    }
+
 	public obterApontamentosTfs(): ApontamentoChannel[] {		
 		let apontamentos: ApontamentoChannel[] = [];
 
-		this.atividades.forEach(atividade => {			
-			atividade.obterApontamentosTfs().forEach(tarefa => {
-				apontamentos.push(tarefa);
-			});
-		});
+		for (let atividade of this.atividades) {		
+            apontamentos.push(...atividade.obterApontamentosTfs());
+		}
 
 		return apontamentos;
 	}
@@ -41,11 +49,11 @@ export class ApontamentosChannelDia implements IModel<ApontamentosChannelDia> {
 	public recalcularTempoTotalApontado(): void {
 		this.tempoTotalApontadoNoDia = 0;
 
-		this.atividades?.forEach(atividade => {
+		for (let atividade of this.atividades) {
 			atividade.recalcularTempoTotalApontado(this.dataReferencia);
 
 			this.tempoTotalApontadoNoDia += atividade.obterTempoApontadoPorData(this.dataReferencia);
-		});
+		}
 	}
 
 	public removerApontamentosExcluidos(): void {
@@ -54,8 +62,17 @@ export class ApontamentosChannelDia implements IModel<ApontamentosChannelDia> {
 		});
 	}
 
-	public removerTarefasSemApontamentos(): void {
+	public removerAtividadesSemApontamentos(): void {
 		this.atividades = this.atividades.filter(c => c.apontamentos.length > 0 
 												&& c.apontamentos.some(a => a.data.getTime() == this.dataReferencia.getTime()));
+	}
+
+    public removerApontamentoPorHash(hash: string): boolean {
+        for (let atividade of this.atividades) {			
+			if(atividade.removerApontamentoPorHash(hash))
+                return true;;
+		}
+
+        return false;
 	}
 }

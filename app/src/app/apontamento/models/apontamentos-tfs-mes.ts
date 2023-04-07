@@ -1,8 +1,10 @@
 import { IModel } from "src/app/common/models/model";
 import { Tarefa } from "src/app/core/models/tarefa";
 import { ApontamentosTfsDia } from "./apontamentos-tfs-dia";
+import { ApontamentoTfs } from "src/app/core/models/apontamento-tfs";
+import { IColecaoApontamentosTfs } from "./colecao-apontamentos";
 
-export class ApontamentosTfsMes implements IModel<ApontamentosTfsMes> {
+export class ApontamentosTfsMes implements IModel<ApontamentosTfsMes>, IColecaoApontamentosTfs {
 
 	public usuarioReferencia: string = "";
 	public mesReferencia: number = 0;
@@ -38,6 +40,16 @@ export class ApontamentosTfsMes implements IModel<ApontamentosTfsMes> {
 		return this.apontamentosDiarios.find(c => c.dataReferencia.getDate() == dia);
 	}
 
+    public obterTodosApontamentos(): ApontamentoTfs[] {
+        let apontamentos: ApontamentoTfs[] = [];
+
+		for (let apontamentosDia of this.apontamentosDiarios) {
+            apontamentos.push(...apontamentosDia.obterTodosApontamentos());
+        }
+
+        return apontamentos;
+	}
+
 	public obterApontamentosDoUltimoDia(): ApontamentosTfsDia | undefined {
 		let diasComApontamento = this.apontamentosDiarios.filter(c => c.tempoTotalApontadoNoDia > 0);
 
@@ -51,11 +63,11 @@ export class ApontamentosTfsMes implements IModel<ApontamentosTfsMes> {
 	public obterTarefasPorId(id: number): Tarefa[] {		
 		let tarefas: Tarefa[] = [];
 
-		this.apontamentosDiarios.forEach(apontamentosDia => {			
-			apontamentosDia.obterTarefasPorId(id).forEach(tarefa => {
+		for (let apontamentosDia of this.apontamentosDiarios) {			
+			for (let tarefa of apontamentosDia.obterTarefasPorId(id)) {
 				tarefas.push(tarefa);
-			});
-		});
+			}
+		}
 
 		return tarefas;
 	}
@@ -70,26 +82,32 @@ export class ApontamentosTfsMes implements IModel<ApontamentosTfsMes> {
 	public recalcularTempoTotalApontadoSincronizadoChannel(): void {
 		this.tempoTotalApontadoSincronizadoChannel = 0;
 
-		this.apontamentosDiarios?.forEach(apontamentoDia => {
-			apontamentoDia.recalcularTempoTotalApontadoNaoSincronizadoChannel();
-			apontamentoDia.recalcularTempoTotalApontadoSincronizadoChannel();
+		for(let apontamentosDia of this.apontamentosDiarios) {
+			apontamentosDia.recalcularTempoTotalApontadoNaoSincronizadoChannel();
+			apontamentosDia.recalcularTempoTotalApontadoSincronizadoChannel();
 
-			this.tempoTotalApontadoSincronizadoChannel += apontamentoDia.tempoTotalApontadoSincronizadoChannel;
-		});
+			this.tempoTotalApontadoSincronizadoChannel += apontamentosDia.tempoTotalApontadoSincronizadoChannel;
+		}
 	}
 
 	public recalcularTempoTotalApontadoNaoSincronizadoChannel(): void {
 		this.tempoTotalApontadoNaoSincronizadoChannel = 0;
 
-		this.apontamentosDiarios?.forEach(apontamentoDia => {
-			apontamentoDia.recalcularTempoTotalApontadoNaoSincronizadoChannel();
-			apontamentoDia.recalcularTempoTotalApontadoSincronizadoChannel();
+		for(let apontamentosDia of this.apontamentosDiarios) {
+			apontamentosDia.recalcularTempoTotalApontadoNaoSincronizadoChannel();
+			apontamentosDia.recalcularTempoTotalApontadoSincronizadoChannel();
 
-			this.tempoTotalApontadoNaoSincronizadoChannel += apontamentoDia.tempoTotalApontadoNaoSincronizadoChannel;
-		});
+			this.tempoTotalApontadoNaoSincronizadoChannel += apontamentosDia.tempoTotalApontadoNaoSincronizadoChannel;
+		}
 	}
 
 	public removerTarefasSemApontamentos(): void {
 		this.apontamentosDiarios.forEach(c => c.removerTarefasSemApontamentos());
+	}
+
+    public removerApontamentoPorHash(hash: string): void {
+        for(let apontamentosDia of this.apontamentosDiarios) {			
+		    apontamentosDia.removerApontamentoPorHash(hash)
+		}
 	}
 }

@@ -93,7 +93,7 @@ export class GraficoResumoMesComponent implements OnChanges, OnInit, OnDestroy, 
                             display: false,
                             backgroundColor: '#0000008d',
                             drawTime: 'afterDatasetsDraw',
-                            content: 'Tempo Total Apontado'
+                            content: 'Tempo Médio Apontado'
                         },
                         enter: this.ocultarExibirLabelAnotation,
                         leave: this.ocultarExibirLabelAnotation
@@ -111,7 +111,7 @@ export class GraficoResumoMesComponent implements OnChanges, OnInit, OnDestroy, 
                             display: false,
                             backgroundColor: '#0000008d',
                             drawTime: 'afterDatasetsDraw',
-                            content: 'Tempo Total Trabalhado'
+                            content: 'Tempo Médio Trabalhado'
                         },
                         enter: this.ocultarExibirLabelAnotation,
                         leave: this.ocultarExibirLabelAnotation
@@ -195,7 +195,7 @@ export class GraficoResumoMesComponent implements OnChanges, OnInit, OnDestroy, 
                             display: false,
                             backgroundColor: '#0000008d',
                             drawTime: 'afterDatasetsDraw',
-                            content: 'Tempo Total Apontado'
+                            content: 'Tempo Médio Apontado'
                         },
                         enter: this.ocultarExibirLabelAnotation,
                         leave: this.ocultarExibirLabelAnotation
@@ -213,7 +213,7 @@ export class GraficoResumoMesComponent implements OnChanges, OnInit, OnDestroy, 
                             display: false,
                             backgroundColor: '#0000008d',
                             drawTime: 'afterDatasetsDraw',
-                            content: 'Tempo Total Trabalhado'
+                            content: 'Tempo Médio Trabalhado'
                         },
                         enter: this.ocultarExibirLabelAnotation,
                         leave: this.ocultarExibirLabelAnotation

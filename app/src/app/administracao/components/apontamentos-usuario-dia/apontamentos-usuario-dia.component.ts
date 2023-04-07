@@ -44,7 +44,8 @@ export class ApontamentosUsuarioDiaComponent extends BaseComponent implements On
 	}
 
 	public get tempoTotalApontadoSincronizadoNoDia() : number {
-		return this.apontamentosTfsDia ? this.apontamentosTfsDia.tempoTotalApontadoSincronizadoChannel : 0;
+        return (this.apontamentosTfsDia ? this.apontamentosTfsDia.tempoTotalApontadoSincronizadoChannel : 0) + 
+                    (this.apontamentosChannelDia ? this.apontamentosChannelDia.tempoTotalApontadoNoDia : 0);
 	}
 
 	public get tempoTotalApontadoNaoSincronizadoNoDia() : number {
@@ -151,9 +152,9 @@ export class ApontamentosUsuarioDiaComponent extends BaseComponent implements On
                 this.apontamentosTfsDia = resultado.apontamentosTfsDia;
                 this.apontamentosChannelDia = resultado.apontamentosChannelDia;
                 this.batidas = resultado.batidas;
-                this.infoJobCarga = resultado.jobInfo;
+                this.infoJobCarga = resultado.infoJobCarga;
 
-                this.servicoApontamento.consolidarTarefasEAtividadesDia(this.apontamentosTfsDia, this.apontamentosChannelDia);
+                this.servicoApontamento.consolidarTarefasEAtividades(this.apontamentosTfsDia, this.apontamentosChannelDia);
             },
             complete: () => this.carregando = false
         });

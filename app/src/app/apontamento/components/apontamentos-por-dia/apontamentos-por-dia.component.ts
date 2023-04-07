@@ -41,7 +41,8 @@ export class ApontamentosPorDiaComponent extends BaseComponent implements OnInit
 	}
 
 	public get tempoTotalApontadoSincronizadoNoDia() : number {
-		return this.apontamentosTfsDia ? this.apontamentosTfsDia.tempoTotalApontadoSincronizadoChannel : 0;
+        return (this.apontamentosTfsDia ? this.apontamentosTfsDia.tempoTotalApontadoSincronizadoChannel : 0) + 
+                    (this.apontamentosChannelDia ? this.apontamentosChannelDia.tempoTotalApontadoNoDia : 0);
 	}
 
 	public get tempoTotalApontadoNaoSincronizadoNoDia() : number {
@@ -78,12 +79,6 @@ export class ApontamentosPorDiaComponent extends BaseComponent implements OnInit
 
 			this.dataSelecionada = data.isValid() ? data.toDate() : this.dataSelecionada;
 
-			this.servicoJob.obterJobCarga().subscribe({
-				next: (jobInfo) => {
-					this.infoJobCarga = jobInfo;
-				}
-			});
-
 			this.obterBatidasEApontamentosPorDia(this.dataSelecionada);
 		});		
 	}
@@ -113,7 +108,7 @@ export class ApontamentosPorDiaComponent extends BaseComponent implements OnInit
                 this.batidas = resultado.batidas;
                 this.infoJobCarga = resultado.infoJobCarga;
 
-                this.servicoApontamento.consolidarTarefasEAtividadesDia(this.apontamentosTfsDia, this.apontamentosChannelDia);
+                this.servicoApontamento.consolidarTarefasEAtividades(this.apontamentosTfsDia, this.apontamentosChannelDia);
             },
             complete: () => this.carregando = false
         });		

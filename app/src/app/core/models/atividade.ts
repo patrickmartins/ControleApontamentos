@@ -43,6 +43,10 @@ export class Atividade implements IModel<Atividade> {
 		return `${environment.urlChannel}/projeto.do?action=escopo&idProjeto=${this.idProjeto}&idAtividade=${this.id}&abaSelecionada=abaApontamentos`
 	}
 
+    public obterTodosApontamentos(): ApontamentoChannel[] {
+		return this.apontamentos;
+    }
+
 	public obterApontamentosTfs(): ApontamentoChannel[] {
 		return this.apontamentos.filter(c => c.apontamentoTfs);
 	}
@@ -50,6 +54,15 @@ export class Atividade implements IModel<Atividade> {
     public apontamentosTfsExiste(hash: string): boolean {
         return this.apontamentos.some(c => c.apontamentoTfs && c.hash == hash);
     }
+
+    public removerApontamentoPorHash(hash: string): boolean {
+		let index = this.apontamentos.findIndex(c => c.hash == hash);
+
+		if(index >= 0)			
+			this.apontamentos.splice(index, 1);
+            
+        return index >= 0;
+	}
 
 	public removerApontamentosExcluidos(): void {
 		this.apontamentos = this.apontamentos.filter(c => c.status != StatusApontamento.Excluido);
@@ -62,9 +75,9 @@ export class Atividade implements IModel<Atividade> {
 	public obterTempoApontadoPorData(data: Date): number {
 		let tempoTotal = 0;
 
-		this.apontamentos?.forEach(apontamento => {
+		for (let apontamento of this.apontamentos) {
 			tempoTotal += apontamento.data.getTime() == data.getTime() ? apontamento.tempo : 0;
-		});
+		}
 
 		return tempoTotal;
 	}

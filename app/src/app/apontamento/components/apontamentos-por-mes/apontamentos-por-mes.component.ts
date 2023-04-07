@@ -92,12 +92,6 @@ export class ApontamentosPorMesComponent extends BaseComponent implements OnInit
 
 				this.mesSelecionado = data.isValid() ? data.toDate() : this.mesSelecionado;
 
-				this.servicoJob.obterJobCarga().subscribe({
-					next: (jobInfo) => {
-						this.infoJobCarga = jobInfo;
-					}
-				});
-
 				this.obterBatidasEApontamentosPorMes(this.mesSelecionado);
 			});		
 	}
@@ -150,7 +144,7 @@ export class ApontamentosPorMesComponent extends BaseComponent implements OnInit
                 this.batidas = resultado.batidas;
                 this.infoJobCarga = resultado.infoJobCarga;
 
-                this.servicoApontamento.consolidarTarefasEAtividadesMes(this.apontamentosTfsMes, this.apontamentosChannelMes);
+                this.servicoApontamento.consolidarTarefasEAtividades(this.apontamentosTfsMes, this.apontamentosChannelMes);
 
                 this.selecionarUltimosApontamentos();
             },

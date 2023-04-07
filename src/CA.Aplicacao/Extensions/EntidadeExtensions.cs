@@ -110,7 +110,7 @@ namespace CA.Aplicacao.Extensions
                 Tags = itemTrabalho.Tags.Split(';', StringSplitOptions.RemoveEmptyEntries),
                 Status = itemTrabalho.Status,
                 ApontamentoHabilitado = itemTrabalho.ApontamentoHabilitado,
-                Apontamentos = apontamentos                
+                Apontamentos = apontamentos.Where(c => c.Usuario == usuario).ToList()
             };
 
             tarefa.TempoTotalApontadoSincronizadoChannel = new TimeSpan(tarefa.Apontamentos.Where(c => (c.Data == dataReferencia || dataReferencia is null) && c.Usuario.Equals(usuario) && c.SincronizadoChannel).Sum(c => c.Tempo.Ticks));
@@ -257,7 +257,7 @@ namespace CA.Aplicacao.Extensions
                     Apontamentos = apontamentoPorAtividade.ApontamentosChannelParaApontamentosModel()
                 };
 
-                atividadeModel.TempoTotalApontado = new TimeSpan(atividadeModel.Apontamentos.Where(c => (c.Data == dataReferencia || dataReferencia is null)).Sum(c => c.Tempo.Ticks));
+                atividadeModel.TempoTotalApontado = new TimeSpan(atividadeModel.Apontamentos.Where(c => c.Status != StatusApontamento.Excluido && (c.Data == dataReferencia || dataReferencia is null)).Sum(c => c.Tempo.Ticks));
 
                 if (atividadeModel.Apontamentos.Any(c => c.Data == dataReferencia || dataReferencia is null))
                     atividades.Add(atividadeModel);
@@ -279,7 +279,7 @@ namespace CA.Aplicacao.Extensions
                     Apontamentos = apontamentoPorProjeto.ApontamentosChannelParaApontamentosModel()
                 };
 
-                atividadeModel.TempoTotalApontado = new TimeSpan(atividadeModel.Apontamentos.Where(c => c.Data == dataReferencia || dataReferencia is null).Sum(c => c.Tempo.Ticks));
+                atividadeModel.TempoTotalApontado = new TimeSpan(atividadeModel.Apontamentos.Where(c => c.Status != StatusApontamento.Excluido && (c.Data == dataReferencia || dataReferencia is null)).Sum(c => c.Tempo.Ticks));
 
                 if (atividadeModel.Apontamentos.Any(c => c.Data == dataReferencia || dataReferencia is null))
                     atividades.Add(atividadeModel);

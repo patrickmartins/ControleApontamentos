@@ -177,9 +177,9 @@ export class ApontamentosUsuarioMesComponent extends BaseComponent implements On
                 this.apontamentosTfsMes = resultado.apontamentosTfsMes;
                 this.apontamentosChannelMes = resultado.apontamentosChannelMes;
                 this.batidas = resultado.batidas;
-                this.infoJobCarga = resultado.jobInfo;
+                this.infoJobCarga = resultado.infoJobCarga;
 
-                this.servicoApontamento.consolidarTarefasEAtividadesMes(this.apontamentosTfsMes, this.apontamentosChannelMes);
+                this.servicoApontamento.consolidarTarefasEAtividades(this.apontamentosTfsMes, this.apontamentosChannelMes);
 
                 this.selecionarUltimosApontamentos();
             },
