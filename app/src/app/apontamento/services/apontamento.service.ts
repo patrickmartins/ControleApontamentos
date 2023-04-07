@@ -78,7 +78,7 @@ export class ApontamentoService extends BaseService {
                     }
                 }
                 else {
-                    if(apontamentoTfs.data >= new Date(2023, 1, 15))
+                    if(apontamentoTfs.sincronizadoChannel && apontamentoTfs.data >= new Date(2023, 1, 15))
                         apontamentosTfs.removerApontamentoPorHash(apontamentoTfs.hash);
                 }
             }
