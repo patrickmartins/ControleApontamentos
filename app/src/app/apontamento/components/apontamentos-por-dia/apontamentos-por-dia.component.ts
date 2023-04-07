@@ -103,8 +103,8 @@ export class ApontamentosPorDiaComponent extends BaseComponent implements OnInit
         })		
         .subscribe({ 
             next: (resultado: any) => {
-                this.apontamentosTfsDia = resultado.apontamentosTfsMes;
-                this.apontamentosChannelDia = resultado.apontamentosChannelMes;
+                this.apontamentosTfsDia = resultado.apontamentosTfsDia;
+                this.apontamentosChannelDia = resultado.apontamentosChannelDia;
                 this.batidas = resultado.batidas;
                 this.infoJobCarga = resultado.infoJobCarga;
 
