@@ -5,7 +5,6 @@ using Hangfire.Storage.SQLite;
 using HangfireBasicAuthenticationFilter;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using System.Globalization;
 
 namespace CA.Api.Configuracoes
 {
@@ -28,8 +27,8 @@ namespace CA.Api.Configuracoes
             {
                 config.UseFilter(new AutomaticRetryAttribute
                 {
-                    DelaysInSeconds = new int [] { 600 },
-                    Attempts = 1,
+                    DelaysInSeconds = new int [] { 300, 600 },
+                    Attempts = 2,
                 });
 
                 config.UseSQLiteStorage(configuracoes.GetConnectionString("ConexaoBdHangfire"));

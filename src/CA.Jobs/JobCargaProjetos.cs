@@ -23,7 +23,7 @@ namespace CA.Jobs
 
         public override async Task ExecutarAsync()
         {
-            LogarInformacao("Iniciando a execução do Job de Carga de Projetos.");
+            LogarInformacao("===> Iniciando a execução do Job de Carga de Projetos. <===");
 
             var dataFim = DateOnly.FromDateTime(DateTime.Now.ConverterParaFusoBrasil());
             var dataInicio = dataFim.AddDays(-40);
@@ -60,7 +60,7 @@ namespace CA.Jobs
 
             await _repositorioProjetos.SalvarAlteracoesAsync();
 
-            LogarInformacao("Finalizando a execução do Job de Carga de Projetos.");
+            LogarInformacao("===> Finalizando a execução do Job de Carga de Projetos. <====");
         }
 
         private async Task ImportarProjetoPorIdAsync(int id)
@@ -136,6 +136,8 @@ namespace CA.Jobs
                 if (resultado.Sucesso)
                 {
                     projetoBanco.AdicionarAtividade(atividade);
+
+                    LogarInformacao($"Atividade {atividade.Id} inserida no projeto {projetoBanco.Id}.");
                 }
                 else
                 {
@@ -155,6 +157,8 @@ namespace CA.Jobs
                 {
                     atividadeBanco.Atualizar(atividadeServico);
                     atividadeBanco.AlterarProjeto(projetoBanco);
+
+                    LogarInformacao($"Atividade {atividadeBanco.Id} atualizada.");
                 }
                 else
                 {

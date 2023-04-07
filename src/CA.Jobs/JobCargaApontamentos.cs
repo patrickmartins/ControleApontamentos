@@ -32,7 +32,7 @@ namespace CA.Jobs
 
         public override async Task ExecutarAsync()
         {
-            LogarInformacao("Iniciando a execução do Job de Carga de Apontamentos.");
+            LogarInformacao("===> Iniciando a execução do Job de Carga de Apontamentos. <===");
 
             var dataFim = DateOnly.FromDateTime(DateTime.Now.ConverterParaFusoBrasil());
             var dataInicio = dataFim.AddDays(-40);
@@ -140,7 +140,7 @@ namespace CA.Jobs
 
             await _repositorioApontamentos.SalvarAlteracoesAsync();
 
-            LogarInformacao("Finalizando a execução do Job de Carga de Apontamentos.");
+            LogarInformacao("===> Finalizando a execução do Job de Carga de Apontamentos. <===");
         }
 
         private IEnumerable<ApontamentoChannel> ExtrairApontamentosInseridos(IEnumerable<ApontamentoResponse> apontamentosServico, IEnumerable<ApontamentoChannel> apontamentosBanco, IEnumerable<ProjetoChannel> projetos, IEnumerable<UsuarioChannel> usuarios)
