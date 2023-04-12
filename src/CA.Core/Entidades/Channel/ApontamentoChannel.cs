@@ -50,8 +50,8 @@ namespace CA.Core.Entidades.Channel
             if (Tipo == TipoApontamento.Projeto && Projeto is null)
                 erros.Add(new Erro("O projeto não foi informada.", nameof(Projeto)));
 
-            if (Comentario.Length > 2000)
-                erros.Add(new Erro("O comentário contém mais de 1000 caracteres.", nameof(Comentario)));
+            if (Comentario.Length > 5000)
+                erros.Add(new Erro("O comentário contém mais de 5000 caracteres.", nameof(Comentario)));
 
             if (TempoApontado.Ticks == 0)
                 erros.Add(new Erro("O tempo apontado não foi informado.", nameof(TempoApontado)));

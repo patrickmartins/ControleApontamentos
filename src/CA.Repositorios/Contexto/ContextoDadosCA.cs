@@ -48,7 +48,7 @@ namespace CA.Repositorios.Channel.Contexto
 
             modelBuilder.Entity<ApontamentoChannel>()
                         .Property(c => c.Comentario)
-                        .HasColumnType("varchar(2000)")
+                        .HasColumnType("varchar(5000)")
                         .IsRequired();
 
             modelBuilder.Entity<ApontamentoChannel>()
