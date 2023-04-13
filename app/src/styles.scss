@@ -1,5 +1,6 @@
 body {
 	font-family: Roboto, "Helvetica Neue", sans-serif;
+    overflow: overlay;
 	margin: 0;
 }
 
@@ -88,4 +89,18 @@ body {
 	animation-name: fade-out-left;
 	animation-duration: 750ms;
 	animation-fill-mode: both;
+}
+
+::-webkit-scrollbar {
+    width: 16px
+}
+
+::-webkit-scrollbar-thumb {
+    height: 56px;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    border-radius: 8px;
+    border: 4px solid transparent;
+    background-clip: content-box;
+    background-color: hsl(0,0%,67%)
 }

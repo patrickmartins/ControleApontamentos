@@ -103,13 +103,15 @@ export class TemaService {
 			};
 
 		this.document.body.classList.add("dark-mode");
+        this.document.getElementsByTagName("html")[0].style.colorScheme = "dark";
 
 		this.servicoTemaGrafico.setColorschemesOptions(opcoesGrafico);
 	}
 
 	private aplicarTemaClaro(): void {
 		this.document.body.classList.remove("dark-mode");
-		
+		this.document.getElementsByTagName("html")[0].style.colorScheme = "auto";
+
 		this.servicoTemaGrafico.setColorschemesOptions({});
 	}
 }
