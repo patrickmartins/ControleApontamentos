@@ -87,9 +87,10 @@ namespace CA.Api.Configuracoes
         public static void UsarHangfire(this IApplicationBuilder app)
         {
             var configs = app.ApplicationServices.GetService<ConfiguracaoHangfire>();
+            var fusoHorario = TimeZoneInfo.GetSystemTimeZones().First(c => c.Id == "E. South America Standard Time");
             
-            RecurringJob.AddOrUpdate<JobCargaCompletaChannel>(recurringJobId: configs.IdJobCargaChannelCompleta, job => job.ExecutarAsync(null), configs.FrequenciaExecucaoJobsChannelCompleta, TimeZoneInfo.Local);
-            RecurringJob.AddOrUpdate<JobImportacaoUsuariosMicrosoft>(recurringJobId: configs.IdJobImportacaoUsuarios, job => job.ExecutarAsync(null), configs.FrequenciaExecucaoJobsImportacaoUsuarios, TimeZoneInfo.Local);            
+            RecurringJob.AddOrUpdate<JobCargaCompletaChannel>(recurringJobId: configs.IdJobCargaChannelCompleta, job => job.ExecutarAsync(null), configs.FrequenciaExecucaoJobsChannelCompleta, fusoHorario);
+            RecurringJob.AddOrUpdate<JobImportacaoUsuariosMicrosoft>(recurringJobId: configs.IdJobImportacaoUsuarios, job => job.ExecutarAsync(null), configs.FrequenciaExecucaoJobsImportacaoUsuarios, fusoHorario);            
         }
     }
 }
