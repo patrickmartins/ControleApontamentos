@@ -24,7 +24,7 @@ ConfiguracaoFlurl.ConfigurarFlurl();
 
 servicos.AdicionarConsoleLogger(configuracoes);
 servicos.AdicionarContextoDeDados(configuracoes);
-servicos.AdicionarJobsChannel();
+servicos.AdicionarJobs();
 
 var provider = servicos.BuildServiceProvider();
 
