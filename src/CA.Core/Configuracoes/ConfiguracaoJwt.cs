@@ -1,6 +1,6 @@
 ﻿namespace CA.Core.Configuracoes
 {
-    public class ConfiguracoesJwt
+    public class ConfiguracaoJwt
     {
         public string Chave { get; set; } = string.Empty;
         public string Issuer { get; set; } = string.Empty;

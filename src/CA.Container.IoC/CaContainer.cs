@@ -2,6 +2,7 @@
 using CA.Aplicacao.Servicos;
 using CA.Core.Configuracoes;
 using CA.Core.Interfaces.Channel;
+using CA.Core.Interfaces.Microsoft;
 using CA.Core.Interfaces.Ponto;
 using CA.Core.Interfaces.Tfs;
 using CA.Core.Servicos.Channel;
@@ -15,6 +16,7 @@ using CA.Repositorios.Tfs;
 using CA.Servicos.Channel;
 using CA.Servicos.Channel.Cache;
 using CA.Servicos.Channel.Interfaces;
+using CA.Servicos.Graph;
 using CA.Servicos.Secullum;
 using CA.Servicos.Secullum.Cache;
 using CA.Servicos.Secullum.Interfaces;
@@ -55,6 +57,7 @@ namespace CA.Container.IoC
             services.AddScoped<IServicoSecullumHttp, ServicoSecullumHttp>();
             services.AddScoped<IServicoSecullumHttp, ServicoSecullumHttp>();
             services.AddScoped<IServicoChannelHttp, ServicoChannelHttp>();
+            services.AddScoped<IServicoMicrosoftGraph, ServicoMicrosoftGraph>();
 
             services.Decorate<IServicoSecullumHttp, ServicoSecullumHttpCache>();
             services.Decorate<IServicoColecaoTfsHttp, ServicoColecaoTfsHttpCache>();
@@ -135,6 +138,21 @@ namespace CA.Container.IoC
                 config.Value.Geral.Validar();
 
                 return config.Value.Geral;
+            });
+
+            services.AddSingleton((service) =>
+            {
+                var config = service.GetService<IOptions<ConfiguracaoCA>>();
+
+                if (config == null)
+                    throw new ArgumentNullException("As configurações da aplicação não foram encontradas.");
+
+                if (config.Value.Graph == null)
+                    throw new ArgumentNullException("As configurações do cliente do Microsoft Graph não foram encontradas.");
+
+                config.Value.Graph.Validar();
+
+                return config.Value.Graph;
             });
 
             services.AddMemoryCache();

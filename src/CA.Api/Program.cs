@@ -1,6 +1,5 @@
 using CA.Api.Configuracoes;
 using CA.Jobs.Configuracoes;
-using Flurl.Http;
 using Hangfire;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,9 +11,10 @@ builder.Services.AdicionarServicosCA(builder.Configuration);
 builder.Services.AdicionarIdentity(builder.Configuration);
 builder.Services.AdicionarHangfire(builder.Configuration);
 builder.Services.AdicionarJobHangfire(builder.Configuration);
+builder.Services.AdicionarMicrosoftGraph();
 builder.Services.AdicionarPoliticasPolly();
 builder.Services.AdicionarSwagger();
-builder.Services.AdicionarJobsChannel();
+builder.Services.AdicionarJobs();
 
 builder.Services
         .AddControllers()

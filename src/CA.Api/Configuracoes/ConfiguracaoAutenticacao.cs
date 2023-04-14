@@ -19,7 +19,7 @@ namespace CA.Api.Configuracoes
                 })
                 .AddJwtBearer(options =>
                 {
-                    var config = services.BuildServiceProvider().GetService<ConfiguracoesJwt>();
+                    var config = services.BuildServiceProvider().GetService<ConfiguracaoJwt>();
 
                     options.SaveToken = true;
                     

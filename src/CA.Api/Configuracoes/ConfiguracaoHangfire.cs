@@ -12,11 +12,14 @@ namespace CA.Api.Configuracoes
     {
         public static string SecaoConfig = "Hangfire";
 
-        public bool HabilitarJobs { get; set; }
-        public string IdJobCargaCompleta { get; set; }
+        public bool HabilitarJobsCargaChannel { get; set; }
+        public bool HabilitarJobsImportacaoUsuarios { get; set; }
+        public string FrequenciaExecucaoJobsChannelCompleta { get; set; }
+        public string FrequenciaExecucaoJobsImportacaoUsuarios { get; set; }
+        public string IdJobCargaChannelCompleta { get; set; }
+        public string IdJobImportacaoUsuarios { get; set; }
         public string UsuarioDashboard { get; set; }
         public string SenhaDashboard { get; set; }
-        public int IntervaloExecucao { get; set; }
     }
 
     public static class ConfiguracaoHangfireExtensions
@@ -49,6 +52,7 @@ namespace CA.Api.Configuracoes
             servicos.Configure<ConfiguracaoHangfire>(configuracoes.GetSection(ConfiguracaoHangfire.SecaoConfig));
 
             servicos.AddScoped<JobCargaCompletaChannel>();
+            servicos.AddScoped<JobImportacaoUsuariosMicrosoft>();
 
             servicos.AddSingleton((service) =>
             {
@@ -84,7 +88,8 @@ namespace CA.Api.Configuracoes
         {
             var configs = app.ApplicationServices.GetService<ConfiguracaoHangfire>();
             
-            RecurringJob.AddOrUpdate<JobCargaCompletaChannel>(recurringJobId: configs.IdJobCargaCompleta, job => job.ExecutarAsync(null), $"*/{configs.IntervaloExecucao} * * * *");
+            RecurringJob.AddOrUpdate<JobCargaCompletaChannel>(recurringJobId: configs.IdJobCargaChannelCompleta, job => job.ExecutarAsync(null), configs.FrequenciaExecucaoJobsChannelCompleta, TimeZoneInfo.Local);
+            RecurringJob.AddOrUpdate<JobImportacaoUsuariosMicrosoft>(recurringJobId: configs.IdJobImportacaoUsuarios, job => job.ExecutarAsync(null), configs.FrequenciaExecucaoJobsImportacaoUsuarios, TimeZoneInfo.Local);            
         }
     }
 }

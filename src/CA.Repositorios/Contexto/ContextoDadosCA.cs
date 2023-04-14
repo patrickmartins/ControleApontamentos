@@ -139,7 +139,7 @@ namespace CA.Repositorios.Channel.Contexto
 
             modelBuilder.Entity<Usuario>()
                         .Property(c => c.Id)
-                        .HasColumnType("varchar(450)")
+                        .HasColumnType("varchar(450)")                        
                         .ValueGeneratedNever();
 
             modelBuilder.Entity<Usuario>()
@@ -200,6 +200,7 @@ namespace CA.Repositorios.Channel.Contexto
             modelBuilder.Entity<Usuario>()
                         .HasMany(c => c.Claims)
                         .WithOne()
+                        .OnDelete(DeleteBehavior.Cascade)
                         .HasForeignKey(c => c.UserId);
 
             modelBuilder.Entity<Role>()

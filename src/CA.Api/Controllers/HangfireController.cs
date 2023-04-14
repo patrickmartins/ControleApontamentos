@@ -1,5 +1,6 @@
 ﻿using CA.Api.Configuracoes;
 using CA.Api.Models;
+using CronExpressionDescriptor;
 using Hangfire;
 using Hangfire.Storage;
 using Microsoft.AspNetCore.Authorization;
@@ -25,7 +26,7 @@ namespace CA.Api.Controllers
         {
             using (var connection = JobStorage.Current.GetConnection())
             {
-                var job = connection.GetRecurringJobs().FirstOrDefault(p => p.Id == _configs.IdJobCargaCompleta && p.LastJobState == "Succeeded");
+                var job = connection.GetRecurringJobs().FirstOrDefault(p => p.Id == _configs.IdJobCargaChannelCompleta && p.LastJobState == "Succeeded");
 
                 if (job != null)
                 {
@@ -34,7 +35,7 @@ namespace CA.Api.Controllers
                         Id = job.Id,
                         UltimaExecucao = job.LastExecution,
                         ProximaExecucao = job.NextExecution,
-                        IntervaloExecucao = _configs.IntervaloExecucao
+                        IntervaloExecucao = ExpressionDescriptor.GetDescription(_configs.FrequenciaExecucaoJobsChannelCompleta).ToLower()
                     });
                 }
                 else

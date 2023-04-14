@@ -141,6 +141,10 @@
 	}
 }
 
+::ng-deep.mat-autocomplete-panel.usuarios {
+    overflow: overlay;
+}     
+
 .usuarios-card {
     margin-bottom: 1em;
     border-radius: 0;
@@ -160,6 +164,6 @@
 
         & ::ng-deep.mat-form-field-infix {
             padding: .5em 0 .8em 0;
-        }     
+        }        
     }
 }

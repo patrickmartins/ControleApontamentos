@@ -77,7 +77,7 @@ namespace CA.Identity.Extensions
             if (colecoes != null)
                 return colecoes.Split(';').ToList();
 
-            return new List<string>();
+            return Enumerable.Empty<string>();
         }
 
         public static UsuarioTfs? ObterUsuarioTfs(this IEnumerable<Claim> claims)
@@ -247,7 +247,7 @@ namespace CA.Identity.Extensions
         public static IEnumerable<string> ObterColecoesTfs(this IPrincipal principal)
         {
             if (principal.Identity is null || !principal.Identity.IsAuthenticated)
-                return new List<string>();
+                return Enumerable.Empty<string>();
 
             return ((ClaimsIdentity)principal.Identity).ObterColecoesTfs();
         }

@@ -114,6 +114,10 @@
 	margin-top: 5px;
 }
 
+::ng-deep.mat-autocomplete-panel.usuarios {
+    overflow: overlay;
+}     
+
 .usuarios-card {
     margin-bottom: 1em;
     border-radius: 0;

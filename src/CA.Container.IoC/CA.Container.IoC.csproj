@@ -19,6 +19,7 @@
     <ProjectReference Include="..\CA.Repositorio.Tfs\CA.Repositorios.Tfs.csproj" />
     <ProjectReference Include="..\CA.Repositorios.Channel\CA.Repositorios.Channel.csproj" />
     <ProjectReference Include="..\CA.Servicos.Channel\CA.Servicos.Channel.csproj" />
+    <ProjectReference Include="..\CA.Servicos.Graph\CA.Servicos.Graph.csproj" />
   </ItemGroup>
 
 </Project>

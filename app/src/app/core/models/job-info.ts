@@ -6,7 +6,7 @@ export class JobInfo implements IModel<JobInfo> {
 	public id: string = "";
 	public ultimaExecucao?: Date = new Date();
 	public proximaExecucao?: Date = new Date();
-	public intervaloExecucao: number = 0;
+	public intervaloExecucao: string = "";
 
 	constructor() { }
 
@@ -20,7 +20,7 @@ export class JobInfo implements IModel<JobInfo> {
 			job.id = params.id;
 			job.ultimaExecucao = params.ultimaExecucao ? moment(params.ultimaExecucao).toDate() : undefined;
 			job.proximaExecucao = params.proximaExecucao ? moment(params.proximaExecucao).toDate() : undefined;
-			job.intervaloExecucao = params.intervaloExecucao as number;
+			job.intervaloExecucao = params.intervaloExecucao;
 		}	
 
 		return job;

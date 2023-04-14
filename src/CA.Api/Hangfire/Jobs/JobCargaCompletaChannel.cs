@@ -29,7 +29,7 @@ namespace CA.Api.Hangfire.Jobs
         {
             using (_logger.BeginScope(context))
             {
-                if (_config.HabilitarJobs)
+                if (_config.HabilitarJobsCargaChannel)
                 {
                     _logger.LogInformation("===> Iniciando a execução dos Jobs de Carga do Channel. <===");
 

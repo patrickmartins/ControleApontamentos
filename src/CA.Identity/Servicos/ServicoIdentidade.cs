@@ -25,15 +25,15 @@ namespace CA.Identity.Servicos
     public class ServicoIdentidade : IServicoIdentidade
     {
         private readonly UserManager<Usuario> _userManager;
-        private readonly ConfiguracoesJwt _configuracaoJwt;
-        private readonly ConfiguracoesGerais _configuracoesGerais;
+        private readonly ConfiguracaoJwt _configuracaoJwt;
+        private readonly ConfiguracaoGerais _configuracoesGerais;
 
         private readonly IRepositorioUsuariosTfs _repositorioTfs;
         private readonly IRepositorioPonto _repositorioPonto;
         private readonly IRepositorioUsuariosChannel _repositorioChannel;
         private readonly IRepositorioColecoes _repositorioColecoes;
 
-        public ServicoIdentidade(UserManager<Usuario> userManager, ConfiguracoesJwt configuracaoJwt, ConfiguracoesGerais configuracoesGerais,
+        public ServicoIdentidade(UserManager<Usuario> userManager, ConfiguracaoJwt configuracaoJwt, ConfiguracaoGerais configuracoesGerais,
                                     IRepositorioUsuariosTfs repositorioTfs, IRepositorioPonto repositorioPonto, IRepositorioUsuariosChannel repositorioChannel, IRepositorioColecoes repositorioColecoes)
         {
             _userManager = userManager;
@@ -70,51 +70,61 @@ namespace CA.Identity.Servicos
             .ToList();
         }
 
-        public async Task<Resultado<UsuarioApp>> ImportarUsuarioAsync(IPrincipal usuarioLogado)
+        public async Task<Resultado<UsuarioApp>> ImportarUsuarioAsync(string email, string nomeUsuario, string nomeCompleto)
         {
-            var nomeCompletoUsuarioLogado = usuarioLogado.ObterNomeCompleto();
-            var nomeUsuarioLogado = usuarioLogado.ObterNomeUsuario();
-            var emailUsuarioLogado = usuarioLogado.ObterEmailUsuario();
+            var resultado = new Resultado<UsuarioApp>();
 
-            if (emailUsuarioLogado is null || nomeUsuarioLogado is null || nomeCompletoUsuarioLogado is null)
-                return Resultado.DeErros<UsuarioApp>(new Erro("Não foi possível identificar o usuário logado.", "usuarioLogado"));
+            if (!email.Contains(_configuracoesGerais.DominioEmailPermitido))
+                resultado.AddError(new Erro("O e-mail informado é de um domínio não permitido pela aplicação.", "email"));
 
-            if (!emailUsuarioLogado.Contains(_configuracoesGerais.DominioEmailPermitido))
-                return Resultado.DeErros<UsuarioApp>(new Erro("O usuário logado é de um domínio não permitido pela aplicação.", "email"));
+            if (string.IsNullOrEmpty(email))
+                resultado.AddError(new Erro("O e-mail do usuário não foi informado.", "email"));
 
-            var usuarioIdentity = await _userManager.FindByEmailAsync(emailUsuarioLogado);
+            if (string.IsNullOrEmpty(nomeUsuario))
+                resultado.AddError(new Erro("O nome de usuário não foi informado.", "nomeUsuario"));
+
+            if (string.IsNullOrEmpty(nomeCompleto))
+                resultado.AddError(new Erro("O nome completo do usuário não foi informado.", "nomeCompleto"));
+
+            if(!resultado.Sucesso)
+                return resultado;
+
+            var usuarioIdentity = await _userManager.FindByEmailAsync(email);
             var colecoes = await _repositorioColecoes.ObterTodasColecoesAsync();
 
             if (usuarioIdentity != null)
-                return Resultado.DeErros<UsuarioApp>(new Erro("O usuário logado já possuí uma conta local.", "email"));
+                return Resultado.DeErros<UsuarioApp>(new Erro("O usuário informado já possuí uma conta local.", "email"));
 
             var usuarioTfs = default(UsuarioTfs);
 
             foreach (var colecao in colecoes)
             {
-                usuarioTfs = await _repositorioTfs.ObterUsuarioAsync(colecao, nomeUsuarioLogado);
+                usuarioTfs = await _repositorioTfs.ObterUsuarioAsync(colecao, nomeUsuario);
 
                 if (usuarioTfs is not null)
                     break;
             }
 
-            var funcionarioPonto = await ObterFuncionarioPontoAsync(nomeCompletoUsuarioLogado);
-            var usuarioChannel = ObterUsuarioChannel(emailUsuarioLogado, nomeCompletoUsuarioLogado);
+            var funcionarioPonto = await ObterFuncionarioPontoAsync(nomeCompleto);
+            var usuarioChannel = ObterUsuarioChannel(email, nomeCompleto);
+
+            if(usuarioTfs is null && funcionarioPonto is null && usuarioChannel is null)
+                return Resultado.DeErros<UsuarioApp>(new Erro("O usuário informado não possuí uma conta no Tfs, no Channel e no Secullum.", "email"));
 
             var claims = new List<Claim>();
 
             usuarioIdentity = new Usuario
             {
-                Email = emailUsuarioLogado,
-                UserName = emailUsuarioLogado
+                Email = email,
+                UserName = email
             };
 
             var result = await _userManager.CreateAsync(usuarioIdentity);
 
             if (result.Succeeded)
             {
-                claims.Add(new Claim(TiposClaims.Email, emailUsuarioLogado));
-                claims.Add(new Claim(TiposClaims.NomeCompleto, nomeCompletoUsuarioLogado));
+                claims.Add(new Claim(TiposClaims.Email, email));
+                claims.Add(new Claim(TiposClaims.NomeCompleto, nomeCompleto));
 
                 if (usuarioTfs is not null)
                 {
@@ -155,7 +165,7 @@ namespace CA.Identity.Servicos
                 Id = new Guid(usuarioIdentity.Id),
                 Email = usuarioIdentity.Email,
                 NomeUsuario = usuarioIdentity.UserName,
-                NomeCompleto = nomeCompletoUsuarioLogado,
+                NomeCompleto = nomeCompleto,
                 Colecoes = usuarioTfs is not null ? usuarioTfs.Colecoes : new string[0],
                 PossuiContaPonto = funcionarioPonto is not null && !string.IsNullOrEmpty(funcionarioPonto.NumeroPis),
                 PossuiContaTfs = usuarioTfs is not null,
@@ -188,6 +198,21 @@ namespace CA.Identity.Servicos
                 return Resultado.DeErros<UsuarioApp>(new Erro("Não foi encontrado um usuário com o id informado.", nameof(id)));
 
             return await ObterUsuarioAppAsync(usuario);
+        }
+
+        public async Task<Resultado<UsuarioApp>> ExcluirUsuarioPorIdAsync(Guid id)
+        {
+            var usuario = _userManager.Users.FirstOrDefault(c => c.Id == id.ToString());
+
+            if (usuario is null)
+                return Resultado.DeErros<UsuarioApp>(new Erro("O usuário informado não existe", nameof(id)));
+
+            var resultado = await _userManager.DeleteAsync(usuario);
+
+            if(!resultado.Succeeded) 
+                return Resultado.DeErros<UsuarioApp>(resultado.Errors.Select(c => new Erro(c.Description, c.Code)).ToArray());
+
+            return Resultado.DeSucesso<UsuarioApp>();
         }
 
         public async Task<Resultado<UsuarioApp>> ObterUsuarioPorEmailAsync(string email)
@@ -279,5 +304,6 @@ namespace CA.Identity.Servicos
 
             return usuarioChannel;
         }
+
     }
 }

@@ -64,7 +64,7 @@
 												[batidas]="batidas"></grafico-resumo-mes>
 							
 							<span class="observacao">
-								Obs.: os apontamentos do Channel são atualizados a cada {{ (infoJobCarga ? infoJobCarga.intervaloExecucao : 30) | tempo }}.
+								Obs.: os apontamentos do Channel são atualizados {{ infoJobCarga ? infoJobCarga.intervaloExecucao : 'a cada 30 minutos' }}.
 								<span *ngIf="infoJobCarga && infoJobCarga.ultimaExecucao"> Última atualização as {{ infoJobCarga.ultimaExecucao | date : 'HH:mm \'do dia\' dd \'de\' LLLL \'de\' yyyy' }}.</span>
 							</span>
 						</div>
@@ -80,9 +80,9 @@
 		<section *ngIf="!carregando">
 			<mat-expansion-panel [expanded]="true" *ngIf="(apontamentosTfsDiaSelecionado && apontamentosTfsDiaSelecionado.tempoTotalApontadoNoDia > 0) || (apontamentosChannelDiaSelecionado && apontamentosChannelDiaSelecionado.tempoTotalApontadoNoDia > 0)" class="painel-tarefas">
 				<mat-expansion-panel-header matRipple class="background-1 borda-1">
-					<h3 *ngIf="eHoje(diaSelecionado) && ((apontamentosChannelDiaSelecionado && apontamentosChannelDiaSelecionado.atividades.length == 0) && (apontamentosTfsDiaSelecionado && apontamentosTfsDiaSelecionado.tarefas.length == 0))">Você não fez apontamentos hoje</h3>
+					<h3 *ngIf="eHoje(diaSelecionado) && ((apontamentosChannelDiaSelecionado && apontamentosChannelDiaSelecionado.atividades.length == 0) && (apontamentosTfsDiaSelecionado && apontamentosTfsDiaSelecionado.tarefas.length == 0))">O usuário não fez apontamentos hoje</h3>
 					<h3 *ngIf="eHoje(diaSelecionado) && ((apontamentosChannelDiaSelecionado && apontamentosChannelDiaSelecionado.atividades.length > 0) || (apontamentosTfsDiaSelecionado && apontamentosTfsDiaSelecionado.tarefas.length > 0))">Apontamentos de hoje</h3>
-					<h3 *ngIf="!eHoje(diaSelecionado) && ((apontamentosChannelDiaSelecionado && apontamentosChannelDiaSelecionado.atividades.length == 0) && (apontamentosTfsDiaSelecionado && apontamentosTfsDiaSelecionado.tarefas.length == 0))">Você não fez apontamentos no dia {{ diaSelecionado | date : "d 'de' MMMM 'de' yyyy" }}</h3>
+					<h3 *ngIf="!eHoje(diaSelecionado) && ((apontamentosChannelDiaSelecionado && apontamentosChannelDiaSelecionado.atividades.length == 0) && (apontamentosTfsDiaSelecionado && apontamentosTfsDiaSelecionado.tarefas.length == 0))">O usuário não fez apontamentos no dia {{ diaSelecionado | date : "d 'de' MMMM 'de' yyyy" }}</h3>
 					<h3 *ngIf="!eHoje(diaSelecionado) && ((apontamentosChannelDiaSelecionado && apontamentosChannelDiaSelecionado.atividades.length > 0) || (apontamentosTfsDiaSelecionado && apontamentosTfsDiaSelecionado.tarefas.length > 0))">Apontamentos do dia {{ diaSelecionado | date : "d 'de' MMMM 'de' yyyy" }}</h3>		
 				</mat-expansion-panel-header>
 

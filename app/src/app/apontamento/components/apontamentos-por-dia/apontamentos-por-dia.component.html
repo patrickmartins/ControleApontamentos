@@ -48,7 +48,7 @@
 												[batidas]="batidas"></grafico-resumo-dia>	
 													
 							<span class="observacao">
-								Obs.: os apontamentos do Channel são atualizados a cada {{ (infoJobCarga ? infoJobCarga.intervaloExecucao : 30) | tempo }}.
+								Obs.: os apontamentos do Channel são atualizados {{ infoJobCarga ? infoJobCarga.intervaloExecucao : 'a cada 30 minutos' }}.
 								<span *ngIf="infoJobCarga"> Última atualização as {{ infoJobCarga.ultimaExecucao | date : 'HH:mm \'do dia\' dd \'de\' LLLL \'de\' yyyy' }}.</span>
 							</span>
 						</div>

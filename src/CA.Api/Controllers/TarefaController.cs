@@ -51,7 +51,7 @@ namespace CA.Api.Controllers
                 return Unauthorized();
 
             if (!usuario.PossuiAcessoColecao(colecao))
-                return Ok(new List<TarefaModel>());
+                return Ok(Enumerable.Empty<TarefaModel>());
 
             var resultado = await _servico.ObterTarefasPorIdAsync(usuario, colecao, ids);
 

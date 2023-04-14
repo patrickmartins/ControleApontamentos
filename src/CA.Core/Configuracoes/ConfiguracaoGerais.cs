@@ -1,6 +1,6 @@
 ﻿namespace CA.Core.Configuracoes
 {
-    public class ConfiguracoesGerais
+    public class ConfiguracaoGerais
     {
         public string DominioEmailPermitido { get; set; }
 

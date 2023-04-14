@@ -7,6 +7,7 @@ import { TarefaHelper } from 'src/app/helpers/tarefa.helper';
 import { BaseComponent } from 'src/app/common/components/base.component';
 import { ContaService } from 'src/app/core/services/conta.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 
 @Component({
 	selector: 'app-minhas-terefas',
@@ -25,12 +26,15 @@ export class MinhasTerefasComponent extends BaseComponent implements OnInit {
 		return this.grupos.some(c => c.tarefas.length > 0) || this.tarefasFixadas.length > 0;
 	}
 
-	constructor(servicoConta: ContaService, snackBar: MatSnackBar, private servicoTarefa: TarefaService) { 
+	constructor(servicoConta: ContaService, snackBar: MatSnackBar, private servicoTarefa: TarefaService, private router: Router) { 
 		super(servicoConta, snackBar);
 	}
 
 	public ngOnInit(): void {
 		this.obterTarefasAtivas();
+
+        if(!this.usuarioLogado?.possuiContaTfs)
+            this.router.navigate(['/apontamento/por-dia']);
 	}
 
 	private obterTarefasAtivas(): void {

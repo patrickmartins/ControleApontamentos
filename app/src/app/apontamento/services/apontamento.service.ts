@@ -10,6 +10,7 @@ import { ApontamentosTfsDia } from '../models/apontamentos-tfs-dia';
 import { ApontamentosTfsMes } from '../models/apontamentos-tfs-mes';
 import { StatusApontamento } from 'src/app/core/models/status-apontamento';
 import { IColecaoApontamentosChannel, IColecaoApontamentosTfs } from '../models/colecao-apontamentos';
+import { ApontamentoTfs } from 'src/app/core/models/apontamento-tfs';
 
 @Injectable({
     providedIn: 'root'
@@ -62,8 +63,10 @@ export class ApontamentoService extends BaseService {
 
     public consolidarTarefasEAtividades(apontamentosTfs: IColecaoApontamentosTfs | undefined, apontamentosChannel: IColecaoApontamentosChannel | undefined): void {
         if (apontamentosTfs && apontamentosChannel) {
-            let todosApontamentosChannelTfs = apontamentosChannel.obterApontamentosTfs().distinct(c => c.hash);
-            let todosApontamentosTfs = apontamentosTfs.obterTodosApontamentos().distinct(c => c.hash);
+            let todosApontamentosChannelTfs = apontamentosChannel.obterApontamentosTfs();
+            let todosApontamentosTfs = apontamentosTfs.obterTodosApontamentos();
+
+            let todosApontamentosTfs2 = apontamentosTfs.obterTodosApontamentos().groupBy<ApontamentoTfs, Date>(c => c.data);
 
             for (let apontamentoTfs of todosApontamentosTfs) {
                 let apontamentoChannelTfs = todosApontamentosChannelTfs.find(c => c.hash == apontamentoTfs.hash);

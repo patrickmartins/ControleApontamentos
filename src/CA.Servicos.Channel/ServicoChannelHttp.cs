@@ -238,7 +238,7 @@ namespace CA.Servicos.Channel
             });
 
             if (resultado is null || resultado.Projeto is null)
-                return new List<AtividadeResponse>();
+                return Enumerable.Empty<AtividadeResponse>();
 
             var atividades = resultado.Projeto.Atividades.ToList();
 
