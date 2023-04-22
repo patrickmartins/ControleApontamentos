@@ -203,7 +203,7 @@ namespace CA.Aplicacao.Extensions
                 Hash = apontamento.Hash,
                 Status = apontamento.Status,
                 ApontamentoTfs = apontamento.ApontamentoTfs,
-                Usuario = apontamento.Usuario.Email.Split("@")[0],
+                Usuario = apontamento.Usuario.NomeUsuario,
                 Data = DateOnly.FromDateTime(apontamento.Data),
                 Tempo = apontamento.TempoApontado,
                 Comentario = apontamento.Comentario,
