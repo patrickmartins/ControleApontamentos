@@ -9,6 +9,7 @@ import { NovoApontamento } from '../models/novo-apontamento';
 import { TarefaHelper } from 'src/app/helpers/tarefa.helper';
 import { FiltroBusca } from '../models/filtro-busca';
 import { PaginaBusca } from '../models/pagina-busca';
+import { ApontamentoTfs } from '../models/apontamento-tfs';
 
 @Injectable({
 	providedIn: 'root'
@@ -35,8 +36,8 @@ export class TarefaService extends BaseService {
 			map(pagina => this.configurarTarefasBusca(pagina)));
 	}
 
-	public salvarApontamento(apontamento: NovoApontamento): Observable<any> {
-		return this.post<any>(`${environment.urlApiBase}tarefa/adicionar-apontamento`, apontamento);
+	public salvarApontamento(apontamento: NovoApontamento): Observable<ApontamentoTfs> {
+		return this.post<any>(`${environment.urlApiBase}tarefa/adicionar-apontamento`, apontamento, {}, ApontamentoTfs);
 	}
 
 	private configurarTarefas(tarefas: Tarefa[]): Tarefa[] {

@@ -66,8 +66,6 @@ export class ApontamentoService extends BaseService {
             let todosApontamentosChannelTfs = apontamentosChannel.obterApontamentosTfs();
             let todosApontamentosTfs = apontamentosTfs.obterTodosApontamentos();
 
-            let todosApontamentosTfs2 = apontamentosTfs.obterTodosApontamentos().groupBy<ApontamentoTfs, Date>(c => c.data);
-
             for (let apontamentoTfs of todosApontamentosTfs) {
                 let apontamentoChannelTfs = todosApontamentosChannelTfs.find(c => c.hash == apontamentoTfs.hash);
 

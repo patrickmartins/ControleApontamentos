@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BaseComponent } from 'src/app/common/components/base.component';
 
@@ -27,6 +27,9 @@ export class QuadroTarefaComponent extends BaseComponent {
 	@Input()
 	public permiteFixar: boolean = true;
 
+    @Output()
+	public onApontamentoSalvo = new EventEmitter<ApontamentoTfs>();
+    
 	@ViewChild('contador')
 	public contador!: ContadorTarefaComponent
 
@@ -53,22 +56,13 @@ export class QuadroTarefaComponent extends BaseComponent {
 		}
 	}
 
-	public onApontamentoSalvo(novoApontamento: NovoApontamento): void {
+	public onSalvarApontamento(novoApontamento: NovoApontamento): void {
 		this.salvandoApontamento = true;
 
 		this.tarefaService
 			.salvarApontamento(novoApontamento).subscribe({
-				next: () => {
+				next: (apontamento) => {
 					let usuario = this.usuarioLogado?.nomeUsuario.split('@')[0];
-
-					const apontamento = new ApontamentoTfs().criarNovo(
-					{
-						usuario: usuario,
-						comentario: novoApontamento.comentario,
-						tempo: novoApontamento.tempoTotal,
-						sincronizadoChannel: false,
-						data: novoApontamento.data
-					});
 
 					this.tarefa.adicionarApontamento(apontamento!);
 
@@ -85,6 +79,8 @@ export class QuadroTarefaComponent extends BaseComponent {
 						horizontalPosition: "center",
 						panelClass: "sucesso"
 					});
+
+                    this.onApontamentoSalvo.emit(apontamento);
 				},
 				error: () => {
 					this.salvandoApontamento = false;

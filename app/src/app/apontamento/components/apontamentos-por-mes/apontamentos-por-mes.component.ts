@@ -1,9 +1,9 @@
-import { Component, NgZone, OnInit } from '@angular/core';
+import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { DateAdapter } from '@angular/material/core';
 import { MatDatepicker } from '@angular/material/datepicker';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
-import { catchError, forkJoin, of, tap } from 'rxjs';
+import { catchError, forkJoin, of } from 'rxjs';
 
 import { BaseComponent } from 'src/app/common/components/base.component';
 import { JobService } from 'src/app/core/services/job.service';
@@ -17,6 +17,8 @@ import { ApontamentoService } from '../../services/apontamento.service';
 import { PontoService } from '../../services/ponto.service';
 import { ContaService } from 'src/app/core/services/conta.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Tarefa } from 'src/app/core/models/tarefa';
+import { GraficoResumoMesComponent } from '../grafico-resumo-mes/grafico-resumo-mes.component';
 
 @Component({
 	selector: 'app-apontamentos-por-mes',
@@ -24,6 +26,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 	styleUrls: ['./apontamentos-por-mes.component.scss']
 })
 export class ApontamentosPorMesComponent extends BaseComponent implements OnInit {
+
+    @ViewChild('grafico')
+    public grafico?: GraficoResumoMesComponent;
 
 	public carregando: boolean = true;
 	
@@ -151,6 +156,26 @@ export class ApontamentosPorMesComponent extends BaseComponent implements OnInit
             complete: () => this.carregando = false
         });
 	}
+
+    public onApontamentoSalvo(tarefa: Tarefa, apontamento: any): void {
+        const apontamentosDia = this.apontamentosTfsMes?.obterApontamentosPorDia(apontamento.data.getDate());
+
+        if(apontamentosDia) {
+            const tarefaDiaApontado = apontamentosDia.obterTarefaPorId(tarefa.id);
+
+            if(tarefaDiaApontado) {
+                if(!tarefaDiaApontado.obterApontamentoPorHash(apontamento.hash)) {
+                    tarefaDiaApontado.adicionarApontamento(apontamento!);
+                }
+            }
+            else {
+                apontamentosDia.adicionarTarefa(new Tarefa().criarNovo(tarefa)!);
+            }
+        }
+
+        this.apontamentosTfsMes?.recalcularTempoTotalApontado();
+        this.grafico?.atualizarGrafico();
+    }
 
 	public eHoje(data: Date): boolean {
 		const hoje = new Date()

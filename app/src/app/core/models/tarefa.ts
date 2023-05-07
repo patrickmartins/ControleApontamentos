@@ -36,7 +36,7 @@ export class Tarefa implements IModel<Tarefa> {
 			tarefa.tipo = params.tipo;
 			tarefa.titulo = params.titulo;	
 			tarefa.tituloPai = params.tituloPai;
-			tarefa.status = StatusTarefa[params.status];
+			tarefa.status = typeof params.status == 'number' ? StatusTarefa[params.status] : params.status;
 			tarefa.colecao = params.colecao;
 			tarefa.projeto = params.projeto;			
 			tarefa.tags = params.tags;			
@@ -72,6 +72,10 @@ export class Tarefa implements IModel<Tarefa> {
     public obterApontamentosPorUsuario(usuario: string): ApontamentoTfs[] {
         return this.apontamentos.filter(c => c.usuario == usuario);
     }
+
+    public obterApontamentoPorHash(hash: string): ApontamentoTfs | undefined {
+        return this.apontamentos.find(c => c.hash == hash);
+    }
 	
 	public recalcularTempoTotalApontadoSincronizadoChannel(usuario: string): void;
 	public recalcularTempoTotalApontadoSincronizadoChannel(usuario: string, dataReferencia?: Date): void;
@@ -91,7 +95,7 @@ export class Tarefa implements IModel<Tarefa> {
 		let tempoTotal = 0;
 
 		for (let apontamento of this.apontamentos) {
-			tempoTotal += apontamento.usuario == usuario && (!dataReferencia || apontamento.data.getTime() == dataReferencia.getTime()) && apontamento.sincronizadoChannel == sincronizado ? apontamento.tempo : 0;
+			tempoTotal += apontamento.usuario == usuario && (!dataReferencia || apontamento.data.toLocaleDateString() == dataReferencia.toLocaleDateString()) && apontamento.sincronizadoChannel == sincronizado ? apontamento.tempo : 0;
 		}
 
 		return tempoTotal;

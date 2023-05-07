@@ -101,7 +101,7 @@ namespace CA.Api.Controllers
             if (!resultado.Sucesso)
                 return BadRequest(resultado.Erros);
 
-            return Ok();
+            return Ok(resultado.Valor);
         }
     }
 }

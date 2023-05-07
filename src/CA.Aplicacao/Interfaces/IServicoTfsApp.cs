@@ -12,6 +12,6 @@ namespace CA.Aplicacao.Interfaces
         Task<Resultado<ApontamentosTfsDiaModel>> ObterApontamentosPorDiaAsync(UsuarioTfs usuario, DateOnly data);
         Task<Resultado<ApontamentosTfsMesModel>> ObterApontamentosPorMesAsync(UsuarioTfs usuario, int mes, int ano);
         Task<Resultado<Pagina<TarefaModel>>> BuscarTarefasAsync(UsuarioTfs usuario, string colecao, string palavraChave, StatusItemTrabalho[] status, int pagina = 1, int tamanhoPagina = 10);
-        Task<Resultado> AdicionarNovoApontamentoAsync(UsuarioTfs usuario, ApontamentoTfsNovoModel apontamento);
+        Task<Resultado<ApontamentoTfsModel>> AdicionarNovoApontamentoAsync(UsuarioTfs usuario, ApontamentoTfsNovoModel apontamentoModel);
     }
 }
