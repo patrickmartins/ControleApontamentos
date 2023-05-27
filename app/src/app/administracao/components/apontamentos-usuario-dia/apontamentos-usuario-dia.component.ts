@@ -8,7 +8,6 @@ import * as moment from 'moment';
 import { ApontamentosChannelDia } from 'src/app/apontamento/models/apontamentos-channel-dia';
 import { ApontamentosTfsDia } from 'src/app/apontamento/models/apontamentos-tfs-dia';
 import { BatidasPontoDia } from 'src/app/apontamento/models/batidas-ponto-dia';
-import { ApontamentoService } from 'src/app/apontamento/services/apontamento.service';
 import { PontoService } from 'src/app/apontamento/services/ponto.service';
 import { BaseComponent } from 'src/app/common/components/base.component';
 import { JobInfo } from 'src/app/core/models/job-info';
@@ -17,6 +16,9 @@ import { JobService } from 'src/app/core/services/job.service';
 import { UsuarioService } from '../../services/usuario.service';
 import { Usuario } from 'src/app/core/models/usuario';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ChannelService } from 'src/app/core/services/channel.service';
+import { ConsolidacaoService } from 'src/app/core/services/consolidacao.service';
+import { TfsService } from 'src/app/core/services/tfs.service';
 
 @Component({
   selector: 'app-apontamentos-usuario-dia',
@@ -69,8 +71,10 @@ export class ApontamentosUsuarioDiaComponent extends BaseComponent implements On
     
 	constructor(servicoConta: ContaService,
         snackBar: MatSnackBar,
-		private servicoApontamento: ApontamentoService,
+		private servicoTfs: TfsService,
 		private servicoPonto: PontoService,
+        private servicoChannel: ChannelService,
+        private servicoConsolidacao: ConsolidacaoService,
         private usuarioService: UsuarioService,
 		private servicoJob: JobService,
 		private dataAdapter: DateAdapter<any>,
@@ -142,8 +146,8 @@ export class ApontamentosUsuarioDiaComponent extends BaseComponent implements On
 		this.carregando = true;
 
         forkJoin({
-            apontamentosTfsDia: this.usuarioSelecionado?.possuiContaTfs ? this.servicoApontamento.obterApontamentosTfsDeUsuarioPorDia(idUsuario, data).pipe(catchError(e => this.pipeErrosDeNegocio(e))) : of(undefined),
-            apontamentosChannelDia: this.usuarioSelecionado?.possuiContaChannel ? this.servicoApontamento.obterApontamentosChannelDeUsuarioPorDia(idUsuario, data).pipe(catchError(e => this.pipeErrosDeNegocio(e))) : of(undefined),
+            apontamentosTfsDia: this.usuarioSelecionado?.possuiContaTfs ? this.servicoTfs.obterApontamentosTfsDeUsuarioPorDia(idUsuario, data).pipe(catchError(e => this.pipeErrosDeNegocio(e))) : of(undefined),
+            apontamentosChannelDia: this.usuarioSelecionado?.possuiContaChannel ? this.servicoChannel.obterApontamentosChannelDeUsuarioPorDia(idUsuario, data).pipe(catchError(e => this.pipeErrosDeNegocio(e))) : of(undefined),
             batidas: this.usuarioSelecionado?.possuiContaPonto ? this.servicoPonto.obterBatidasDeUsuarioPorDia(idUsuario, data).pipe(catchError(e => this.pipeErrosDeNegocio(e))) : of(undefined),
             infoJobCarga: this.servicoJob.obterJobCarga()
         })		
@@ -154,7 +158,7 @@ export class ApontamentosUsuarioDiaComponent extends BaseComponent implements On
                 this.batidas = resultado.batidas;
                 this.infoJobCarga = resultado.infoJobCarga;
 
-                this.servicoApontamento.consolidarTarefasEAtividades(this.apontamentosTfsDia, this.apontamentosChannelDia);
+                this.servicoConsolidacao.consolidarTarefasEAtividades(this.apontamentosTfsDia, this.apontamentosChannelDia);
             },
             complete: () => this.carregando = false
         });

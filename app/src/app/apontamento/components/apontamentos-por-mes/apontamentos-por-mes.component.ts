@@ -13,12 +13,14 @@ import { ApontamentosChannelMes } from '../../models/apontamentos-channel-mes';
 import { BatidasPontoMes } from '../../models/batidas-ponto-mes';
 import { ApontamentosTfsMes } from '../../models/apontamentos-tfs-mes';
 import { ApontamentosTfsDia } from '../../models/apontamentos-tfs-dia';
-import { ApontamentoService } from '../../services/apontamento.service';
 import { PontoService } from '../../services/ponto.service';
 import { ContaService } from 'src/app/core/services/conta.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Tarefa } from 'src/app/core/models/tarefa';
+import { ConsolidacaoService } from 'src/app/core/services/consolidacao.service';
+import { TfsService } from 'src/app/core/services/tfs.service';
+import { ChannelService } from '../../../core/services/channel.service';
 import { GraficoResumoMesComponent } from '../grafico-resumo-mes/grafico-resumo-mes.component';
+import { Tarefa } from 'src/app/core/models/tarefa';
 
 @Component({
 	selector: 'app-apontamentos-por-mes',
@@ -76,8 +78,10 @@ export class ApontamentosPorMesComponent extends BaseComponent implements OnInit
 
 	constructor(servicoConta: ContaService,
         snackBar: MatSnackBar,
-		private servicoApontamento: ApontamentoService,
+		private servicoTfs: TfsService,
 		private servicoPonto: PontoService,
+        private servicoChannel: ChannelService,
+        private servicoConsolidacao: ConsolidacaoService,
 		private servicoJob: JobService,
 		private dataAdapter: DateAdapter<any>,
 		private zone: NgZone,
@@ -137,8 +141,8 @@ export class ApontamentosPorMesComponent extends BaseComponent implements OnInit
         this.apontamentosTfsMes = undefined;       
 
         forkJoin({
-            apontamentosTfsMes: this.usuarioLogado?.possuiContaTfs ? this.servicoApontamento.obterApontamentosTfsPorMes(mes, ano).pipe(catchError(e => this.pipeErrosDeNegocio(e))) : of(undefined),
-            apontamentosChannelMes: this.usuarioLogado?.possuiContaChannel ? this.servicoApontamento.obterApontamentosChannelPorMes(mes, ano).pipe(catchError(e => this.pipeErrosDeNegocio(e))) : of(undefined),
+            apontamentosTfsMes: this.usuarioLogado?.possuiContaTfs ? this.servicoTfs.obterApontamentosTfsPorMes(mes, ano).pipe(catchError(e => this.pipeErrosDeNegocio(e))) : of(undefined),
+            apontamentosChannelMes: this.usuarioLogado?.possuiContaChannel ? this.servicoChannel.obterApontamentosChannelPorMes(mes, ano).pipe(catchError(e => this.pipeErrosDeNegocio(e))) : of(undefined),
             batidas: this.usuarioLogado?.possuiContaPonto ? this.servicoPonto.obterBatidasPorMes(mes, ano).pipe(catchError(e => this.pipeErrosDeNegocio(e))) : of(undefined),
             infoJobCarga: this.servicoJob.obterJobCarga()
         })		
@@ -149,7 +153,7 @@ export class ApontamentosPorMesComponent extends BaseComponent implements OnInit
                 this.batidas = resultado.batidas;
                 this.infoJobCarga = resultado.infoJobCarga;
 
-                this.servicoApontamento.consolidarTarefasEAtividades(this.apontamentosTfsMes, this.apontamentosChannelMes);
+                this.servicoConsolidacao.consolidarTarefasEAtividades(this.apontamentosTfsMes, this.apontamentosChannelMes);
 
                 this.selecionarUltimosApontamentos();
             },

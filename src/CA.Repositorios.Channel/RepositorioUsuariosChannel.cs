@@ -39,6 +39,11 @@ namespace CA.Repositorios.Channel
             return Set<UsuarioChannel>().Where(C => C.Ativo).ToIListAsync();
         }
 
+        public UsuarioChannel? ObterUsuarioPorId(int id)
+        {
+            return Set<UsuarioChannel>().FirstOrDefault(c => c.Id == id);
+        }
+
         public UsuarioChannel? ObterUsuarioPorEmail(string email)
         {
             return Set<UsuarioChannel>().FirstOrDefault(c => c.Email.ToLower().Equals(email.ToLower()));

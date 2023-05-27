@@ -1,8 +1,14 @@
 import { SafeUrl } from "@angular/platform-browser";
 import { IModel } from "src/app/common/models/model";
+import { UsuarioTfs } from "./usuarioTfs";
+import { Funcionario } from "./funcionario";
+import { UsuarioChannel } from "./usuarioChannel";
 
 export class Usuario implements IModel<Usuario> {
     public id: string = "";
+    public idUsuarioTfs?: string;
+    public idUsuarioChannel?: number;
+    public idFuncionarioPonto?: number;
     public nomeCompleto: string = "";
 	public nomeUsuario: string = "";
 	public foto?: SafeUrl;
@@ -14,6 +20,12 @@ export class Usuario implements IModel<Usuario> {
 	public possuiContaTfs: boolean = false;
 	public possuiContaChannel: boolean = false;
 
+    public ehAdministrador?: boolean;
+    
+    public usuarioTfs?: UsuarioTfs;
+    public usuarioChannel?: UsuarioChannel;
+    public funcionarioPonto?: Funcionario;
+    
 	constructor() {	}
 
 	public criarNovo(params: any): Usuario | undefined {
@@ -24,11 +36,15 @@ export class Usuario implements IModel<Usuario> {
 
 		if(params) {
             user.id = params.id;
+            user.idUsuarioTfs = params.idUsuarioTfs;
+            user.idUsuarioChannel = params.idUsuarioChannel;
+            user.idFuncionarioPonto = params.idFuncionarioPonto;
 			user.nomeCompleto = params.nomeCompleto;
 			user.nomeUsuario = params.nomeUsuario;
 			user.email = params.email;
 			user.roles = params.roles;
 			user.colecoes = params.colecoes;
+            user.ehAdministrador = params.ehAdministrador;
 			user.possuiContaPonto = params.possuiContaPonto;
 			user.possuiContaTfs = params.possuiContaTfs;
 			user.possuiContaChannel = params.possuiContaChannel;

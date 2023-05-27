@@ -7,8 +7,8 @@ import { TarefaHelper } from 'src/app/helpers/tarefa.helper';
 import { ApontamentoTfs } from '../../models/apontamento-tfs';
 import { NovoApontamento } from '../../models/novo-apontamento';
 import { Tarefa } from '../../models/tarefa';
-import { TarefaService } from '../../services/tarefa.service';
 import { ContadorTarefaComponent } from '../contador-tarefa/contador-tarefa.component';
+import { TfsService } from '../../services/tfs.service';
 
 @Component({
 	selector: 'quadro-tarefa',
@@ -36,7 +36,7 @@ export class QuadroTarefaComponent extends BaseComponent {
 	public apontamentosExpandido: boolean = false;
 	public salvandoApontamento: boolean = false;	
 	
-	constructor(servicoConta: ContaService, snackBar: MatSnackBar, private tarefaService: TarefaService) {
+	constructor(servicoConta: ContaService, snackBar: MatSnackBar, private servicoTfs: TfsService) {
 		super(servicoConta, snackBar);
 	}
 
@@ -59,7 +59,7 @@ export class QuadroTarefaComponent extends BaseComponent {
 	public onSalvarApontamento(novoApontamento: NovoApontamento): void {
 		this.salvandoApontamento = true;
 
-		this.tarefaService
+		this.servicoTfs
 			.salvarApontamento(novoApontamento).subscribe({
 				next: (apontamento) => {
 					let usuario = this.usuarioLogado?.nomeUsuario.split('@')[0];
@@ -68,8 +68,6 @@ export class QuadroTarefaComponent extends BaseComponent {
 
 					this.tarefa.recalcularTempoTotalApontadoNaoSincronizadoChannel(usuario!);
 					this.tarefa.recalcularTempoTotalApontadoSincronizadoChannel(usuario!);
-
-					this.salvandoApontamento = false;
 
 					this.contador.resetarContador();
 
@@ -83,15 +81,14 @@ export class QuadroTarefaComponent extends BaseComponent {
                     this.onApontamentoSalvo.emit(apontamento);
 				},
 				error: () => {
-					this.salvandoApontamento = false;
-
 					this.snackBar.open("Ocorreu um erro interno. Atualize a página e tente novamente.", "OK", {
 						duration: 5000,
 						verticalPosition: "top",
 						horizontalPosition: "center",
 						panelClass: "erro"
 					});
-				}
+				},
+                complete: () => this.salvandoApontamento = false
 			});
 	}
 }

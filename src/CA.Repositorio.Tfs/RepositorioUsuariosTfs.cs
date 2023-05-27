@@ -32,7 +32,7 @@ namespace CA.Repositorios.Tfs
 
             var resultado = await _politicaPolly.ExecuteAsync(() =>
             {
-                return _servicoIdentidade.BuscarUsuariosTfs(new ReadIdentitiesRequest(7, new string[] { _configuracoes.Dominio }, 0, 4, 1, null, 0), colecao);
+                return _servicoIdentidade.BuscarUsuariosTfs(new ReadIdentitiesRequest(7, new string[] { _configuracoes.Dominio }, 0, 0, 1, null, 0), colecao);
             });
 
             var identidades = resultado.ReadIdentitiesResult.Any() && resultado.ReadIdentitiesResult[0].Any() ? resultado.ReadIdentitiesResult[0] : null;
@@ -48,11 +48,21 @@ namespace CA.Repositorios.Tfs
             return usuarios;
         }
 
-        public async Task<UsuarioTfs?> ObterUsuarioAsync(string colecao, string usuario)
+        public async Task<UsuarioTfs?> ObterUsuarioPorNomeAsync(string colecao, string usuario)
         {
-            var resultado = await _politicaPolly.ExecuteAsync(() => 
+            return await BuscarUsuariosAsync(colecao, 0, usuario);
+        }
+
+        public async Task<UsuarioTfs?> ObterUsuarioPorIdAsync(string colecao, string id)
+        {
+            return await BuscarUsuariosAsync(colecao, 3, id);
+        }
+
+        private async Task<UsuarioTfs?> BuscarUsuariosAsync(string colecao, int tipoBusca, string palavraChave)
+        {
+            var resultado = await _politicaPolly.ExecuteAsync(() =>
             {
-                return _servicoIdentidade.BuscarUsuariosTfs(new ReadIdentitiesRequest(0, new string[] { usuario }, 0, 4, 1, null, 0), colecao);
+                return _servicoIdentidade.BuscarUsuariosTfs(new ReadIdentitiesRequest(tipoBusca, new string[] { palavraChave }, 0, 4, 1, null, 0), colecao);
             });
 
             var identidade = resultado.ReadIdentitiesResult.Any() && resultado.ReadIdentitiesResult[0].Any() ? resultado.ReadIdentitiesResult[0][0] : null;

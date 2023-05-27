@@ -8,5 +8,6 @@ namespace CA.Core.Interfaces.Ponto
         Task<Resultado<IEnumerable<BatidasPontoDia>>> ObterBatidasPorPeriodoAsync(string pisFuncionario, DateOnly inicio, DateOnly fim);
         Task<Resultado<BatidasPontoDia?>> ObterBatidasPorDataAsync(string pisFuncionario, DateOnly data);
         Task<Resultado<Funcionario?>> ObterFuncionarioPorNomeAsync(string nome);
+        Task<IEnumerable<Funcionario>> ObterTodosFuncionariosAsync();
     }
 }

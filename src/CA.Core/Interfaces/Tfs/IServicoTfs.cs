@@ -5,7 +5,10 @@ namespace CA.Core.Interfaces.Tfs
 {
     public interface IServicoTfs
     {
+        Task<string[]> ObterTodasColecoesAsync();
+        Task<IEnumerable<UsuarioTfs>> ObterTodosUsuariosPorColecaoAsync(string colecao);
         Task<Resultado<UsuarioTfs>> ObterUsuarioPorNomeAsync(string usuario, string colecao);
+        Task<Resultado<UsuarioTfs>> ObterUsuarioPorIdAsync(string id, string colecao);
         Task<Resultado<IEnumerable<ItemTrabalho>>> ObterItensTrabalhoPorIdAsync(string colecao, params int[] idsItemTrabalho);
         Task<Resultado<IEnumerable<ItemTrabalho>>> ObterItensTrabalhoPorUsuarioAsync(UsuarioTfs usuario, string colecao);
         Task<Resultado<IEnumerable<ItemTrabalho>>> ObterItensTrabalhoApontadosPorDatasAsync(UsuarioTfs usuario, string colecao, params DateOnly[] data);

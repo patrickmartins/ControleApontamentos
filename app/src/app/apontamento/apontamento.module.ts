@@ -18,7 +18,6 @@ import { GraficoResumoDiaComponent } from './components/grafico-resumo-dia/grafi
 import { ApontamentosPorMesComponent } from './components/apontamentos-por-mes/apontamentos-por-mes.component';
 import { GraficoResumoMesComponent } from './components/grafico-resumo-mes/grafico-resumo-mes.component';
 import { LoaderModule } from '../loader/loader.module';
-import { ApontamentoService } from './services/apontamento.service';
 import { PontoService } from './services/ponto.service';
 import { ResumoApontamentosComponent } from './components/resumo-apontamentos/resumo-apontamentos.component';
 
@@ -50,8 +49,7 @@ import { ResumoApontamentosComponent } from './components/resumo-apontamentos/re
         GraficoResumoMesComponent,
         ResumoApontamentosComponent
     ],
-    providers: [
-        ApontamentoService,
+    providers: [        
         PontoService
     ]
 })

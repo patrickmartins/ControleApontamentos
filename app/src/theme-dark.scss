@@ -45,7 +45,7 @@ $color-primary: mat.define-palette($dark-palette, 800);
 	}
 
 	.borda-1 {
-		border: 1px solid mat.get-color-from-palette($foreground, divider)!important;
+		border: 1px solid mat.get-color-from-palette($foreground, divider);
 	}
 
 	.background-1 {

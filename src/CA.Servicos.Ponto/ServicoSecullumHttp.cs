@@ -31,10 +31,10 @@ namespace CA.Servicos.Secullum
 
         public async Task<IEnumerable<Funcionario>> ObterFuncionariosAsync()
         {
+            var token = ObterTokenJwt();
+
             var funcionarios = await _policy.ExecuteAsync(() =>
             {
-                var token = ObterTokenJwt();
-
                 return _configuracoes.UrlIntegracao
                                         .AppendPathSegment("Funcionarios")
                                         .WithOAuthBearerToken(token.TokenAcesso)
@@ -51,10 +51,10 @@ namespace CA.Servicos.Secullum
 
         public async Task<Resultado<IEnumerable<BatidasPontoDia>>> ObterBatidasPorPeriodoAsync(string pisFuncionario, DateOnly inicio, DateOnly fim)
         {
+            var token = ObterTokenJwt();
+
             var resposta = await _policy.ExecuteAsync(() =>
             {
-                var token = ObterTokenJwt();
-
                 return _configuracoes.UrlIntegracao
                                             .AppendPathSegment("Batidas")
                                             .WithOAuthBearerToken(token.TokenAcesso)

@@ -50,6 +50,11 @@ namespace CA.Core.Servicos.Channel
             return Resultado.DeValor(apontamentos);
         }
 
+        public Task<IEnumerable<UsuarioChannel>> ObterTodosUsuariosAsync()
+        {
+            return _repositorioUsuario.ObterUsuariosAtivosAsync();
+        }
+
         public Resultado<UsuarioChannel?> ObterUsuarioPorEmail(string email)
         {
             if (string.IsNullOrEmpty(email))

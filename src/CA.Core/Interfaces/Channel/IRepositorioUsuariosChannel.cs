@@ -11,6 +11,7 @@ namespace CA.Core.Interfaces.Channel
 
         Task<IEnumerable<UsuarioChannel>> ObterTodosUsuariosAsync();
         Task<IEnumerable<UsuarioChannel>> ObterUsuariosAtivosAsync();
+        UsuarioChannel? ObterUsuarioPorId(int id);
         UsuarioChannel? ObterUsuarioPorEmail(string email);
         UsuarioChannel? ObterUsuarioPorNomeCompleto(string nomeCompleto);
     }

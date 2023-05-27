@@ -5,6 +5,7 @@ namespace CA.Core.Interfaces.Channel
 {
     public interface IServicoChannel
     {
+        Task<IEnumerable<UsuarioChannel>> ObterTodosUsuariosAsync();
         Resultado<UsuarioChannel?> ObterUsuarioPorEmail(string email);
         Resultado<UsuarioChannel?> ObterUsuarioPorNomeCompleto(string nomeCompleto);
         Task<Resultado<IEnumerable<AtividadeChannel>>> ObterAtividadesApontadasPorUsuarioPorDiaAsync(int idUsuario, DateOnly data);

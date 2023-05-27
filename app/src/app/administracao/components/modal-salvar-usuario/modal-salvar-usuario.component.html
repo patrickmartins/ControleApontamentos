@@ -1,0 +1,51 @@
+<div class="modal">
+    <div class="cabecalho">
+        <h4>Alterar Usuário</h4>
+        <button mat-icon-button (click)="dialogRef.close()" class="btn-fechar">
+            <mat-icon class="nav-toolbar-icon-menu">close</mat-icon>
+        </button>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="corpo">
+        <form #formulario [formGroup]="form.formGroup" novalidate>
+            <div class="nome-usuario">
+                <span>{{ usuario.nomeCompleto }}</span>
+                <input matInput formControlName="idUsuario" name="idUsuario" id="idUsuario" type="text" style="display: none;">
+                <mat-error *ngFor="let error of form.errors.idUsuario">{{ error.descricao }}</mat-error>
+            </div>
+            <div>
+                <mat-form-field appearance="outline" class="usuario-form-field" >
+                    <mat-label>Usuário TFS</mat-label>
+                    <input type="text" placeholder="Selecione um usuário" matInput formControlName="usuarioTfs" name="usuarioTfs" id="usuarioTfs" [matAutocomplete]="autoTfs">
+                    <mat-autocomplete #autoTfs="matAutocomplete" [displayWith]="obterNomeCompletoUsuario">
+                        <mat-option *ngFor="let usuarioTfs of usuariosTfsFiltrado" [value]="usuarioTfs">{{ usuarioTfs.nomeCompleto }}</mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="usuario-form-field">
+                    <mat-label>Usuário Channel</mat-label>
+                    <input type="text" placeholder="Selecione um usuário channel" matInput formControlName="usuarioChannel" name="usuarioChannel" id="usuarioChannel"  [matAutocomplete]="autoChannel">
+                    <mat-autocomplete #autoChannel="matAutocomplete" [displayWith]="obterNomeCompletoUsuario">
+                        <mat-option *ngFor="let usuarioChannel of usuariosChannelFiltrado" [value]="usuarioChannel">{{ usuarioChannel.nomeCompleto }}</mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="usuario-form-field">     
+                    <mat-label>Funcionário</mat-label>               
+                    <input type="text" placeholder="Selecione um usuário" matInput formControlName="funcionarioPonto" name="funcionarioPonto" id="funcionarioPonto"  [matAutocomplete]="autoFuncionario">
+                    <mat-autocomplete #autoFuncionario="matAutocomplete" [displayWith]="obterNomeCompletoUsuario">
+                        <mat-option *ngFor="let funcionario of funcionariosFiltrado" [value]="funcionario">{{ funcionario.nomeCompleto }}</mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
+
+                <mat-checkbox formControlName="ehAdministrador" name="ehAdministrador" id="ehAdministrador" color="primary">Administrador</mat-checkbox>
+                
+            </div>
+            <mat-divider style="margin-top: 30px;"></mat-divider>
+            <div class="acoes">
+                <button mat-raised-button color="warn" (click)="dialogRef.close(undefined)">Cancelar</button>
+                <button mat-raised-button color="primary" (click)="salvarUsuario()" [disabled]="!form.formGroup.valid">Salvar</button>
+            </div>
+        </form>
+    </div>
+</div>

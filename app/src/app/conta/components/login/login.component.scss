@@ -30,6 +30,10 @@
         & article {
             width: 100%;
         }
+
+        & > div {
+            align-self: center;
+        }
     }
 
     & .secao {

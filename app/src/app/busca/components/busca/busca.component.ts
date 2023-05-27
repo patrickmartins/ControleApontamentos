@@ -6,29 +6,9 @@ import { Subject } from 'rxjs';
 import { BaseComponent } from 'src/app/common/components/base.component';
 import { PaginaBusca } from 'src/app/core/models/pagina-busca';
 import { ContaService } from 'src/app/core/services/conta.service';
-import { TarefaService } from 'src/app/core/services/tarefa.service';
 import { FiltroBusca } from '../../../core/models/filtro-busca';
-
-@Injectable()
-export class PaginatorPortugues implements MatPaginatorIntl {
-	changes = new Subject<void>();
-
-	firstPageLabel = 'Primeira página';
-	itemsPerPageLabel = 'Items por página:';
-	lastPageLabel = 'Última página';
-	nextPageLabel = 'Próxima página';
-	previousPageLabel = 'Página anterior';
-
-	public getRangeLabel(page: number, pageSize: number, length: number): string {
-		if (length === 0) {
-			return `Página 1 de 1`;
-		}
-
-		const amountPages = Math.ceil(length / pageSize);
-
-		return `Página ${page + 1} de ${amountPages}`;
-	}
-}
+import { TfsService } from 'src/app/core/services/tfs.service';
+import { PaginatorPortugues } from 'src/app/core/configs/paginator-portugues';
 
 @Component({
 	selector: 'app-busca',
@@ -46,7 +26,7 @@ export class BuscaComponent extends BaseComponent implements OnInit {
 	public filtro: FiltroBusca = new FiltroBusca();
 	public pagina: PaginaBusca = new PaginaBusca();
 
-	constructor(servicoConta: ContaService, snackBar: MatSnackBar, private servicoTarefa: TarefaService, private activeRoute: ActivatedRoute, private router: Router) { 
+	constructor(servicoConta: ContaService, snackBar: MatSnackBar, private servicoTfs: TfsService, private activeRoute: ActivatedRoute, private router: Router) { 
 		super(servicoConta, snackBar);
 	}
 
@@ -72,7 +52,7 @@ export class BuscaComponent extends BaseComponent implements OnInit {
 
 		if(this.usuarioLogado?.possuiContaTfs) {
 			if (this.filtro.palavraChave !== "") {
-				this.servicoTarefa
+				this.servicoTfs
 					.buscarTarefas(this.filtro)
 					.subscribe({
 						next: (pagina) => {

@@ -46,6 +46,11 @@ namespace CA.Aplicacao.Servicos
             return Resultado.DeValor(apontamentos);
         }
 
+        public Task<IEnumerable<UsuarioChannel>> ObterTodosUsuariosAsync()
+        {
+            return _servico.ObterTodosUsuariosAsync();
+        }
+
         public Resultado<UsuarioChannel?> ObterUsuarioPorEmail(string emailUsuario)
         {
             return _servico.ObterUsuarioPorEmail(emailUsuario);

@@ -198,7 +198,13 @@ namespace CA.Repositorios.Channel.Contexto
                         .IsRequired();
 
             modelBuilder.Entity<Usuario>()
-                        .HasMany(c => c.Claims)
+                        .HasMany(c => c.UserClaims)
+                        .WithOne()
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey(c => c.UserId);
+
+            modelBuilder.Entity<Usuario>()
+                        .HasMany(c => c.UserRoles)
                         .WithOne()
                         .OnDelete(DeleteBehavior.Cascade)
                         .HasForeignKey(c => c.UserId);
@@ -213,7 +219,8 @@ namespace CA.Repositorios.Channel.Contexto
 
             modelBuilder.Entity<Role>()
                         .Property(c => c.Name)
-                        .HasColumnType("varchar(450)");
+                        .HasColumnType("varchar(450)")
+                        .IsRequired();
 
             modelBuilder.Entity<Role>()
                         .Property(c => c.NormalizedName)
@@ -221,13 +228,7 @@ namespace CA.Repositorios.Channel.Contexto
 
             modelBuilder.Entity<Role>()
                         .Property(c => c.ConcurrencyStamp)
-                        .HasColumnType("varchar(max)")
-                        .IsRequired();
-
-            modelBuilder.Entity<Role>()
-                        .Property(c => c.Name)
-                        .HasColumnType("varchar(450)")
-                        .IsRequired();
+                        .HasColumnType("varchar(max)");
 
             modelBuilder.Entity<IdentityUserClaim<string>>()
                         .HasKey(c => c.Id);
@@ -246,7 +247,7 @@ namespace CA.Repositorios.Channel.Contexto
                         .HasColumnType("varchar(max)");
 
             modelBuilder.Entity<IdentityUserRole<string>>()
-                        .HasKey(c => new { c.RoleId, c.UserId });
+                        .HasKey(c => new { c.UserId, c.RoleId });
 
             modelBuilder.Entity<IdentityUserRole<string>>()
                         .ToTable("UsuarioRoles")

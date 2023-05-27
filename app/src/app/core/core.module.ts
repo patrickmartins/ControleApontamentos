@@ -23,8 +23,10 @@ import { TempoTrabalhadoPipe } from './pipes/tempo-trabalhado.pipe';
 import { TempoPipe } from './pipes/tempo.pipe';
 import { ContaService } from './services/conta.service';
 import { JobService } from './services/job.service';
-import { TarefaService } from './services/tarefa.service';
 import { TemaService } from './services/tema.service';
+import { ConsolidacaoService } from './services/consolidacao.service';
+import { TfsService } from './services/tfs.service';
+import { ChannelService } from './services/channel.service';
 
 @NgModule({
 	declarations: [		
@@ -55,8 +57,10 @@ import { TemaService } from './services/tema.service';
 	],
 	providers: [
 		ContaService,
+        TfsService,
+        ChannelService,
+        ConsolidacaoService,
 		JobService,
-		TarefaService,
 		TemaService
 	],
 	exports: [

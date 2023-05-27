@@ -2,12 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { forkJoin, of } from 'rxjs';
 import { Tarefa } from 'src/app/core/models/tarefa';
 import { GrupoTarefas } from '../../models/grupos-tarefas';
-import { TarefaService } from '../../../core/services/tarefa.service';
 import { TarefaHelper } from 'src/app/helpers/tarefa.helper';
 import { BaseComponent } from 'src/app/common/components/base.component';
 import { ContaService } from 'src/app/core/services/conta.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { TfsService } from 'src/app/core/services/tfs.service';
 
 @Component({
 	selector: 'app-minhas-terefas',
@@ -26,7 +26,7 @@ export class MinhasTerefasComponent extends BaseComponent implements OnInit {
 		return this.grupos.some(c => c.tarefas.length > 0) || this.tarefasFixadas.length > 0;
 	}
 
-	constructor(servicoConta: ContaService, snackBar: MatSnackBar, private servicoTarefa: TarefaService, private router: Router) { 
+	constructor(servicoConta: ContaService, snackBar: MatSnackBar, private servicoTfs: TfsService, private router: Router) { 
 		super(servicoConta, snackBar);
 	}
 
@@ -43,8 +43,8 @@ export class MinhasTerefasComponent extends BaseComponent implements OnInit {
 			let tarefasAgrupadas = TarefaHelper.agruparTarefasFixadas(tarefasFixadas);
 			
 			forkJoin({
-				tarefasFixadas: tarefasAgrupadas.length == 0 ? of([]) : forkJoin(tarefasAgrupadas.map((tarefasPorColecao: any) => this.servicoTarefa.obterTarefasPorIds(tarefasPorColecao.key, tarefasPorColecao.values.map((c: any) => c.idTarefa)))),
-				grupoTarefasAtivas: this.servicoTarefa.obterTarefasAtivas()
+				tarefasFixadas: tarefasAgrupadas.length == 0 ? of([]) : forkJoin(tarefasAgrupadas.map((tarefasPorColecao: any) => this.servicoTfs.obterTarefasPorIds(tarefasPorColecao.key, tarefasPorColecao.values.map((c: any) => c.idTarefa)))),
+				grupoTarefasAtivas: this.servicoTfs.obterTarefasAtivas()
 			})		
 			.subscribe({ 
 				next: (resultado: any) => {

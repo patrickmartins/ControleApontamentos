@@ -109,5 +109,13 @@ namespace CA.Api.Controllers
 
             return Ok(resultado.Valor);
         }
+
+        [HttpGet]
+        [Authorize(Roles = "administrador")]
+        [Route("funcionarios")]
+        public async Task<ActionResult> ObterTodosFuncionariosAsync()
+        {
+            return Ok(await _servico.ObterTodosFuncionariosAsync());
+        }
     }
 }
