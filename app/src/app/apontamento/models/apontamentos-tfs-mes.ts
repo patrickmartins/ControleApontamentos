@@ -64,9 +64,10 @@ export class ApontamentosTfsMes implements IModel<ApontamentosTfsMes>, IColecaoA
 		let tarefas: Tarefa[] = [];
 
 		for (let apontamentosDia of this.apontamentosDiarios) {			
-			for (let tarefa of apontamentosDia.obterTarefasPorId(id)) {
-				tarefas.push(tarefa);
-			}
+			var tarefa = apontamentosDia.obterTarefaPorId(id);
+
+            if(tarefa)
+				tarefas.push(tarefa);			
 		}
 
 		return tarefas;
@@ -83,8 +84,7 @@ export class ApontamentosTfsMes implements IModel<ApontamentosTfsMes>, IColecaoA
 		this.tempoTotalApontadoSincronizadoChannel = 0;
 
 		for(let apontamentosDia of this.apontamentosDiarios) {
-			apontamentosDia.recalcularTempoTotalApontadoNaoSincronizadoChannel();
-			apontamentosDia.recalcularTempoTotalApontadoSincronizadoChannel();
+			apontamentosDia.recalcularTempoTotalApontado();
 
 			this.tempoTotalApontadoSincronizadoChannel += apontamentosDia.tempoTotalApontadoSincronizadoChannel;
 		}
@@ -94,8 +94,7 @@ export class ApontamentosTfsMes implements IModel<ApontamentosTfsMes>, IColecaoA
 		this.tempoTotalApontadoNaoSincronizadoChannel = 0;
 
 		for(let apontamentosDia of this.apontamentosDiarios) {
-			apontamentosDia.recalcularTempoTotalApontadoNaoSincronizadoChannel();
-			apontamentosDia.recalcularTempoTotalApontadoSincronizadoChannel();
+			apontamentosDia.recalcularTempoTotalApontado();
 
 			this.tempoTotalApontadoNaoSincronizadoChannel += apontamentosDia.tempoTotalApontadoNaoSincronizadoChannel;
 		}

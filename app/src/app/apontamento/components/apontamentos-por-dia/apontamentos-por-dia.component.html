@@ -37,13 +37,13 @@
 						</button>
 					</section>
 					<section *ngIf="!carregando" class="informacoes">
-                        <resumo-apontamentos [tempoApontadoNaoSincronizado]="tempoTotalApontadoSincronizadoNoDia"
+                        <resumo-apontamentos [tempoApontadoNaoSincronizado]="tempoTotalApontadoNaoSincronizadoNoDia"
                                              [tempoApontadoSincronizado]="tempoTotalApontadoSincronizadoNoDia"
                                              [tempoTrabalhado]="tempoTotalTrabalhadoNoDia">
                         </resumo-apontamentos>
 									
 						<div *ngIf="(tempoTotalApontadoNoDia > 0 ||  tempoTotalTrabalhadoNoDia > 0)">
-							<grafico-resumo-dia	[apontamentosTfs]="apontamentosTfsDia"
+							<grafico-resumo-dia #grafico [apontamentosTfs]="apontamentosTfsDia"
 												[apontamentosChannel]="apontamentosChannelDia"
 												[batidas]="batidas"></grafico-resumo-dia>	
 													
@@ -71,7 +71,8 @@
 				<quadro-tarefa *ngFor="let tarefa of apontamentosTfsDia.tarefas"
 								class="fade-in-left tarefa"
 								[tarefa]="tarefa" 
-								[permiteFixar]="true"></quadro-tarefa>
+								[permiteFixar]="true"
+                                (onApontamentoSalvo)="onApontamentoSalvo($event)"></quadro-tarefa>
 			</div>
 		</div>
 

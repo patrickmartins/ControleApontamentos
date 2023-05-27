@@ -221,7 +221,7 @@ namespace CA.Core.Servicos.Tfs
             itemTrabalho.ListaApontamentos.Apontamentos.Add(apontamento);
 
             var tempoTotalApontado = Math.Round(itemTrabalho.ListaApontamentos.ObterTempoTotalApontado().TotalHours, 2);
-            var tempoRestante = CalcularTempoRestante(itemTrabalho.EstimativaOriginal, itemTrabalho.TempoRestante, tempoTotalApontado);
+            var tempoRestante = CalcularTempoRestante(itemTrabalho.EstimativaOriginal, itemTrabalho.TempoRestante, tempoTotalApontado, TimeSpan.Parse(apontamento.TempoApontamento).TotalHours);
 
             itemTrabalho.TempoConcluido = tempoTotalApontado;
             itemTrabalho.TempoRestante = tempoRestante;
@@ -246,12 +246,12 @@ namespace CA.Core.Servicos.Tfs
             return Resultado.DeValor(ConfigurarLinks(itensTrabalho, links));
         }
 
-        private double CalcularTempoRestante(double estimativaInicial, double tempoRestante, double tempoTotal)
+        private double CalcularTempoRestante(double estimativaInicial, double tempoRestante, double tempoTotal, double tempoApontado)
         {
             if (estimativaInicial > 0)
-                tempoRestante = estimativaInicial >= tempoTotal ? estimativaInicial - tempoTotal : 0;
-            else
-                tempoRestante = tempoRestante >= tempoTotal ? tempoRestante - tempoTotal : 0;
+                tempoRestante = estimativaInicial >= tempoTotal ? (estimativaInicial - tempoTotal) : 0;
+            else            
+                tempoRestante = tempoRestante - tempoApontado;            
 
             return Math.Round(tempoRestante >= 0 ? tempoRestante : 0, 2);
         }

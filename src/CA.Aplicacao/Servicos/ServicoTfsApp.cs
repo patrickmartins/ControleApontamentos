@@ -17,15 +17,22 @@ namespace CA.Aplicacao.Servicos
             _servico = servico;
         }
 
-        public Task<Resultado> AdicionarNovoApontamentoAsync(UsuarioTfs usuario, ApontamentoTfsNovoModel apontamento)
+        public async Task<Resultado<ApontamentoTfsModel>> AdicionarNovoApontamentoAsync(UsuarioTfs usuario, ApontamentoTfsNovoModel apontamentoModel)
         {
-            if (apontamento is null)
-                return Task.FromResult(Resultado.DeErros(new Erro("O apontamento não foi informado.", nameof(apontamento))));
+            if (apontamentoModel is null)
+                return Resultado.DeErros<ApontamentoTfsModel>(new Erro("O apontamento não foi informado.", nameof(apontamentoModel)));
 
-            if (apontamento.Data.Date > DateTime.Now.ConverterParaFusoBrasil().Date)
-                return Task.FromResult(Resultado.DeErros(new Erro("A data informada deve ser menor ou igual a data atual.", nameof(apontamento.Data))));
+            if (apontamentoModel.Data.ConverterParaFusoBrasil().Date > DateTime.Now.ConverterParaFusoBrasil().Date)
+                return Resultado.DeErros<ApontamentoTfsModel>(new Erro("A data informada deve ser menor ou igual a data atual.", nameof(apontamentoModel.Data)));
 
-            return _servico.AdicionarNovoApontamentoAsync(usuario, apontamento.Colecao, apontamento.IdTarefa, ApontamentoTfsNovoModel.ViewModelParaApontamento(apontamento));
+            var apontamento = ApontamentoTfsNovoModel.ViewModelParaApontamento(apontamentoModel);
+
+            var resultado = await _servico.AdicionarNovoApontamentoAsync(usuario, apontamentoModel.Colecao, apontamentoModel.IdTarefa, ApontamentoTfsNovoModel.ViewModelParaApontamento(apontamentoModel));
+
+            if (!resultado.Sucesso)
+                return Resultado.DeErros<ApontamentoTfsModel>(resultado.Erros);
+
+            return Resultado.DeValor(apontamento.ApontamentoTfsParaApontamentoTfsModel(apontamentoModel.IdTarefa));
         }
 
         public async Task<Resultado<Pagina<TarefaModel>>> BuscarTarefasAsync(UsuarioTfs usuario, string colecao, string palavraChave, StatusItemTrabalho[] status, int pagina = 1, int tamanhoPagina = 10)

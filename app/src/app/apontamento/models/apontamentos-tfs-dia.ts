@@ -32,8 +32,12 @@ export class ApontamentosTfsDia implements IModel<ApontamentosTfsDia>, IColecaoA
 		return apontamento;
 	}
 
-	public obterTarefasPorId(id: number): Tarefa[] {
-		return this.tarefas.filter(c => c.id == id);
+    public adicionarTarefa(tarefa: Tarefa): void {
+        this.tarefas.push(tarefa);
+    }
+
+	public obterTarefaPorId(id: number): Tarefa | undefined {
+		return this.tarefas.find(c => c.id == id);
 	}
 
     public obterTodosApontamentos(): ApontamentoTfs[] {

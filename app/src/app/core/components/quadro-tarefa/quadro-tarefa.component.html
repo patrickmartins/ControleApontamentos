@@ -29,7 +29,7 @@
 				</button>
 			</div>
 			<div *ngIf="tarefa.apontamentoHabilitado && permiteApontar" class="contador-container">
-				<contador-tarefa #contador class="contador" [habilitado]="!salvandoApontamento" [idTarefa]="tarefa.id" [colecao]="tarefa.colecao" (onApontamentoSalvo)="onApontamentoSalvo($event)"></contador-tarefa>
+				<contador-tarefa #contador class="contador" [habilitado]="!salvandoApontamento" [idTarefa]="tarefa.id" [colecao]="tarefa.colecao" (onSalvarApontamento)="onSalvarApontamento($event)"></contador-tarefa>
 			</div>
 		</div>	
 		<mat-progress-bar mode="indeterminate" *ngIf="salvandoApontamento" class="salvando-progresso"></mat-progress-bar>	

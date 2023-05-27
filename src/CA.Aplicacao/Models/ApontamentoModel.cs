@@ -29,7 +29,7 @@ namespace CA.Aplicacao.Models
             {
                 SincronizadoChannel = false,
                 Comentario = viewModel.Comentario,
-                DataApontamento = viewModel.Data.ToString("d"),
+                DataApontamento = viewModel.Data.ConverterParaFusoBrasil().ToString("d"),
                 DataCriacao = DateTime.UtcNow,
                 TempoApontamento = TimeSpan.FromMinutes(viewModel.TempoTotal).ToString("hh\\:mm"),
                 Usuario = viewModel.Usuario

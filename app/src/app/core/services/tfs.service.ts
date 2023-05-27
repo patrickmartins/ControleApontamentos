@@ -13,6 +13,7 @@ import { Tarefa } from '../models/tarefa';
 import { ApontamentosTfsDia } from 'src/app/apontamento/models/apontamentos-tfs-dia';
 import { ApontamentosTfsMes } from 'src/app/apontamento/models/apontamentos-tfs-mes';
 import { UsuarioTfs } from '../models/usuarioTfs';
+import { ApontamentoTfs } from '../models/apontamento-tfs';
 
 @Injectable({
   providedIn: 'root'
@@ -38,8 +39,8 @@ export class TfsService extends BaseService {
 			map(pagina => this.configurarTarefasBusca(pagina)));
 	}
 
-	public salvarApontamento(apontamento: NovoApontamento): Observable<any> {
-		return this.post<any>(`${environment.urlApiBase}tfs/tarefa/adicionar-apontamento`, apontamento);
+	public salvarApontamento(apontamento: NovoApontamento): Observable<ApontamentoTfs> {
+		return this.post<ApontamentoTfs>(`${environment.urlApiBase}tfs/tarefa/adicionar-apontamento`, apontamento, {}, ApontamentoTfs);
 	}
     
     public obterApontamentosTfsPorDia(data: Date): Observable<ApontamentosTfsDia> {

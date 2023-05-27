@@ -326,7 +326,7 @@ export class GraficoResumoMesComponent implements OnChanges, OnInit, OnDestroy, 
         this.atualizarGrafico();
     }
 
-    private atualizarGrafico(): void {
+    public atualizarGrafico(): void {
         this.dadosGrafico.labels = this.obterDiasPorMes(this.dataReferencia.getMonth(), this.dataReferencia.getFullYear());
 
         this.dadosGrafico.datasets[0].data = this.batidas ? this.batidas.batidasDiarias.map(c => c.tempoTotalTrabalhadoNoDia) : [];

@@ -43,7 +43,7 @@
                         </resumo-apontamentos>
 						
 						<div *ngIf="tempoTotalApontadoNoMes > 0 || tempoTotalTrabalhadoNoMes > 0">
-							<grafico-resumo-mes (onDiaClicado)="onDiaClicado($event)"
+							<grafico-resumo-mes #grafico (onDiaClicado)="onDiaClicado($event)"
 												[dataReferencia]="mesSelecionado"
 												[apontamentosTfs]="apontamentosTfsMes"
 												[apontamentosChannel]="apontamentosChannelMes"
@@ -83,7 +83,8 @@
 						<quadro-tarefa *ngFor="let tarefa of apontamentosTfsDiaSelecionado.tarefas"
 										class="fade-in-left tarefa"
 										[tarefa]="tarefa" 
-										[permiteFixar]="true"></quadro-tarefa>
+										[permiteFixar]="true"
+                                        (onApontamentoSalvo)="onApontamentoSalvo(tarefa, $event)"></quadro-tarefa>
 					</div>
 				</ng-template>
 			</mat-expansion-panel>

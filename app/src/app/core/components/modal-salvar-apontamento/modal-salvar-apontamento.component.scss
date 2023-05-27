@@ -38,6 +38,10 @@
 				&::-webkit-calendar-picker-indicator {
 					display: none;
 				}
+
+                &::after {
+                    content: unset;
+                }
 			}
 
 			.mat-icon {
@@ -100,3 +104,4 @@
 		}
 	}
 }
+

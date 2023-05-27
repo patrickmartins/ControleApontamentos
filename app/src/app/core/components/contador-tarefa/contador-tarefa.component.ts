@@ -27,7 +27,7 @@ export class ContadorTarefaComponent implements AfterViewInit {
 	public habilitado: boolean = true;
 
 	@Output()
-	public onApontamentoSalvo = new EventEmitter<NovoApontamento>
+	public onSalvarApontamento = new EventEmitter<NovoApontamento>
 
 	@ViewChild('timer')
 	public timer!: TimerComponent;
@@ -90,7 +90,7 @@ export class ContadorTarefaComponent implements AfterViewInit {
 
 		dialogRef.afterClosed().subscribe((result) => {
 			if(result)
-				this.onApontamentoSalvo.emit(result);
+				this.onSalvarApontamento.emit(result);
 		});
 	}
 

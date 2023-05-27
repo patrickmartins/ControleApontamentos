@@ -61,6 +61,29 @@ namespace CA.Aplicacao.Extensions
 
         #region TFS
 
+        public static IEnumerable<ApontamentoTfsModel> ApontamentosTfsParaApontamentosTfsModel(this IEnumerable<ApontamentoTfs> apontamentos, int idItemTrabalho)
+        {
+            return apontamentos.OrderByDescending(c => c.DataCriacao).Select(c => c.ApontamentoTfsParaApontamentoTfsModel(idItemTrabalho)).ToList();
+        }
+
+        public static ApontamentoTfsModel ApontamentoTfsParaApontamentoTfsModel(this ApontamentoTfs apontamento, int idItemTrabalho)
+        {
+            var comentario = apontamento.Comentario.Trim().RemoverEspacosDuplicados().Replace(";", ",");
+
+            DateOnly.TryParse(apontamento.DataApontamento, out var data);
+            TimeSpan.TryParse(apontamento.TempoApontamento, out var tempo);
+
+            return new ApontamentoTfsModel
+            {
+                Data = data,
+                Tempo = tempo,
+                Usuario = apontamento.Usuario,
+                Comentario = apontamento.Comentario.Trim(),
+                SincronizadoChannel = apontamento.SincronizadoChannel,
+                Hash = Sha1Helper.GerarHashPorString($"{idItemTrabalho} - {apontamento.Usuario} - {comentario} - {data} - {tempo}")
+            };
+        }
+
         public static IEnumerable<TarefaModel> ItensTrabalhoParaTarefaModel(this IEnumerable<ItemTrabalho> itensTrabalho, string usuario)
         {
             return itensTrabalho.Select(c => c.ItemTrabalhoParaTarefaModel(usuario)).ToList();
@@ -73,25 +96,7 @@ namespace CA.Aplicacao.Extensions
             var tituloItemTrabalho = itemTrabalho.Titulo.RemoverQuebrasDeLinha().RemoverTabulacoes().Trim().Replace(";", ",");
             var tituloItemTrabalhoPai = itemTrabalho.TituloItemTrabalhoPai.RemoverQuebrasDeLinha().RemoverTabulacoes().Trim().Replace(";", ",");
 
-            var apontamentos = itemTrabalho.
-                                ListaApontamentos.Apontamentos.OrderByDescending(c => c.DataCriacao).Select(c =>
-                                {
-                                    var comentario = c.Comentario.Trim().RemoverEspacosDuplicados().Replace(";", ",");
-
-                                    DateOnly.TryParse(c.DataApontamento, out var data);
-                                    TimeSpan.TryParse(c.TempoApontamento, out var tempo);
-
-                                    return new ApontamentoTfsModel
-                                    {
-                                        Data = data,
-                                        Tempo = tempo,
-                                        Usuario = c.Usuario,
-                                        Comentario = c.Comentario.Trim(),
-                                        SincronizadoChannel = c.SincronizadoChannel,
-                                        Hash = Sha1Helper.GerarHashPorString($"{itemTrabalho.IdItemTrabalho} - {c.Usuario} - {comentario} - {data} - {tempo}")
-                                    };
-                                })
-                                .ToList();
+            var apontamentos = itemTrabalho.ListaApontamentos.Apontamentos.ApontamentosTfsParaApontamentosTfsModel(itemTrabalho.IdItemTrabalho);
 
             var tarefa = new TarefaModel
             {

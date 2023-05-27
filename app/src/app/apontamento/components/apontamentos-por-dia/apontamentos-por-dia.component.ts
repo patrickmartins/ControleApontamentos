@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DateAdapter } from '@angular/material/core';
 import { catchError, forkJoin, of } from 'rxjs';
@@ -16,6 +16,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { TfsService } from 'src/app/core/services/tfs.service';
 import { ConsolidacaoService } from 'src/app/core/services/consolidacao.service';
 import { ChannelService } from '../../../core/services/channel.service';
+import { GraficoResumoDiaComponent } from '../grafico-resumo-dia/grafico-resumo-dia.component';
 
 @Component({
 	selector: 'app-apontamentos-por-dia',
@@ -24,6 +25,9 @@ import { ChannelService } from '../../../core/services/channel.service';
 })
 export class ApontamentosPorDiaComponent extends BaseComponent implements OnInit {
 
+    @ViewChild('grafico')
+    public grafico?: GraficoResumoDiaComponent;
+    
 	public carregando: boolean = true;
 
 	public get tempoTotalTrabalhadoNoDia() : number {
@@ -125,4 +129,9 @@ export class ApontamentosPorDiaComponent extends BaseComponent implements OnInit
 			data.getMonth() == hoje.getMonth() &&
 			data.getFullYear() == hoje.getFullYear()
 	}
+
+    public onApontamentoSalvo(apontamento: any): void {
+        this.apontamentosTfsDia?.recalcularTempoTotalApontado();
+        this.grafico?.atualizarGrafico();
+    }
 }
