@@ -56,6 +56,18 @@ namespace CA.Aplicacao.Servicos
             return _servico.ObterFuncionarioPorNomeAsync(nome);
         }
 
+        public async Task<IEnumerable<Funcionario>> ObterTodosFuncionariosAsync()
+        {
+            var funcionarios = await _servico.ObterTodosFuncionariosAsync();
+
+            return funcionarios.Select(c => new Funcionario
+            {
+                Id = c.Id,
+                Nome = c.Nome,
+                NumeroFolha = c.NumeroFolha
+            });
+        }
+
         private IEnumerable<BatidasPontoDia> AdequarBatidasPorPeriodo(IEnumerable<BatidasPontoDia> batidas, DateOnly dataInicio, DateOnly dataFim)
         {
             var batidasPeriodo = batidas.OrderBy(c => c.Data).ToList();

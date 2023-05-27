@@ -1,0 +1,45 @@
+.loader {
+    & .mat-table {
+        width: 100%;
+        border-bottom: 0!important;
+    }
+
+   & th {
+        font-weight: 500;
+        font-size: .85rem;
+        border-bottom-color: rgba(255, 255, 255, 0.12) !important;
+        border-bottom-width: 1px !important;
+        border-bottom-style: solid !important;
+        text-align: start;
+    }
+
+    & td {
+        font-weight: 300;
+        border-bottom-color: rgba(255, 255, 255, 0.12) !important;
+        border-bottom-width: 1px !important;
+        border-bottom-style: solid !important;
+    }
+
+    & th.mat-header-cell:first-of-type, td.mat-cell:first-of-type {
+        padding-left: 24px;
+    }
+
+    & tr {
+        height: 48px;
+    }
+
+    & tr.mat-header-row {
+        height: 56px;
+    }
+
+    & ::ng-deep {
+        svg {
+            height: 1.8em;
+        }
+
+        content-loader {
+            overflow: hidden;
+            display: grid!important;
+        }
+    }
+}

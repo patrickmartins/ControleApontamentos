@@ -18,13 +18,14 @@
 						<a mat-menu-item class="btn-menu" [routerLink]="['/apontamento/por-mes']">Apontamentos por Mês</a>
 					</mat-menu>
 					<a mat-button class="btn-menu" *ngIf="usuarioLogado?.possuiRole('administrador')" [matMenuTriggerFor]="menuAdministracao">Administração</a>
-                    <mat-menu #menuAdministracao>
+                    <mat-menu #menuAdministracao>                        
 						<a mat-menu-item class="btn-menu" [matMenuTriggerFor]="menuUsuarios">Usuários</a>
                         <mat-menu #menuUsuarios>
+                            <a mat-menu-item class="btn-menu" [routerLink]="['/administracao/usuario']">Alterar</a>
                             <a mat-menu-item class="btn-menu" [matMenuTriggerFor]="menuApontamentosUsuarios">Apontamentos</a>
                             <mat-menu #menuApontamentosUsuarios>
-                                <a mat-menu-item class="btn-menu" [routerLink]="['/administracao/apontamentos-usuario/por-dia']">Por Dia</a>
-                                <a mat-menu-item class="btn-menu" [routerLink]="['/administracao/apontamentos-usuario/por-mes']">Por Mês</a>
+                                <a mat-menu-item class="btn-menu" [routerLink]="['/administracao/usuario/apontamento/por-dia']">Por Dia</a>
+                                <a mat-menu-item class="btn-menu" [routerLink]="['/administracao/usuario/apontamento/por-mes']">Por Mês</a>
                             </mat-menu>
                         </mat-menu>
 					</mat-menu>
@@ -42,7 +43,7 @@
 							<mat-divider></mat-divider>
 							<div class="lista">		
 								<mat-radio-group>
-									<mat-radio-button *ngFor="let colecao of usuarioLogado.colecoes; let i = index" ngDefaultControl [(ngModel)]="filtros.colecao" [checked]="i == 0"  [value]="colecao" (click)="$event.stopPropagation()">{{ colecao  }}</mat-radio-button>
+									<mat-radio-button color="primary" *ngFor="let colecao of usuarioLogado.colecoes; let i = index" ngDefaultControl [(ngModel)]="filtros.colecao" [checked]="i == 0"  [value]="colecao" (click)="$event.stopPropagation()">{{ colecao  }}</mat-radio-button>
 								</mat-radio-group>						
 							</div>
 						</div>
@@ -52,7 +53,7 @@
 							<div class="lista">		
 								<ul>
 									<li *ngFor="let status of filtros.status">
-										<mat-checkbox [(ngModel)]="status.marcado" value="status.status" (click)="$event.stopPropagation()">{{ status.nome }}</mat-checkbox>
+										<mat-checkbox color="primary" [(ngModel)]="status.marcado" value="status.status" (click)="$event.stopPropagation()">{{ status.nome }}</mat-checkbox>
 									</li>
 								</ul>						
 							</div>
@@ -102,10 +103,11 @@
                 <mat-menu #menuAdministracao>
                     <a mat-menu-item class="btn-menu" [matMenuTriggerFor]="menuUsuarios">Usuários</a>
                     <mat-menu #menuUsuarios>
+                        <a mat-menu-item class="btn-menu" [routerLink]="['/administracao/usuario']">Alterar</a>
                         <a mat-menu-item class="btn-menu" [matMenuTriggerFor]="menuApontamentosUsuarios">Apontamentos</a>
                         <mat-menu #menuApontamentosUsuarios>
-                            <a mat-menu-item class="btn-menu" [routerLink]="['/administracao/apontamentos-usuario/por-dia']">Por Dia</a>
-                            <a mat-menu-item class="btn-menu" [routerLink]="['/administracao/apontamentos-usuario/por-mes']">Por Mês</a>
+                            <a mat-menu-item class="btn-menu" [routerLink]="['/administracao/usuario/apontamento/por-dia']">Por Dia</a>
+                            <a mat-menu-item class="btn-menu" [routerLink]="['/administracao/usuario/apontamento/por-mes']">Por Mês</a>
                         </mat-menu>
                     </mat-menu>
                 </mat-menu>
@@ -140,14 +142,15 @@
                             <mat-expansion-panel-header matRipple>
                                 <mat-panel-title>Usuários</mat-panel-title>
                             </mat-expansion-panel-header>
-                            <div>
+                            <div>        
+                                <a mat-menu-item class="btn-menu" [routerLink]="['/administracao/usuario']">Alterar</a>                       
                                 <mat-expansion-panel>
                                     <mat-expansion-panel-header matRipple>
                                         <mat-panel-title>Apontamentos</mat-panel-title>
-                                    </mat-expansion-panel-header>
+                                    </mat-expansion-panel-header>                                    
                                     <div>
-                                        <a mat-menu-item class="btn-menu" [routerLink]="['/administracao/apontamentos-usuario/por-dia']">Por Dia</a>
-                                        <a mat-menu-item class="btn-menu" [routerLink]="['/administracao/apontamentos-usuario/por-mes']">Por Mês</a>
+                                        <a mat-menu-item class="btn-menu" [routerLink]="['/administracao/usuario/apontamento/por-dia']">Por Dia</a>
+                                        <a mat-menu-item class="btn-menu" [routerLink]="['/administracao/usuario/apontamento/por-mes']">Por Mês</a>
                                     </div>
                                 </mat-expansion-panel>
                             </div>

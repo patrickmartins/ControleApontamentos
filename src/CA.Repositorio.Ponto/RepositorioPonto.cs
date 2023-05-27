@@ -30,6 +30,13 @@ namespace CA.Repositorios.Ponto
             return _servico.ObterBatidasPorPeriodoAsync(pisFuncionario, inicio, fim);
         }
 
+        public async Task<Funcionario?> ObterFuncionarioPorIdAsync(int id)
+        {
+            var funcionarios = await _servico.ObterFuncionariosAsync();
+
+            return funcionarios.FirstOrDefault(c => c.Id == id);
+        }
+
         public async Task<Funcionario?> ObterFuncionarioPorNomeAsync(string nome)
         {
             var funcionarios = await _servico.ObterFuncionariosAsync();
@@ -42,6 +49,11 @@ namespace CA.Repositorios.Ponto
             var funcionarios = await _servico.ObterFuncionariosAsync();
 
             return funcionarios.FirstOrDefault(c => c.NumeroPis.Equals(pisFuncionario));
+        }
+
+        public async Task<IEnumerable<Funcionario>> ObterTodosFuncionariosAsync()
+        {
+            return (await _servico.ObterFuncionariosAsync()).Where(c => !string.IsNullOrEmpty(c.NumeroPis)).ToList();
         }
     }
 }

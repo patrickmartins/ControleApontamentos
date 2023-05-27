@@ -1,4 +1,5 @@
 ﻿using CA.Core.Entidades.Channel;
+using CA.Core.Entidades.Ponto;
 using CA.Core.Entidades.Tfs;
 using System.Security.Claims;
 using System.Security.Principal;
@@ -50,6 +51,19 @@ namespace CA.Identity.Extensions
         public static string? ObterPisFuncionario(this IEnumerable<Claim> claims)
         {
             return claims.FirstOrDefault(c => c.Type.Equals(TiposClaims.PisFuncionario))?.Value;
+        }
+
+        public static int? ObterIdFuncionarioPonto(this IEnumerable<Claim> claims)
+        {
+            var valor = claims.FirstOrDefault(c => c.Type.Equals(TiposClaims.IdFuncionario))?.Value;
+
+            if (valor is null)
+                return null;
+
+            if (int.TryParse(valor, out var id))
+                return id;
+
+            return null;
         }
 
         public static string? ObterEmailUsuarioChannel(this IEnumerable<Claim> claims)
@@ -121,6 +135,22 @@ namespace CA.Identity.Extensions
             };
         }
 
+        public static Funcionario? ObterFuncionarioPonto(this IEnumerable<Claim> claims)
+        {
+            var idFuncionario = claims.ObterIdFuncionarioPonto();
+
+            if (idFuncionario is null)
+                return null;
+
+            var pisFuncionario = claims.ObterPisFuncionario();
+
+            return new Funcionario
+            {
+                Id = idFuncionario.Value,                
+                NumeroPis = pisFuncionario
+            };
+        }
+
         public static string ObterNomeUsuario(this ClaimsIdentity identity)
         {
             return identity.Claims.ObterNomeUsuario();
@@ -178,6 +208,11 @@ namespace CA.Identity.Extensions
         public static UsuarioTfs? ObterUsuarioTfs(this ClaimsIdentity identity)
         {
             return identity.Claims.ObterUsuarioTfs();
+        }
+
+        public static Funcionario? ObterFuncionarioPonto(this ClaimsIdentity identity)
+        {
+            return identity.Claims.ObterFuncionarioPonto();
         }
 
         public static string? ObterNomeUsuario(this IPrincipal principal)
@@ -244,6 +279,14 @@ namespace CA.Identity.Extensions
             return ((ClaimsIdentity)principal.Identity).ObterUsuarioTfs();
         }
 
+        public static Funcionario? ObterFuncionarioPonto(this IPrincipal principal)
+        {
+            if (principal.Identity is null || !principal.Identity.IsAuthenticated)
+                return null;
+
+            return ((ClaimsIdentity)principal.Identity).ObterFuncionarioPonto();
+        }
+
         public static IEnumerable<string> ObterColecoesTfs(this IPrincipal principal)
         {
             if (principal.Identity is null || !principal.Identity.IsAuthenticated)
@@ -286,7 +329,8 @@ namespace CA.Identity.Extensions
         public const string IdentidadeTfs = "tfs_identidade";
         public const string TipoIdentidadeTfs = "tfs_tipo_identidade";
         public const string ColecoesTfs = "tfs_colecoes";
-        public const string PisFuncionario = "secullum_pis";
+        public const string IdFuncionario = "secullum_funcionario_id";
+        public const string PisFuncionario = "secullum_funcionario_pis";
         public const string EmailUsuarioChannel = "channel_email_usuario";
         public const string IdUsuarioChannel = "channel_id_usuario";
     }

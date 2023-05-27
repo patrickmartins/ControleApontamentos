@@ -1,0 +1,52 @@
+.modal {
+
+	& .cabecalho {
+		display: flex;
+
+		& > h4 {
+			margin: 0 0 5px 0;
+			width: 100%;
+			align-items: center;
+    		display: flex;
+		}
+
+		& > .btn-fechar {
+			margin: 0 0 5px 0;
+		}
+	}
+
+	& .corpo {
+		padding: 20px 0;
+
+        & .mat-form-field {
+            width: 100%;
+
+            & ::ng-deep.mat-form-field-wrapper {
+                padding-bottom: 0.3em;
+            }
+
+            & ::ng-deep.mat-form-field-infix {
+                padding: .8em 0 .8em 0 !important;
+            }        
+        }   
+
+        & #ehAdministrador {
+            padding-top: .6em;
+            padding-left: .2em;
+        }
+        
+        & .nome-usuario {
+            margin: 0 0 1.5em .4em;
+            font-size: 1.2rem;
+        }
+	}
+
+	& .acoes {
+		margin-top: 15px;
+		float: right;
+
+		& button:nth-child(1) {
+			margin-right: 10px;
+		}
+	}
+}

@@ -4,8 +4,8 @@ namespace CA.Identity.Entidades
 {
     public class Usuario : IdentityUser<string> 
     {
-        public IEnumerable<Role> Roles { get; set; }
-        public IEnumerable<IdentityUserClaim<string>> Claims { get; set; }
+        public IEnumerable<IdentityUserRole<string>> UserRoles { get; set; }
+        public IEnumerable<IdentityUserClaim<string>> UserClaims { get; set; }
 
         public Usuario()
         {

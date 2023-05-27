@@ -5,6 +5,7 @@ namespace CA.Identity.Interfaces
 {
     public interface IServicoIdentidade
     {
+        Task<Resultado> AtualizarUsuario(AtualizarUsuarioApp model);
         Task<IEnumerable<UsuarioApp>> ObterTodosUsuariosAsync();
         Task<Resultado<UsuarioApp>> ImportarUsuarioAsync(string email, string nomeUsuario, string nomeCompleto);
         Task<Resultado<UsuarioApp>> ObterUsuarioPorEmailAsync(string email);

@@ -6,6 +6,7 @@ namespace CA.Aplicacao.Interfaces
 {
     public interface IServicoChannelApp
     {
+        Task<IEnumerable<UsuarioChannel>> ObterTodosUsuariosAsync();
         Resultado<UsuarioChannel?> ObterUsuarioPorEmail(string emailUsuario);
         Resultado<UsuarioChannel?> ObterUsuarioPorNomeCompleto(string nomeCompleto);
         Task<Resultado<ApontamentosChannelDiaModel>> ObterApontamentosPorDiaAsync(int idUsuario, DateOnly data);

@@ -131,6 +131,29 @@ namespace CA.Aplicacao.Servicos
             return _servico.ObterUsuarioPorNomeAsync(colecao, nomeUsuario);
         }
 
+        public Task<Resultado<UsuarioTfs>> ObterUsuarioPorIdAsync(string colecao, string id)
+        {
+            return _servico.ObterUsuarioPorIdAsync(colecao, id);
+        }
+
+        public async Task<IEnumerable<UsuarioTfs>> ObterTodosUsuariosAsync()
+        {
+            var colecoes = await _servico.ObterTodasColecoesAsync();
+            var usuarios = new List<UsuarioTfs>();
+
+            foreach(var colecao in colecoes)
+            {
+                usuarios.AddRange(await _servico.ObterTodosUsuariosPorColecaoAsync(colecao));
+            }            
+
+            return usuarios.Where(c => c.Ativo).GroupBy(c => c.Identidade.Id).Select(c => c.First()).OrderBy(c => c.NomeCompleto).ToList();
+        }
+
+        public Task<IEnumerable<UsuarioTfs>> ObterTodosUsuariosPorColecaoAsync(string colecao)
+        {
+            return _servico.ObterTodosUsuariosPorColecaoAsync(colecao);
+        }
+
         private IEnumerable<ItemTrabalho> ConsolidarTarefas(IEnumerable<ItemTrabalho> itens)
         {
             return itens.Where(c => c.Tipo == TipoItemTrabalho.Tarefa || c.Tipo == TipoItemTrabalho.Bug).Select(item =>

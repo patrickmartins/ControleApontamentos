@@ -8,6 +8,7 @@ import { LoginMenuLoaderComponent } from './components/login-menu-loader/login-m
 import { CardLoaderComponent } from './components/card-loader/card-loader.component';
 import { GraficoResumoDiaLoaderComponent } from './components/grafico-resumo-dia-loader/grafico-resumo-dia-loader.component';
 import { GraficoResumoMesLoaderComponent } from './components/grafico-resumo-mes-loader/grafico-resumo-mes-loader.component';
+import { UsuariosLoaderComponent } from './components/usuarios-loader/usuarios-loader.component';
 
 @NgModule({
 	declarations: [
@@ -15,7 +16,8 @@ import { GraficoResumoMesLoaderComponent } from './components/grafico-resumo-mes
 		LoginMenuLoaderComponent,
   		CardLoaderComponent,
     	GraficoResumoDiaLoaderComponent,
-     	GraficoResumoMesLoaderComponent
+     	GraficoResumoMesLoaderComponent,
+        UsuariosLoaderComponent
 	],
 	imports: [
 		MatCardModule,
@@ -27,7 +29,8 @@ import { GraficoResumoMesLoaderComponent } from './components/grafico-resumo-mes
 		LoginMenuLoaderComponent,
 		CardLoaderComponent,
 		GraficoResumoDiaLoaderComponent,
-		GraficoResumoMesLoaderComponent
+		GraficoResumoMesLoaderComponent,
+        UsuariosLoaderComponent
 	]
 })
 export class LoaderModule { }

@@ -6,6 +6,8 @@ namespace CA.Aplicacao.Interfaces
 {
     public interface IServicoTfsApp
     {
+        Task<IEnumerable<UsuarioTfs>> ObterTodosUsuariosAsync();
+        Task<IEnumerable<UsuarioTfs>> ObterTodosUsuariosPorColecaoAsync(string colecao);
         Task<Resultado<UsuarioTfs>> ObterUsuarioPorNomeAsync(string colecao, string nomeUsuario);
         Task<Resultado<IEnumerable<TarefaModel>>> ObterTarefasPorIdAsync(UsuarioTfs usuario, string colecao, params int[] ids);
         Task<Resultado<IEnumerable<GrupoTarefasModel>>> ObterTarefasAtivasPorUsuarioAsync(UsuarioTfs usuario);

@@ -9,5 +9,6 @@ namespace CA.Aplicacao.Interfaces
         Task<Resultado<BatidasPontoDiaModel>> ObterBatidasPorDiaAsync(string pisFuncionario, DateOnly data);
         Task<Resultado<BatidasPontoMesModel>> ObterBatidasPorMesAsync(string pisFuncionario, int mes, int ano);
         Task<Resultado<Funcionario?>> ObterFuncionarioPorNomeAsync(string nome);
+        Task<IEnumerable<Funcionario>> ObterTodosFuncionariosAsync();
     }
 }

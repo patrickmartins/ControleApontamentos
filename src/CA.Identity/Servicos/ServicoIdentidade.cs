@@ -17,7 +17,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Principal;
 using System.Text;
 
 namespace CA.Identity.Servicos
@@ -45,31 +44,6 @@ namespace CA.Identity.Servicos
             _repositorioColecoes = repositorioColecoes;
         }
 
-        public async Task<IEnumerable<UsuarioApp>> ObterTodosUsuariosAsync()
-        {
-            var usuario = await _userManager.Users.Include(c => c.Claims).ToListAsync();
-
-            return usuario.Select(usuario => {
-
-                var claims = usuario.Claims.Select(c => new Claim(c.ClaimType, c.ClaimValue)).ToList();
-
-                return new UsuarioApp
-                {
-                    Id = new Guid(usuario.Id),
-                    Email = usuario.Email,
-                    NomeUsuario = usuario.UserName,
-                    NomeCompleto = claims.ObterNomeCompleto(),
-                    Colecoes = claims.ObterColecoesTfs(),
-                    PossuiContaPonto = claims.ObterPisFuncionario() is not null,                    
-                    PossuiContaChannel = claims.ObterUsuarioChannel() is not null,
-                    PossuiContaTfs = claims.ObterUsuarioTfs() is not null,
-                    Roles = new string[0]
-                };
-            })
-            .OrderBy(c => c.NomeCompleto)
-            .ToList();
-        }
-
         public async Task<Resultado<UsuarioApp>> ImportarUsuarioAsync(string email, string nomeUsuario, string nomeCompleto)
         {
             var resultado = new Resultado<UsuarioApp>();
@@ -86,7 +60,7 @@ namespace CA.Identity.Servicos
             if (string.IsNullOrEmpty(nomeCompleto))
                 resultado.AddError(new Erro("O nome completo do usuário não foi informado.", "nomeCompleto"));
 
-            if(!resultado.Sucesso)
+            if (!resultado.Sucesso)
                 return resultado;
 
             var usuarioIdentity = await _userManager.FindByEmailAsync(email);
@@ -99,16 +73,16 @@ namespace CA.Identity.Servicos
 
             foreach (var colecao in colecoes)
             {
-                usuarioTfs = await _repositorioTfs.ObterUsuarioAsync(colecao, nomeUsuario);
+                usuarioTfs = await _repositorioTfs.ObterUsuarioPorNomeAsync(colecao, nomeUsuario);
 
                 if (usuarioTfs is not null)
                     break;
             }
 
-            var funcionarioPonto = await ObterFuncionarioPontoAsync(nomeCompleto);
+            var funcionario = await ObterFuncionarioPontoAsync(nomeCompleto);
             var usuarioChannel = ObterUsuarioChannel(email, nomeCompleto);
 
-            if(usuarioTfs is null && funcionarioPonto is null && usuarioChannel is null)
+            if (usuarioTfs is null && funcionario is null && usuarioChannel is null)
                 return Resultado.DeErros<UsuarioApp>(new Erro("O usuário informado não possuí uma conta no Tfs, no Channel e no Secullum.", "email"));
 
             var claims = new List<Claim>();
@@ -123,32 +97,12 @@ namespace CA.Identity.Servicos
 
             if (result.Succeeded)
             {
-                claims.Add(new Claim(TiposClaims.Email, email));
-                claims.Add(new Claim(TiposClaims.NomeCompleto, nomeCompleto));
+                var resultIntegracao = await AdicionarClaimsDadosUsuario(usuarioIdentity, email, nomeCompleto);
 
-                if (usuarioTfs is not null)
-                {
-                    claims.Add(new Claim(TiposClaims.NomeUsuarioTfs, usuarioTfs.NomeUsuario));
-                    claims.Add(new Claim(TiposClaims.DominioTfs, usuarioTfs.Dominio));
-                    claims.Add(new Claim(TiposClaims.IdentidadeTfs, usuarioTfs.Identidade.Id));
-                    claims.Add(new Claim(TiposClaims.TipoIdentidadeTfs, usuarioTfs.Identidade.Tipo));
-                }
+                if (resultIntegracao.Sucesso)
+                    resultIntegracao = await IntegrarContas(usuarioIdentity, usuarioTfs, usuarioChannel, funcionario);
 
-                if (usuarioChannel is not null)
-                {
-                    claims.Add(new Claim(TiposClaims.IdUsuarioChannel, usuarioChannel.Id.ToString()));
-                    claims.Add(new Claim(TiposClaims.EmailUsuarioChannel, usuarioChannel.Email));
-                }
-
-                if (funcionarioPonto is not null && !string.IsNullOrEmpty(funcionarioPonto.NumeroPis))
-                    claims.Add(new Claim(TiposClaims.PisFuncionario, funcionarioPonto.NumeroPis));
-
-                result = await _userManager.AddClaimsAsync(usuarioIdentity, claims);
-
-                if (usuarioTfs is not null)
-                    claims.Add(new Claim(TiposClaims.ColecoesTfs, string.Join(";", usuarioTfs.Colecoes)));
-
-                if (!result.Succeeded)
+                if (!resultIntegracao.Sucesso)
                 {
                     await _userManager.DeleteAsync(usuarioIdentity);
 
@@ -160,19 +114,113 @@ namespace CA.Identity.Servicos
                 return Resultado.DeErros<UsuarioApp>(result.Errors.Select(c => new Erro(c.Description, c.Code)).ToArray());
             }
 
+            if (usuarioTfs is not null)
+                claims.Add(new Claim(TiposClaims.ColecoesTfs, string.Join(";", usuarioTfs.Colecoes)));
+
             return Resultado.DeValor(new UsuarioApp
             {
                 Id = new Guid(usuarioIdentity.Id),
+                IdUsuarioTfs = claims.ObterIdentidadeTfs(),
+                IdFuncionarioPonto = claims.ObterIdFuncionarioPonto(),
+                IdUsuarioChannel = claims.ObterIdUsuarioChannel(),
                 Email = usuarioIdentity.Email,
                 NomeUsuario = usuarioIdentity.UserName,
                 NomeCompleto = nomeCompleto,
                 Colecoes = usuarioTfs is not null ? usuarioTfs.Colecoes : new string[0],
-                PossuiContaPonto = funcionarioPonto is not null && !string.IsNullOrEmpty(funcionarioPonto.NumeroPis),
+                PossuiContaPonto = funcionario is not null && !string.IsNullOrEmpty(funcionario.NumeroPis),
                 PossuiContaTfs = usuarioTfs is not null,
                 PossuiContaChannel = usuarioChannel is not null,
                 Roles = new string[0],
                 Claims = claims
             });
+        }
+
+        public async Task<Resultado> AtualizarUsuario(AtualizarUsuarioApp model)
+        {
+            var usuarioIdentity = await _userManager.FindByIdAsync(model.IdUsuario.ToString());
+            var ehAdministrador = await _userManager.IsInRoleAsync(usuarioIdentity, "administrador");
+
+            if(usuarioIdentity is null) 
+                return Resultado.DeErros(new Erro("O usuário informado não foi encontrado.", nameof(model.IdUsuario)));
+
+            var usuarioTfs = default(UsuarioTfs);
+
+            if (model.EhAdministrador && !ehAdministrador)
+            {
+                await _userManager.AddToRoleAsync(usuarioIdentity, "administrador");
+            }
+            else if (ehAdministrador)
+            {
+                await _userManager.RemoveFromRoleAsync(usuarioIdentity, "administrador");
+            }
+
+            if (model.IdUsuarioTfs is not null)
+            {
+                var colecoes = await _repositorioColecoes.ObterTodasColecoesAsync();
+
+                foreach (var colecao in colecoes)
+                {
+                    usuarioTfs = await _repositorioTfs.ObterUsuarioPorIdAsync(colecao, model.IdUsuarioTfs);
+
+                    if (usuarioTfs is not null)
+                        break;
+                }
+
+                if (usuarioTfs is null)
+                    return Resultado.DeErros(new Erro("O usuário informado não foi encontrado no Tfs.", nameof(model.IdUsuarioTfs)));
+            }
+
+            var usuarioChannel = default(UsuarioChannel);
+
+            if (model.IdUsuarioChannel is not null)
+            {
+                usuarioChannel = _repositorioChannel.ObterUsuarioPorId(model.IdUsuarioChannel.Value);
+
+                if (usuarioChannel is null)
+                    return Resultado.DeErros(new Erro("O usuário informado não foi encontrado no Channel.", nameof(model.IdUsuarioChannel)));
+            }
+
+            var funcionario = default(Funcionario);
+
+            if (model.IdFuncionarioPonto is not null)
+            {
+                funcionario = await _repositorioPonto.ObterFuncionarioPorIdAsync(model.IdFuncionarioPonto.Value);
+
+                if (funcionario is null)
+                    return Resultado.DeErros(new Erro("O funcionário informado não foi encontrado no sistema de ponto.", nameof(model.IdFuncionarioPonto)));
+            }
+
+            return await IntegrarContas(usuarioIdentity, usuarioTfs, usuarioChannel, funcionario);
+        }
+
+        public async Task<IEnumerable<UsuarioApp>> ObterTodosUsuariosAsync()
+        {
+            var usuario = await _userManager.Users.Include(c => c.UserClaims).ToListAsync();
+            var administradores = await _userManager.GetUsersInRoleAsync("administrador");
+
+            return usuario.Select(usuario => {
+
+                var claims = usuario.UserClaims.Select(c => new Claim(c.ClaimType, c.ClaimValue)).ToList();
+
+                return new UsuarioApp
+                {
+                    Id = new Guid(usuario.Id),
+                    IdUsuarioTfs = claims.ObterIdentidadeTfs(),
+                    IdFuncionarioPonto = claims.ObterIdFuncionarioPonto(),
+                    IdUsuarioChannel = claims.ObterIdUsuarioChannel(),
+                    Email = usuario.Email,
+                    NomeUsuario = usuario.UserName,
+                    NomeCompleto = claims.ObterNomeCompleto(),
+                    Colecoes = claims.ObterColecoesTfs(),
+                    EhAdministrador = administradores.Any(c => c.Id == usuario.Id),
+                    PossuiContaPonto = claims.ObterPisFuncionario() is not null,                    
+                    PossuiContaChannel = claims.ObterUsuarioChannel() is not null,
+                    PossuiContaTfs = claims.ObterUsuarioTfs() is not null,
+                    Roles = new string[0]
+                };
+            })
+            .OrderBy(c => c.NomeCompleto)
+            .ToList();
         }
 
         public async Task<Resultado<CaJwt>> LoginAsync(string email)
@@ -244,6 +292,9 @@ namespace CA.Identity.Servicos
             return Resultado.DeValor(new UsuarioApp
             {
                 Id = new Guid(usuario.Id),
+                IdUsuarioTfs = claims.ObterIdentidadeTfs(),
+                IdFuncionarioPonto = claims.ObterIdFuncionarioPonto(),
+                IdUsuarioChannel = claims.ObterIdUsuarioChannel(),
                 Email = usuario.Email,
                 NomeUsuario = usuario.UserName,
                 NomeCompleto = claims.ObterNomeCompleto(),                
@@ -254,6 +305,65 @@ namespace CA.Identity.Servicos
                 Roles = roles,
                 Claims = claims
             });
+        }
+
+        private async Task<Resultado> AdicionarClaimsDadosUsuario(Usuario usuario, string email, string nomeCompleto)
+        {
+            var claims = new List<Claim>();
+
+            claims.Add(new Claim(TiposClaims.Email, email));
+            claims.Add(new Claim(TiposClaims.NomeCompleto, nomeCompleto));
+
+            var result = await _userManager.AddClaimsAsync(usuario, claims);
+
+            if (!result.Succeeded)
+                return Resultado.DeErros<IEnumerable<Claim>>(result.Errors.Select(c => new Erro(c.Description, c.Code)).ToArray());
+
+            return Resultado.DeSucesso();
+        }
+
+        private async Task<Resultado> IntegrarContas(Usuario usuarioIdentity, UsuarioTfs? usuarioTfs, UsuarioChannel? usuarioChannel, Funcionario? funcionarioPonto)
+        {
+            var claims = (await _userManager.GetClaimsAsync(usuarioIdentity)).Where(c => c.Type != TiposClaims.Email && c.Type != TiposClaims.NomeCompleto).ToList();
+
+            var result = new IdentityResult();
+
+            if (claims.Any())
+            {
+                result = await _userManager.RemoveClaimsAsync(usuarioIdentity, claims);
+
+                if (!result.Succeeded)
+                    return Resultado.DeErros(result.Errors.Select(c => new Erro(c.Description, c.Code)).ToArray());
+
+                claims = new List<Claim>();
+            }
+
+            if (usuarioTfs is not null)
+            {
+                claims.Add(new Claim(TiposClaims.NomeUsuarioTfs, usuarioTfs.NomeUsuario));
+                claims.Add(new Claim(TiposClaims.DominioTfs, usuarioTfs.Dominio));
+                claims.Add(new Claim(TiposClaims.IdentidadeTfs, usuarioTfs.Identidade.Id));
+                claims.Add(new Claim(TiposClaims.TipoIdentidadeTfs, usuarioTfs.Identidade.Tipo));
+            }
+
+            if (usuarioChannel is not null)
+            {
+                claims.Add(new Claim(TiposClaims.IdUsuarioChannel, usuarioChannel.Id.ToString()));
+                claims.Add(new Claim(TiposClaims.EmailUsuarioChannel, usuarioChannel.Email));
+            }
+
+            if (funcionarioPonto is not null && !string.IsNullOrEmpty(funcionarioPonto.NumeroPis))
+            {
+                claims.Add(new Claim(TiposClaims.IdFuncionario, funcionarioPonto.Id.ToString()));
+                claims.Add(new Claim(TiposClaims.PisFuncionario, funcionarioPonto.NumeroPis));
+            }
+
+            result = await _userManager.AddClaimsAsync(usuarioIdentity, claims);
+
+            if (!result.Succeeded)
+                return Resultado.DeErros(result.Errors.Select(c => new Erro(c.Description, c.Code)).ToArray());
+
+            return Resultado.DeSucesso();
         }
 
         private CaJwt GerarTokenJwtPorUsuario(UsuarioApp usuario)

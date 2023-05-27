@@ -71,5 +71,10 @@ namespace CA.Core.Servicos.Ponto
 
             return Resultado.DeValor(funcionario);
         }
+
+        public Task<IEnumerable<Funcionario>> ObterTodosFuncionariosAsync()
+        {
+            return _repositorio.ObterTodosFuncionariosAsync();
+        }
     }
 }

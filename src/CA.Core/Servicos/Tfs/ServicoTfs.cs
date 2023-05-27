@@ -12,25 +12,56 @@ namespace CA.Core.Servicos.Tfs
     {
         private readonly IRepositorioItensTrabalho _repositorioItens;
         private readonly IRepositorioUsuariosTfs _repositorioUsuarios;
+        private readonly IRepositorioColecoes _repositorioColecoes;
 
-        public ServicoTfs(IRepositorioItensTrabalho repositorioItens, IRepositorioUsuariosTfs repositorioUsuarios)
+        public ServicoTfs(IRepositorioItensTrabalho repositorioItens, IRepositorioUsuariosTfs repositorioUsuarios, IRepositorioColecoes repositorioColecoes)
         {
             _repositorioItens = repositorioItens;
             _repositorioUsuarios = repositorioUsuarios;
+            _repositorioColecoes = repositorioColecoes;
+        }
+
+        public Task<string[]> ObterTodasColecoesAsync()
+        {
+            return _repositorioColecoes.ObterTodasColecoesAsync();
+        }
+
+        public Task<IEnumerable<UsuarioTfs>> ObterTodosUsuariosPorColecaoAsync(string colecao)
+        {
+            if (string.IsNullOrEmpty(colecao))
+                return Task.FromResult(Enumerable.Empty<UsuarioTfs>());
+
+            return _repositorioUsuarios.ObterTodosUsuariosAsync(colecao);
         }
 
         public async Task<Resultado<UsuarioTfs>> ObterUsuarioPorNomeAsync(string usuario, string colecao)
         {
             if (string.IsNullOrEmpty(usuario))
-                return Resultado.DeErros<UsuarioTfs>(new Erro("O usuário não foi informado.", nameof(usuario)));
+                return Resultado.DeErros<UsuarioTfs>(new Erro("O nome de usuário não foi informado.", nameof(usuario)));
 
             if (string.IsNullOrEmpty(colecao))
                 return Resultado.DeErros<UsuarioTfs>(new Erro("A coleção do TFS não foi informada.", nameof(colecao)));
 
-            var usuarioTfs = await _repositorioUsuarios.ObterUsuarioAsync(colecao, usuario);
+            var usuarioTfs = await _repositorioUsuarios.ObterUsuarioPorNomeAsync(colecao, usuario);
 
             if (usuarioTfs is null)
                 return Resultado.DeErros<UsuarioTfs>(new Erro("O usuário informado não foi encontrado.", nameof(usuario)));
+
+            return Resultado.DeValor(usuarioTfs);
+        }
+
+        public async Task<Resultado<UsuarioTfs>> ObterUsuarioPorIdAsync(string id, string colecao)
+        {
+            if (string.IsNullOrEmpty(id))
+                return Resultado.DeErros<UsuarioTfs>(new Erro("O id do usuário não foi informado.", nameof(id)));
+
+            if (string.IsNullOrEmpty(colecao))
+                return Resultado.DeErros<UsuarioTfs>(new Erro("A coleção do TFS não foi informada.", nameof(colecao)));
+
+            var usuarioTfs = await _repositorioUsuarios.ObterUsuarioPorIdAsync(colecao, id);
+
+            if (usuarioTfs is null)
+                return Resultado.DeErros<UsuarioTfs>(new Erro("O usuário informado não foi encontrado.", nameof(id)));
 
             return Resultado.DeValor(usuarioTfs);
         }
@@ -240,6 +271,5 @@ namespace CA.Core.Servicos.Tfs
 
             return itens;
         }
-
     }
 }
