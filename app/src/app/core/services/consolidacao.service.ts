@@ -26,10 +26,6 @@ export class ConsolidacaoService {
                         apontamentosTfs.removerApontamentoPorHash(apontamentoChannelTfs.hash);
                     }
                 }
-                else {
-                    if (apontamentoTfs.sincronizadoChannel && apontamentoTfs.data >= new Date(2023, 1, 15))
-                        apontamentosTfs.removerApontamentoPorHash(apontamentoTfs.hash);
-                }
             }
 
             apontamentosChannel.removerApontamentosExcluidos();
