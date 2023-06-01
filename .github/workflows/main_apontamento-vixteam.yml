@@ -53,5 +53,5 @@ jobs:
         with:
           app-name: 'apontamento-vixteam'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_2B29FA8B74EC4E3AAFA27BF7F683EEBB }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_5114B28030E54B5DB770130516E06818 }}
           package: .
