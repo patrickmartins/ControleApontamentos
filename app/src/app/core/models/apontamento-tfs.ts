@@ -28,7 +28,7 @@ export class ApontamentoTfs implements IModel<ApontamentoTfs> {
 			apontamento.data = moment(params.data).toDate();	
 			apontamento.tempo = params.tempo as number;            
 			apontamento.sincronizadoChannel = params.sincronizadoChannel;		
-            apontamento.dataApropriacao = params.dataApropriacao ? moment(params.data).toDate() : undefined;
+            apontamento.dataApropriacao = params.dataApropriacao ? moment(params.dataApropriacao).toDate() : undefined;
 		}
 
 		return apontamento;
