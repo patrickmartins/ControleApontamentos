@@ -158,7 +158,7 @@ export class ApontamentosUsuarioDiaComponent extends BaseComponent implements On
                 this.batidas = resultado.batidas;
                 this.infoJobCarga = resultado.infoJobCarga;
 
-                this.servicoConsolidacao.consolidarTarefasEAtividades(this.apontamentosTfsDia, this.apontamentosChannelDia);
+                this.servicoConsolidacao.consolidarTarefasEAtividades(this.apontamentosTfsDia, this.apontamentosChannelDia, this.infoJobCarga?.ultimaExecucao);
             },
             complete: () => this.carregando = false
         });

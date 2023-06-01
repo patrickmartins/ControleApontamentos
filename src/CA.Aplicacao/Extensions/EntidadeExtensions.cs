@@ -74,12 +74,13 @@ namespace CA.Aplicacao.Extensions
             TimeSpan.TryParse(apontamento.TempoApontamento, out var tempo);
 
             return new ApontamentoTfsModel
-            {
+            {                
                 Data = data,
                 Tempo = tempo,
                 Usuario = apontamento.Usuario,
-                Comentario = apontamento.Comentario.Trim(),
+                Comentario = apontamento.Comentario.Trim(),                
                 SincronizadoChannel = apontamento.SincronizadoChannel,
+                DataApropriacao = apontamento.DataApropriacao?.ConverterParaFusoBrasil(),
                 Hash = Sha1Helper.GerarHashPorString($"{idItemTrabalho} - {apontamento.Usuario} - {comentario} - {data} - {tempo}")
             };
         }

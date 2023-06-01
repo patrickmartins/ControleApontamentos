@@ -1,6 +1,5 @@
 .mat-table {
     width: 100%;
-    border-bottom: 0!important;
 }
 
 th {
@@ -12,8 +11,8 @@ td {
     font-weight: 300;
 }
 
-.paginator {
-    border-top: 0!important;
+.grid-usuarios {
+    margin-bottom: 1.5em;
 }
 
 .btn-editar {
@@ -62,7 +61,7 @@ td {
     border-radius: 0;
     margin-bottom: 0;
     box-shadow: unset!important;
-    border-bottom: 0!important;
+    margin-bottom: 1.5em;
     
     & > ::ng-deep.mat-form-field {
         width: 100%;   

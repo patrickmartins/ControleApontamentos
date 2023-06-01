@@ -49,6 +49,7 @@ namespace CA.Aplicacao.Models
     public record ApontamentoTfsModel : ApontamentoModel 
     {
         public bool SincronizadoChannel { get; set; }
+        public DateTime? DataApropriacao { get; set; }
     }
 
     public record ApontamentoChannelModel : ApontamentoModel
