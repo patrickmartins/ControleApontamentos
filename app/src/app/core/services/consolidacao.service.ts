@@ -9,7 +9,7 @@ export class ConsolidacaoService {
 
     constructor() { }
 
-    public consolidarTarefasEAtividades(apontamentosTfs: IColecaoApontamentosTfs | undefined, apontamentosChannel: IColecaoApontamentosChannel | undefined): void {
+    public consolidarTarefasEAtividades(apontamentosTfs: IColecaoApontamentosTfs | undefined, apontamentosChannel: IColecaoApontamentosChannel | undefined, dataUltimaSincronizacaoChannel: Date | undefined): void {
         if (apontamentosTfs && apontamentosChannel) {
             let todosApontamentosChannelTfs = apontamentosChannel.obterApontamentosTfs();
             let todosApontamentosTfs = apontamentosTfs.obterTodosApontamentos();
@@ -26,7 +26,11 @@ export class ConsolidacaoService {
                         apontamentosTfs.removerApontamentoPorHash(apontamentoChannelTfs.hash);
                     }
                 }
-            }
+                else {
+                    if (apontamentoTfs.sincronizadoChannel && (!dataUltimaSincronizacaoChannel || (apontamentoTfs.dataApropriacao && apontamentoTfs.dataApropriacao < dataUltimaSincronizacaoChannel)))
+                        apontamentosTfs.removerApontamentoPorHash(apontamentoTfs.hash);
+                }
+            } 
 
             apontamentosChannel.removerApontamentosExcluidos();
             apontamentosChannel.removerAtividadesSemApontamentos();

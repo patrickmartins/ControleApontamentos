@@ -5,7 +5,7 @@
         </mat-form-field>
     </mat-card>
 
-    <div>
+    <div class="grid-usuarios">
         <div class="loading" *ngIf="salvando">
             <mat-spinner></mat-spinner>    
         </div>
@@ -62,9 +62,9 @@
             <tr mat-header-row *matHeaderRowDef="colunasGridUsuarios"></tr>
             <tr mat-row *matRowDef="let row; columns: colunasGridUsuarios;"></tr>
         </table>
-    </div>
 
-    <usuarios-loader *ngIf="carregando" [quantidadeLinhas]="15"></usuarios-loader>
+        <usuarios-loader *ngIf="carregando" [quantidadeLinhas]="15"></usuarios-loader>
+    </div>    
 
     <mat-paginator [pageSize]="15" [pageSizeOptions]="[10,15,20]" class="borda-1 paginator"></mat-paginator>
 </div>

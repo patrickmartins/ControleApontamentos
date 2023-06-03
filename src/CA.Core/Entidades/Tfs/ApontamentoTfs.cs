@@ -1,13 +1,28 @@
-﻿using System;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 
 namespace CA.Core.Entidades.Tfs
 {
     [XmlType("TimeSheetEntry")]
     public class ApontamentoTfs
     {
+        [XmlAttribute("DataApropriacao")]
+        public string DataApropriacaoString
+        {
+            get
+            {
+                return DataApropriacao.HasValue ? DataApropriacao.Value.ToString("yyyy/MM/dd HH:mm:ss.fff") : string.Empty;
+            }
+            set
+            {
+                DataApropriacao = !string.IsNullOrEmpty(value) ? DateTime.Parse(value) : null;
+            }
+        }
+
         [XmlAttribute("CreatedDate")]
         public DateTime DataCriacao { get; set; }
+
+        [XmlIgnore]
+        public DateTime? DataApropriacao { get; set; }
 
         [XmlAttribute("ApropriadoChannel")]
         public bool SincronizadoChannel { get; set; }
@@ -23,5 +38,6 @@ namespace CA.Core.Entidades.Tfs
 
         [XmlAttribute("Comments")]
         public string Comentario { get; set; } = string.Empty;
+
     }
 }
