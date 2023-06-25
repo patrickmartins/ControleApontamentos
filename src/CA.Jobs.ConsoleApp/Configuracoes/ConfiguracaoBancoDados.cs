@@ -1,4 +1,4 @@
-﻿using CA.Repositorios.Channel.Contexto;
+﻿using CA.Repositorios.Contexto;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

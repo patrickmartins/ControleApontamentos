@@ -26,7 +26,7 @@ namespace CA.Jobs
             LogarInformacao("===> Iniciando a execução do Job de Carga de Projetos. <===");
 
             var dataFim = DateOnly.FromDateTime(DateTime.Now.ConverterParaFusoBrasil());
-            var dataInicio = dataFim.AddDays(-45);
+            var dataInicio = dataFim.Day < 15 ? new DateOnly(dataFim.Year, dataFim.Month - 1, 1) : new DateOnly(dataFim.Year, dataFim.Month, 1);
 
             LogarInformacao($"Data de início: {dataInicio:d}.");
             LogarInformacao($"Data de fim: {dataFim:d}.");

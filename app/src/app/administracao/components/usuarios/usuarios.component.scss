@@ -1,18 +1,35 @@
 .mat-table {
     width: 100%;
-}
 
-th {
-    font-weight: 500;
-    font-size: .85rem;
-}
+    & th {
+        font-weight: 500;
+        font-size: .85rem;
+    }
+    
+    & td {
+        font-weight: 300;
+    }
 
-td {
-    font-weight: 300;
+    & .mat-column-unidade {
+        width: 7em;
+    }
+
+    & .mat-column-usuarioTfs {
+        width: 11em;
+    }
+
+    & .mat-column-usuarioChannel {
+        width: 12.5em;
+    }
+
+    & .mat-column-numeroFolha {
+        width: 5em;
+    }
 }
 
 .grid-usuarios {
     margin-bottom: 1.5em;
+    box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075);
 }
 
 .btn-editar {
@@ -62,7 +79,8 @@ td {
     margin-bottom: 0;
     box-shadow: unset!important;
     margin-bottom: 1.5em;
-    
+    box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075)!important;
+
     & > ::ng-deep.mat-form-field {
         width: 100%;   
         
@@ -84,15 +102,6 @@ td {
     text-align: center;
 }
 
-.loading {
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 56px;
-    right: 0;
-    background: rgba(0, 0, 0, 0.32);
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.paginador {
+    box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075);
 }

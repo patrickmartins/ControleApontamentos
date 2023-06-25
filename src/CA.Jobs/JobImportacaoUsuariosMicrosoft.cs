@@ -1,20 +1,23 @@
-﻿using CA.Core.Interfaces.Microsoft;
-using CA.Identity.Entidades;
+﻿using CA.Aplicacao.Interfaces;
+using CA.Core.Entidades.CA;
+using CA.Core.Interfaces.Microsoft;
 using CA.Identity.Interfaces;
 using CA.Jobs.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace CA.Jobs
 {
-    public class JobImportacaoUsuariosMicrosoft : Job<Usuario>
+    public class JobImportacaoUsuariosMicrosoft : Job<UsuarioCA>
     {
         private readonly IServicoMicrosoftGraph _servicoGraph;
         private readonly IServicoIdentidade _servicoIdentidade;
+        private readonly IServicoUsuariosCaApp _servicoUsuariosCa;
 
-        public JobImportacaoUsuariosMicrosoft(IServicoMicrosoftGraph servicoGraph, IServicoIdentidade servicoIdentidade, ILogger<Usuario> logger) : base(logger)
+        public JobImportacaoUsuariosMicrosoft(IServicoMicrosoftGraph servicoGraph, IServicoIdentidade servicoIdentidade, IServicoUsuariosCaApp servicoUsuariosCa, ILogger<UsuarioCA> logger) : base(logger)
         {
             _servicoGraph = servicoGraph;
             _servicoIdentidade = servicoIdentidade;
+            _servicoUsuariosCa = servicoUsuariosCa;
         }
 
         public override async Task ExecutarAsync()
@@ -27,7 +30,7 @@ namespace CA.Jobs
 
             LogarInformacao($"{usuariosMicrosoft.Count()} usuários obtidos.");
 
-            var usuariosLocal = await _servicoIdentidade.ObterTodosUsuariosAsync();
+            var usuariosLocal = await _servicoIdentidade.ObterTodasContaUsuarioAsync();
 
             var usuariosMicrosoftImportar = usuariosMicrosoft.Where(usuarioMicrosoft => !usuariosLocal.Any(usuarioLocal => usuarioLocal.Email == usuarioMicrosoft.Email)).ToList();
             var usuariosLocalExcluir = usuariosLocal.Where(usuariosLocal => !usuariosMicrosoft.Any(usuarioMicrosoft => usuarioMicrosoft.Email == usuariosLocal.Email)).ToList();
@@ -41,26 +44,35 @@ namespace CA.Jobs
 
                 foreach (var usuario in usuariosMicrosoftImportar)
                 {
-                    var resultado = await _servicoIdentidade.ImportarUsuarioAsync(usuario.Email, usuario.NomeUsuario, usuario.NomeCompleto);
+                    var resultadoImportacao = await _servicoUsuariosCa.ImportarUsuarioAsync(usuario.Email, usuario.NomeCompleto);
 
-                    if (resultado.Sucesso)
+                    if (resultadoImportacao.Sucesso)
                     {
                         LogarInformacao($"Usuário '{usuario.Email}' importado com sucesso.");
                         
-                        if(!resultado.Valor.PossuiContaTfs)
+                        if(!resultadoImportacao.Valor.PossuiContaTfs)
                             LogarAlerta($"Usuário '{usuario.Email}' não possui conta no Tfs.");
 
-                        if(!resultado.Valor.PossuiContaChannel)
+                        if(!resultadoImportacao.Valor.PossuiContaChannel)
                             LogarAlerta($"Usuário '{usuario.Email}' não possui conta no Channel.");
 
-                        if(!resultado.Valor.PossuiContaPonto)
+                        if(!resultadoImportacao.Valor.PossuiContaPonto)
                             LogarAlerta($"Usuário '{usuario.Email}' não possui conta no Secullum.");
+
+                        var resultadoConta = await _servicoIdentidade.CriarContaUsuarioAsync(usuario.Email);
+
+                        if (!resultadoConta.Sucesso)
+                        {
+                            LogarInformacao($"Não foi possível criar a conta do usuário '{usuario.Email}'. Devido aos erros abaixo:");
+
+                            LogarErros(resultadoConta.Erros.ToArray());
+                        }
                     }
                     else
                     {
                         LogarInformacao($"Não foi possível importar o usuário '{usuario.Email}'. Devido aos erros abaixo:");
 
-                        LogarErros(resultado.Erros.ToArray());
+                        LogarErros(resultadoImportacao.Erros.ToArray());
                     }
                 }
             }
@@ -71,17 +83,19 @@ namespace CA.Jobs
 
                 foreach (var usuario in usuariosLocalExcluir)
                 {
-                    var resultado = await _servicoIdentidade.ExcluirUsuarioPorIdAsync(usuario.Id);
+                    var resultadoExclusaoConta = await _servicoIdentidade.ExcluirContaUsuarioAsync(usuario.Email);
 
-                    if (resultado.Sucesso)
+                    if (resultadoExclusaoConta.Sucesso)
                     {
-                        LogarInformacao($"Usuário '{usuario.Email}' excluído com sucesso.");
+                        var resultadoExclusaoUsuario = await _servicoIdentidade.ExcluirContaUsuarioAsync(usuario.Email);
+
+                        LogarInformacao($"Conta do usuário '{usuario.Email}' excluída com sucesso.");
                     }
                     else
                     {
-                        LogarInformacao($"Não foi possível excluír o usuário '{usuario.Email}'. Devido aos erros abaixo:");
+                        LogarInformacao($"Não foi possível excluír a conta do usuário '{usuario.Email}'. Devido aos erros abaixo:");
 
-                        LogarErros(resultado.Erros.ToArray());
+                        LogarErros(resultadoExclusaoConta.Erros.ToArray());
                     }
                 }
             }

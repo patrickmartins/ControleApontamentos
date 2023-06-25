@@ -1,10 +1,12 @@
 ﻿using CA.Aplicacao.Interfaces;
+using CA.Aplicacao.Models;
+using CA.Core.Extensions;
 using CA.Core.Valores;
 using CA.Identity.Extensions;
 using CA.Identity.Interfaces;
-using CA.Identity.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CA.Api.Controllers
 {
@@ -27,17 +29,17 @@ namespace CA.Api.Controllers
         [Route("{id:required:guid}/por-dia")]
         public async Task<ActionResult> BatidasUsuarioPorDiaAsync([FromRoute] Guid id, DateTime data)
         {
-            var usuario = await _servicoIdentidade.ObterUsuarioPorIdAsync(id);
+            var usuario = await _servicoIdentidade.ObterContaUsuarioPorIdAsync(id);
 
             if (!usuario.Sucesso)
                 return NotFound(usuario.Erros);
 
-            var pis = usuario.Valor.Claims.ObterPisFuncionario();
+            var funcionario = usuario.Valor.ExtrairFuncionarioPonto();
 
-            if (string.IsNullOrEmpty(pis))
-                return BadRequest(Resultado.DeErros<UsuarioApp>(new Erro("O usuário informado não possui cadastro no sistema de ponto.", nameof(id))));
+            if (funcionario is null || string.IsNullOrEmpty(funcionario.NumeroPis))
+                return BadRequest(Resultado.DeErros<UsuarioModel>(new Erro("O usuário informado não possui cadastro no sistema de ponto.", nameof(id))));
 
-            var resultado = await _servico.ObterBatidasPorDiaAsync(pis, DateOnly.FromDateTime(data));
+            var resultado = await _servico.ObterBatidasPorDiaAsync(funcionario.NumeroPis, DateOnly.FromDateTime(data));
 
             if (!resultado.Sucesso)
                 return BadRequest(resultado.Erros);
@@ -71,17 +73,17 @@ namespace CA.Api.Controllers
         [Route("{id:required:guid}/por-mes")]
         public async Task<ActionResult> BatidasUsuarioPorMesAsync([FromRoute] Guid id, int mes, int ano)
         {
-            var usuario = await _servicoIdentidade.ObterUsuarioPorIdAsync(id);
+            var usuario = await _servicoIdentidade.ObterContaUsuarioPorIdAsync(id);
 
             if (!usuario.Sucesso)
                 return NotFound(usuario.Erros);
 
-            var pis = usuario.Valor.Claims.ObterPisFuncionario();
+            var funcionario = usuario.Valor.ExtrairFuncionarioPonto();
 
-            if (string.IsNullOrEmpty(pis))
-                return BadRequest(Resultado.DeErros<UsuarioApp>(new Erro("O usuário informado não possui cadastro no sistema de ponto.", nameof(id))));
+            if (funcionario is null || string.IsNullOrEmpty(funcionario.NumeroPis))
+                return BadRequest(Resultado.DeErros<UsuarioModel>(new Erro("O usuário informado não possui cadastro no sistema de ponto.", nameof(id))));
 
-            var resultado = await _servico.ObterBatidasPorMesAsync(pis, mes, ano);
+            var resultado = await _servico.ObterBatidasPorMesAsync(funcionario.NumeroPis, mes, ano);
 
             if(!resultado.Sucesso)
                 return BadRequest(resultado.Erros);

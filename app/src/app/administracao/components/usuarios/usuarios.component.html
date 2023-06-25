@@ -1,4 +1,4 @@
-<div *ngIf="usuarioLogado" class="container s3">
+<div *ngIf="usuarioLogado" class="container s4">
     <mat-card class="borda-1 filtro-usuarios">
         <mat-form-field appearance="outline">
             <input matInput (keyup)="filtrarGrid($event)" #input placeholder="Buscar usuários">
@@ -6,12 +6,12 @@
     </mat-card>
 
     <div class="grid-usuarios">
-        <div class="loading" *ngIf="salvando">
+        <div class="loading-spinning" *ngIf="salvando">
             <mat-spinner></mat-spinner>    
         </div>
         <table mat-table [dataSource]="usuariosApp" class="borda-1" [ngStyle]="{'display': carregando ? 'none' : 'table'}">
             <ng-container matColumnDef="nomeCompleto">
-                <th mat-header-cell *matHeaderCellDef> Nome Completo </th>
+                <th mat-header-cell *matHeaderCellDef> Nome </th>
                 <td mat-cell *matCellDef="let usuario"> {{usuario.nomeCompleto}} </td>
             </ng-container>
 
@@ -19,6 +19,17 @@
                 <th mat-header-cell *matHeaderCellDef> Email </th>
                 <td mat-cell *matCellDef="let usuario"> {{usuario.email}} </td>
             </ng-container>
+
+            <ng-container matColumnDef="unidade">
+                <th mat-header-cell *matHeaderCellDef> Unidade </th>
+                <td mat-cell *matCellDef="let usuario"> {{usuario.unidade?.nome}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="gerente">
+                <th mat-header-cell *matHeaderCellDef> Gerente </th>
+                <td mat-cell *matCellDef="let usuario"> {{usuario.gerente?.nomeCompleto}} </td>
+            </ng-container>
+
 
             <ng-container matColumnDef="usuarioTfs">
                 <th mat-header-cell *matHeaderCellDef> Nome de Usuário TFS </th>
@@ -66,5 +77,5 @@
         <usuarios-loader *ngIf="carregando" [quantidadeLinhas]="15"></usuarios-loader>
     </div>    
 
-    <mat-paginator [pageSize]="15" [pageSizeOptions]="[10,15,20]" class="borda-1 paginator"></mat-paginator>
+    <mat-paginator [pageSize]="20" [pageSizeOptions]="[15,20,25]" class="borda-1 paginador"></mat-paginator>
 </div>

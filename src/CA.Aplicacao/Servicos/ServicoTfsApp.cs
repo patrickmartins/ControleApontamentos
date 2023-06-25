@@ -25,9 +25,9 @@ namespace CA.Aplicacao.Servicos
             if (apontamentoModel.Data.ConverterParaFusoBrasil().Date > DateTime.Now.ConverterParaFusoBrasil().Date)
                 return Resultado.DeErros<ApontamentoTfsModel>(new Erro("A data informada deve ser menor ou igual a data atual.", nameof(apontamentoModel.Data)));
 
-            var apontamento = ApontamentoTfsNovoModel.ViewModelParaApontamento(apontamentoModel);
+            var apontamento = apontamentoModel.ViewModelParaApontamento();
 
-            var resultado = await _servico.AdicionarNovoApontamentoAsync(usuario, apontamentoModel.Colecao, apontamentoModel.IdTarefa, ApontamentoTfsNovoModel.ViewModelParaApontamento(apontamentoModel));
+            var resultado = await _servico.AdicionarNovoApontamentoAsync(usuario, apontamentoModel.Colecao, apontamentoModel.IdTarefa, apontamentoModel.ViewModelParaApontamento());
 
             if (!resultado.Sucesso)
                 return Resultado.DeErros<ApontamentoTfsModel>(resultado.Erros);

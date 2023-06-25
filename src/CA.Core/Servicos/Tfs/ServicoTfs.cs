@@ -26,6 +26,11 @@ namespace CA.Core.Servicos.Tfs
             return _repositorioColecoes.ObterTodasColecoesAsync();
         }
 
+        public Task<string[]> ObterColecoesPorUsuarioAsync(UsuarioTfs usuario)
+        {
+            return _repositorioColecoes.ObterColecoesPorUsuarioAsync(usuario);
+        }
+
         public Task<IEnumerable<UsuarioTfs>> ObterTodosUsuariosPorColecaoAsync(string colecao)
         {
             if (string.IsNullOrEmpty(colecao))
@@ -74,7 +79,7 @@ namespace CA.Core.Servicos.Tfs
             if (string.IsNullOrEmpty(colecao))
                 return Resultado.DeErros<IEnumerable<ItemTrabalho>>(new Erro("A coleção do TFS não foi informada.", nameof(colecao)));
 
-            var resultado = await _repositorioItens.ExecutarQueryAsync(colecao, $@"SELECT [System.Id]
+            var resultado = await _repositorioItens.ExecutarQueryDeLinksAsync(colecao, $@"SELECT [System.Id]
                                                                                     FROM WorkItemLinks 
                                                                                     WHERE (Source.[System.WorkItemType] In ('Task','Bug')
                                                                                         and Source.[System.Id] in ({string.Join(",", idsItemTrabalho)}))
@@ -93,7 +98,7 @@ namespace CA.Core.Servicos.Tfs
             if (string.IsNullOrEmpty(colecao))
                 return Resultado.DeErros<IEnumerable<ItemTrabalho>>(new Erro("A coleção do TFS não foi informada.", nameof(colecao)));
 
-            var resultado = await _repositorioItens.ExecutarQueryAsync(colecao, $@"SELECT [System.Id]
+            var resultado = await _repositorioItens.ExecutarQueryDeLinksAsync(colecao, $@"SELECT [System.Id]
                                                                                             FROM WorkItemLinks 
                                                                                             WHERE (Source.[System.WorkItemType] In ('Task','Bug')
                                                                                                 and Source.[System.AssignedTo] = '{usuario.Dominio}\{usuario.NomeUsuario}' 
@@ -117,11 +122,11 @@ namespace CA.Core.Servicos.Tfs
             var camposSuportadosDaColecao = await _repositorioItens.ObterCamposSuportadosPorColecaoAsync(colecao);
 
             if(!camposSuportadosDaColecao.CampoSuportado(NomesCamposTfs.Apontamentos))
-                return Resultado.DeValor<IEnumerable<ItemTrabalho>>(new List<ItemTrabalho>());
+                return Resultado.DeValor(Enumerable.Empty<ItemTrabalho>());
 
             var filtroPeriodo = string.Join(" or ", data.Select(c => $@"Source.[Custom.Timesheets.TimesheetRawData] contains words 'CreatedBy=\""{usuario.NomeUsuario}\"" TimeSheetDate=\""{c:d}\""'"));
 
-            var resultado = await _repositorioItens.ExecutarQueryAsync(colecao, $@"SELECT [System.Id]
+            var resultado = await _repositorioItens.ExecutarQueryDeLinksAsync(colecao, $@"SELECT [System.Id]
                                                                                     FROM WorkItemLinks 
                                                                                     WHERE (Source.[System.WorkItemType] In ('Task','Bug')                     
                                                                                         and ({filtroPeriodo})) " +
@@ -135,6 +140,30 @@ namespace CA.Core.Servicos.Tfs
         public Task<Resultado<IEnumerable<ItemTrabalho>>> ObterItensTrabalhoApontadosPorPeriodoAsync(UsuarioTfs usuario, string colecao, DateOnly inicio, DateOnly fim)
         {
             return ObterItensTrabalhoApontadosPorDatasAsync(usuario, colecao, DateTimeHelper.ObterIntervalo(inicio, fim).ToArray());
+        }
+
+        public async Task<Resultado<IEnumerable<ItemTrabalho>>> ObterItensTrabalhoComApontamentosNaoSincronizadosAsync(string colecao, DateOnly inicio, DateOnly fim)
+        {
+            if (string.IsNullOrEmpty(colecao))
+                return Resultado.DeErros<IEnumerable<ItemTrabalho>>(new Erro("A coleção do TFS não foi informada.", nameof(colecao)));
+
+            var filtroPeriodo = string.Join(" or ", DateTimeHelper.ObterIntervalo(inicio, fim).Select(c => $@"[Custom.Timesheets.TimesheetRawData] contains words 'TimeSheetDate=\""{c:d}\""'"));
+
+            var camposSuportadosDaColecao = await _repositorioItens.ObterCamposSuportadosPorColecaoAsync(colecao);
+
+            if (!camposSuportadosDaColecao.CampoSuportado(NomesCamposTfs.Apontamentos))
+                return Resultado.DeValor<IEnumerable<ItemTrabalho>>(new List<ItemTrabalho>());
+
+            var ids = await _repositorioItens.ExecutarQueryDeIdsAsync(colecao, $@"SELECT [System.Id] FROM WorkItems 
+                                                                            WHERE [Custom.Timesheets.TimesheetRawData] contains words 'ApropriadoChannel=\""false\""' 
+                                                                                AND ({filtroPeriodo}) ORDER BY [System.ChangedDate] DESC");
+
+            if(!ids.Any())
+                return Resultado.DeValor(Enumerable.Empty<ItemTrabalho>());
+
+            var itensTrabalho = await _repositorioItens.ObterItensTrabalhoPorIdAsync(colecao, ids);
+
+            return Resultado.DeValor(itensTrabalho);
         }
 
         public async Task<Resultado<Pagina<ItemTrabalho>>> BuscarItensTrabalhoAsync(string colecao, string palavraChave, StatusItemTrabalho[] status, int pagina = 1, int tamanhoPagina = 10)
@@ -158,7 +187,7 @@ namespace CA.Core.Servicos.Tfs
 
             var filtroStatus = string.Join(',', status.Select(c => $"'{c.ObterDescricao()}'"));
 
-            var resultadoLinks = await _repositorioItens.ExecutarQueryAsync(colecao, $@"SELECT [System.Id]
+            var resultadoLinks = await _repositorioItens.ExecutarQueryDeLinksAsync(colecao, $@"SELECT [System.Id]
                                                                                             FROM WorkItemLinks 
                                                                                             WHERE (Source.[System.Title] contains words '{palavraChave}' 
                                                                                                 or Source.[System.Description] contains words '{palavraChave}' 

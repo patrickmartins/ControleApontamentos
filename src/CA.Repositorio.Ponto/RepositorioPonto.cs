@@ -30,25 +30,30 @@ namespace CA.Repositorios.Ponto
             return _servico.ObterBatidasPorPeriodoAsync(pisFuncionario, inicio, fim);
         }
 
+        public Task<Resultado<IEnumerable<BatidasPontoDia>>> ObterTodasBatidasPorPeriodoAsync(DateOnly inicio, DateOnly fim)
+        {
+            return _servico.ObterTodasBatidasPorPeriodoAsync(inicio, fim);
+        }
+
         public async Task<Funcionario?> ObterFuncionarioPorIdAsync(int id)
         {
             var funcionarios = await _servico.ObterFuncionariosAsync();
 
-            return funcionarios.FirstOrDefault(c => c.Id == id);
+            return funcionarios.OrderBy(c => c.Id).LastOrDefault(c => c.Id == id);
         }
 
         public async Task<Funcionario?> ObterFuncionarioPorNomeAsync(string nome)
         {
             var funcionarios = await _servico.ObterFuncionariosAsync();
 
-            return funcionarios.FirstOrDefault(c => c.Nome.Trim().RemoverEspacosDuplicados().ToLower().Equals(nome.ToLower()));
+            return funcionarios.OrderBy(c => c.Id).LastOrDefault(c => c.Nome.Trim().RemoverEspacosDuplicados().ToLower().Equals(nome.ToLower()));
         }
 
         public async Task<Funcionario?> ObterFuncionarioPorPisAsync(string pisFuncionario)
         {
             var funcionarios = await _servico.ObterFuncionariosAsync();
 
-            return funcionarios.FirstOrDefault(c => c.NumeroPis.Equals(pisFuncionario));
+            return funcionarios.OrderBy(c => c.Id).LastOrDefault(c => c.NumeroPis.Equals(pisFuncionario));
         }
 
         public async Task<IEnumerable<Funcionario>> ObterTodosFuncionariosAsync()

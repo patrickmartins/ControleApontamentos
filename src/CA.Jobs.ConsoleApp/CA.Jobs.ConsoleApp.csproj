@@ -29,6 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CA.Api\CA.Api.csproj" />
     <ProjectReference Include="..\CA.Container.IoC\CA.Container.IoC.csproj" />
     <ProjectReference Include="..\CA.Jobs\CA.Jobs.csproj" />
     <ProjectReference Include="..\CA.Polly\CA.Polly.csproj" />

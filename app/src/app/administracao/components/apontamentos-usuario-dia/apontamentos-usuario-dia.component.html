@@ -1,4 +1,8 @@
 <div *ngIf="usuarioLogado" class="container s2">
+    <div class="loading-spinning" *ngIf="carregandoUsuarios">
+        <mat-spinner></mat-spinner>    
+    </div>
+    
     <mat-card class="borda-1 usuarios-card">
         <mat-form-field appearance="outline" class="usuarios-form">
             <input type="text"
@@ -50,7 +54,7 @@
 							<mat-icon>refresh</mat-icon>
 						</button>
 					</section>
-					<section *ngIf="!carregando" class="informacoes">
+					<section *ngIf="!carregandoRelatorio" class="informacoes">
                         <resumo-apontamentos [tempoApontadoNaoSincronizado]="tempoTotalApontadoNaoSincronizadoNoDia"
                                              [tempoApontadoSincronizado]="tempoTotalApontadoSincronizadoNoDia"                                           
                                              [tempoTrabalhado]="tempoTotalTrabalhadoNoDia">
@@ -67,14 +71,14 @@
 							</span>
 						</div>
 					</section>			
-					<section *ngIf="carregando">
+					<section *ngIf="carregandoRelatorio">
 						<grafico-resumo-dia-loader style="height: 182px;"></grafico-resumo-dia-loader>
 					</section>			
 				</div>		
 			</ng-template>
 		</mat-expansion-panel>
 
-		<div *ngIf="!carregando">
+		<div *ngIf="!carregandoRelatorio">
 			<div *ngIf="apontamentosChannelDia">
 				<quadro-atividade *ngFor="let atividade of apontamentosChannelDia.atividades"
 								class="fade-in-left tarefa"
@@ -90,7 +94,7 @@
 			</div>
 		</div>
 
-		<div *ngIf="carregando">	
+		<div *ngIf="carregandoRelatorio">	
 			<quadro-tarefa-loader class="tarefa" style="display: block;" *ngFor="let index of [].constructor(4)"></quadro-tarefa-loader>
 		</div>
 	</div>

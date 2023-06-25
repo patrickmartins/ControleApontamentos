@@ -1,0 +1,123 @@
+.relatorio-apontamentos {
+    & .mat-form-field {
+        & ::ng-deep.mat-form-field-wrapper {
+            padding-bottom: 0;
+            margin-bottom: 0;
+        }
+
+        & ::ng-deep.mat-form-field-infix {
+            padding: .8em 0 .8em 0 !important;
+        }   
+    } 
+
+    & .paginador {
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+    }
+
+    & .filtros {
+        box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075);
+        margin-bottom: 1.3em;
+        border-radius: 0;
+
+        ::ng-deep.cabecalho {
+            height: 54px;
+
+            & .titulo {
+                align-self: center;
+                font-weight: 400 !important;
+                font-size: 1.2rem;
+                margin: 0 !important;
+            }
+        }
+
+        ::ng-deep.mat-expansion-panel-content {
+            .mat-expansion-panel-body {
+                padding: 0 24px 15px 24px;
+            }
+
+            .linha-filtro {
+                margin: .1em 0 1em 0;
+
+                & .mat-form-field, .mat-checkbox {
+                    margin-top: .5em;
+                    margin-right: 1em;
+                }   
+            }
+            
+            .acoes-filtro {                
+                float: right;
+
+                & button {
+                    margin-right: .6em;
+                }  
+
+                & .mat-icon {
+                    height: 20px !important;
+                    width: 20px !important;
+                    font-size: 21px !important;
+                    display: inline-flex;
+                    vertical-align: middle;
+                    padding-bottom: 0.11em;
+                    padding-right: 0.3em;
+                }
+            }
+        }
+    }
+
+    & .quadro-relatorio {
+        margin: 0.8em 0;
+        display: block;
+    }
+
+    & ::ng-deep.template-sem-resultados {
+        box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075);
+        border-radius: 0;
+        font-size: 1.2em;
+        font-weight: 300;
+        text-align: center;
+    }
+
+    & .configuracoes {
+        margin-bottom: 1.3em;
+        display: flex;
+        margin-top: .5em;
+
+        & .tolerancia {
+            margin-bottom: 0;
+            width: 10em;
+        }
+
+        & .busca-usuario {
+            width: 20em;
+        }
+
+        & .visualizacao {
+            align-self: center;
+            margin-top: .1em;
+            flex-grow: 1;
+            text-align: end;
+            
+            & ::ng-deep.mat-button-toggle-button {
+                
+                & .mat-button-toggle-label-content {
+                    line-height: 36px !important;
+                    padding: 0 10px;
+                }
+
+                & .mat-icon {
+                    height: 20px;
+                    width: 20px;
+                    font-size: 20px;
+                }
+            }
+        }
+
+        & .mat-form-field {
+            margin-right: 1em;
+        }
+    }
+
+    & .resultados {
+        margin-bottom: 1.3em;
+    }
+}

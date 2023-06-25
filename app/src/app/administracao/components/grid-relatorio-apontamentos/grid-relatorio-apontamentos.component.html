@@ -1,0 +1,56 @@
+<table mat-table [dataSource]="relatorioDataSource" class="borda-1">
+    <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef> Email </th>
+        <td mat-cell *matCellDef="let relatorio"> {{relatorio.usuario.email}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="nomeCompleto">
+        <th mat-header-cell *matHeaderCellDef> Nome </th>
+        <td mat-cell *matCellDef="let relatorio"> {{relatorio.usuario.nomeCompleto}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="unidade">
+        <th mat-header-cell *matHeaderCellDef> Unidade </th>
+        <td mat-cell *matCellDef="let relatorio"> {{relatorio.usuario.unidade?.nome}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="gerente">
+        <th mat-header-cell *matHeaderCellDef> Gerente </th>
+        <td mat-cell *matCellDef="let relatorio"> {{relatorio.usuario.gerente?.nomeCompleto}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="tempoTrabalhado">
+        <th mat-header-cell *matHeaderCellDef> Tempo<br>Trabalhado </th>
+        <td mat-cell *matCellDef="let relatorio"> {{relatorio.tempoTotalTrabalhadoNoMes | tempo : 'customizado' : 'HH:mm'}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="tempoApontadoChannel">
+        <th mat-header-cell *matHeaderCellDef> Tempo<br>Apontado (Channel) </th>
+        <td mat-cell *matCellDef="let relatorio"> {{relatorio.tempoTotalApontadoNoChannelNoMes | tempo : 'customizado' : 'HH:mm'}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="tempoApontadoTfs">
+        <th mat-header-cell *matHeaderCellDef> Tempo Apontado<br>Não Sincronizado (TFS) </th>
+        <td mat-cell *matCellDef="let relatorio"> {{relatorio.tempoTotalApontadoNaoSincronizadoNoTfsNoMes | tempo : 'customizado' : 'HH:mm'}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="diferenca">
+        <th mat-header-cell *matHeaderCellDef> Diferença </th>
+        <td mat-cell *matCellDef="let relatorio"> 
+            <span *ngIf="relatorio.diferencaTempoTrabalhadoApontado < 0">-{{(relatorio.diferencaTempoTrabalhadoApontado * -1) | tempo : 'customizado' : 'HH:mm'}}</span>
+            <span *ngIf="relatorio.diferencaTempoTrabalhadoApontado >= 0">{{relatorio.diferencaTempoTrabalhadoApontado | tempo : 'customizado' : 'HH:mm'}}</span>
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="situacao">
+        <th mat-header-cell *matHeaderCellDef> Situação </th>
+        <td mat-cell *matCellDef="let relatorio">
+            <div *ngIf="relatorio.calcularSituacao(tolerancia) == 1; then ok else verificar"></div> 
+            <ng-template #ok><span title="Ok" class="badge sucess">ok</span></ng-template>
+            <ng-template #verificar><span title="Verificar" class="badge error">verificar</span></ng-template>
+        </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="colunasGridRelatorio"></tr>
+    <tr mat-row *matRowDef="let row; columns: colunasGridRelatorio;"></tr>
+</table>    

@@ -9,6 +9,9 @@ import { NovoApontamento } from '../../models/novo-apontamento';
 import { Tarefa } from '../../models/tarefa';
 import { ContadorTarefaComponent } from '../contador-tarefa/contador-tarefa.component';
 import { TfsService } from '../../services/tfs.service';
+import { Erro } from 'src/app/common/models/erro';
+import { MatDialog } from '@angular/material/dialog';
+import { ModalSalvarApontamentoComponent } from '../modal-salvar-apontamento/modal-salvar-apontamento.component';
 
 @Component({
 	selector: 'quadro-tarefa',
@@ -36,7 +39,7 @@ export class QuadroTarefaComponent extends BaseComponent {
 	public apontamentosExpandido: boolean = false;
 	public salvandoApontamento: boolean = false;	
 	
-	constructor(servicoConta: ContaService, snackBar: MatSnackBar, private servicoTfs: TfsService) {
+	constructor(servicoConta: ContaService, snackBar: MatSnackBar, private servicoTfs: TfsService, private dialog: MatDialog) {
 		super(servicoConta, snackBar);
 	}
 
@@ -54,6 +57,25 @@ export class QuadroTarefaComponent extends BaseComponent {
 
 			TarefaHelper.desafixarTarefa(this.usuarioLogado!.nomeUsuario, this.tarefa);
 		}
+	}
+
+    public novoApontamento(): void {
+		let dialogRef = this.dialog.open(ModalSalvarApontamentoComponent, {
+			width: '500px',
+			height: '430px',
+			disableClose: true,
+			data: new NovoApontamento().criarNovo({
+				idTarefa: this.tarefa.id,
+				colecao: this.tarefa.colecao,
+				data: new Date(),
+				tempoTotal: 0
+			})
+		});
+
+		dialogRef.afterClosed().subscribe((result) => {
+			if(result)
+				this.onSalvarApontamento(result);
+		});
 	}
 
 	public onSalvarApontamento(novoApontamento: NovoApontamento): void {
@@ -80,13 +102,17 @@ export class QuadroTarefaComponent extends BaseComponent {
 
                     this.onApontamentoSalvo.emit(apontamento);
 				},
-				error: () => {
-					this.snackBar.open("Ocorreu um erro interno. Atualize a página e tente novamente.", "OK", {
-						duration: 5000,
-						verticalPosition: "top",
-						horizontalPosition: "center",
-						panelClass: "erro"
-					});
+				error: (erros: Erro[]) => {
+                    this.salvandoApontamento = false
+                    
+                    for(let erro of erros) {
+                        this.snackBar.open(erro.descricao, "OK", {
+                            duration: 5000,
+                            verticalPosition: "top",
+                            horizontalPosition: "center",
+                            panelClass: "erro"
+                        });
+                    }
 				},
                 complete: () => this.salvandoApontamento = false
 			});

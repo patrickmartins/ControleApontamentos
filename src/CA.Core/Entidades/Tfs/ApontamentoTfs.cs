@@ -5,6 +5,9 @@ namespace CA.Core.Entidades.Tfs
     [XmlType("TimeSheetEntry")]
     public class ApontamentoTfs
     {
+        [XmlIgnore]
+        public DateTime? DataApropriacao { get; set; }
+
         [XmlAttribute("DataApropriacao")]
         public string DataApropriacaoString
         {
@@ -20,9 +23,6 @@ namespace CA.Core.Entidades.Tfs
 
         [XmlAttribute("CreatedDate")]
         public DateTime DataCriacao { get; set; }
-
-        [XmlIgnore]
-        public DateTime? DataApropriacao { get; set; }
 
         [XmlAttribute("ApropriadoChannel")]
         public bool SincronizadoChannel { get; set; }

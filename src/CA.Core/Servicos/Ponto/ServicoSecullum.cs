@@ -49,6 +49,29 @@ namespace CA.Core.Servicos.Ponto
             return resultadoBatidas;
         }
 
+        public async Task<Resultado<IEnumerable<BatidasPontoDia>>> ObterTodasBatidasPorPeriodoAsync(DateOnly inicio, DateOnly fim)
+        {
+            var resultadoBatidas = await _repositorio.ObterTodasBatidasPorPeriodoAsync(inicio, fim);
+
+            if (!resultadoBatidas.Sucesso)
+                return Resultado.DeErros<IEnumerable<BatidasPontoDia>>(resultadoBatidas.Erros);
+
+            return resultadoBatidas;
+        }
+
+        public async Task<Resultado<Funcionario?>> ObterFuncionarioPorIdAsync(int id)
+        {
+            if (id <= 0)
+                return Resultado.DeErros<Funcionario?>(new Erro("O id do funcionário não foi informado.", nameof(id)));
+
+            var funcionario = await _repositorio.ObterFuncionarioPorIdAsync(id);
+
+            if (funcionario is null)
+                return Resultado.DeErros<Funcionario?>(new Erro("O funcionário informado não foi encontrado no sistema de ponto.", nameof(funcionario)));
+
+            return Resultado.DeValor<Funcionario?>(funcionario);
+        }
+
         public async Task<Resultado<Funcionario?>> ObterFuncionarioPorNomeAsync(string nome)
         {
             if (string.IsNullOrEmpty(nome))
@@ -56,7 +79,10 @@ namespace CA.Core.Servicos.Ponto
 
             var funcionario = await _repositorio.ObterFuncionarioPorNomeAsync(nome);
 
-            return Resultado.DeValor(funcionario);
+            if (funcionario is null)
+                return Resultado.DeErros<Funcionario?>(new Erro("O funcionário informado não foi encontrado no sistema de ponto.", nameof(funcionario)));
+
+            return Resultado.DeValor<Funcionario?>(funcionario);
         }
 
         public async Task<Resultado<Funcionario?>> ObterFuncionarioPorPisAsync(string pisFuncionario)
@@ -69,7 +95,7 @@ namespace CA.Core.Servicos.Ponto
             if (funcionario is null)
                 return Resultado.DeErros<Funcionario?>(new Erro("O funcionário informado não foi encontrado no sistema de ponto.", nameof(funcionario)));
 
-            return Resultado.DeValor(funcionario);
+            return Resultado.DeValor<Funcionario?>(funcionario);
         }
 
         public Task<IEnumerable<Funcionario>> ObterTodosFuncionariosAsync()

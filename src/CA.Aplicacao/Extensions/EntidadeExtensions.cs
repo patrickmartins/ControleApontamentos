@@ -1,4 +1,5 @@
 ﻿using CA.Aplicacao.Models;
+using CA.Core.Entidades.CA;
 using CA.Core.Entidades.Channel;
 using CA.Core.Entidades.Ponto;
 using CA.Core.Entidades.Tfs;
@@ -10,8 +11,65 @@ namespace CA.Aplicacao.Extensions
 {
     internal static class EntidadeExtensions
     {
+        #region CA
+
+        public static UsuarioModel UsuarioCaParaUsuarioModel(this UsuarioCA usuario)
+        {
+            return new UsuarioModel
+            {
+                Id = new Guid(usuario.Id),
+                Email = usuario.Email,
+                NomeCompleto = usuario.NomeCompleto,
+                IdUsuarioTfs = usuario.ParametrosIntegracoes is not null ? usuario.ParametrosIntegracoes.IdUsuarioTfs : null,
+                IdUsuarioChannel = usuario.ParametrosIntegracoes is not null ? usuario.ParametrosIntegracoes.IdUsuarioChannel : null,
+                IdFuncionarioPonto = usuario.ParametrosIntegracoes is not null ? usuario.ParametrosIntegracoes.IdFuncionarioPonto : null,                
+                PossuiContaTfs = usuario.ParametrosIntegracoes is not null && !string.IsNullOrEmpty(usuario.ParametrosIntegracoes.IdUsuarioTfs),
+                PossuiContaPonto = usuario.ParametrosIntegracoes is not null && usuario.ParametrosIntegracoes.IdFuncionarioPonto.HasValue,
+                PossuiContaChannel = usuario.ParametrosIntegracoes is not null && usuario.ParametrosIntegracoes.IdUsuarioChannel.HasValue,
+                IdUnidade = usuario.Unidade is not null ? usuario.Unidade.Id : null,
+                Unidade = usuario.Unidade is not null ? new UnidadeModel
+                {
+                    Id = new Guid(usuario.Unidade.Id),
+                    Nome = usuario.Unidade.Nome
+                } 
+                : null,
+                IdGerente = usuario.Gerente is not null ? usuario.Gerente.Id : null,
+                Gerente = usuario.Gerente is not null ? new GerenteModel
+                {
+                    Id = new Guid(usuario.Gerente.Id),
+                    NomeCompleto = usuario.Gerente.NomeCompleto
+                }
+                : null,
+            };
+        }
+
+        public static IEnumerable<UsuarioModel> UsuariosCaParaUsuariosModel(this IEnumerable<UsuarioCA> usuarios)
+        {
+            return usuarios.Select(c => c.UsuarioCaParaUsuarioModel()).ToList();
+        }
+
+        public static UnidadeModel UnidadeParaUnidadeModel(this Unidade unidade)
+        {
+            return new UnidadeModel
+            {
+                Id = new Guid(unidade.Id),
+                Nome = unidade.Nome
+            };
+        }
+
+        public static Unidade UnidadeModelParaUnidade(this UnidadeModel model)
+        {
+            return new Unidade
+            {
+                Id = model.Id.ToString(),
+                Nome = model.Nome,
+            };
+        }
+
+        #endregion
+
         #region Ponto
-        
+
         public static BatidasPontoDiaModel BatidasPontoParaBatidasPontoModel(this BatidasPontoDia batidaPonto)
         {
             var dataAtual = DateTime.Now.ConverterParaFusoBrasil();
@@ -194,6 +252,19 @@ namespace CA.Aplicacao.Extensions
                 TempoTotalApontadoNoMes = new TimeSpan(apontamentosDiarios.Sum(c => c.TempoTotalApontadoNoDia.Ticks)),
                 TempoTotalApontadoSincronizadoChannel = new TimeSpan(apontamentosDiarios.Sum(c => c.TempoTotalApontadoSincronizadoChannel.Ticks)),
                 TempoTotalApontadoNaoSincronizadoChannel = new TimeSpan(apontamentosDiarios.Sum(c => c.TempoTotalApontadoNaoSincronizadoChannel.Ticks)),
+            };
+        }
+
+        public static ApontamentoTfs ViewModelParaApontamento(this ApontamentoTfsNovoModel viewModel)
+        {
+            return new ApontamentoTfs
+            {
+                SincronizadoChannel = false,
+                Comentario = viewModel.Comentario,
+                DataApontamento = viewModel.Data.ConverterParaFusoBrasil().ToString("d"),
+                DataCriacao = DateTime.UtcNow,
+                TempoApontamento = TimeSpan.FromMinutes(viewModel.TempoTotal).ToString("hh\\:mm"),
+                Usuario = viewModel.Usuario
             };
         }
 

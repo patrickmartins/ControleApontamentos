@@ -8,6 +8,7 @@
         public string Senha { get; set; } = string.Empty;
         public string IdCliente { get; set; } = string.Empty;
         public int TempoCacheFuncionarios { get; set; }
+        public int TempoCacheTodasBatidas { get; set; }
 
         public void Validar()
         {
@@ -28,6 +29,9 @@
 
             if (TempoCacheFuncionarios <= 0)
                 throw new ArgumentException("O tempo de cache de funcionários não foi informado.");
+
+            if (TempoCacheTodasBatidas <= 0)
+                throw new ArgumentException("O tempo de cache das batidas, de todos os funcionários, não foi informado.");
         }
     }
 }

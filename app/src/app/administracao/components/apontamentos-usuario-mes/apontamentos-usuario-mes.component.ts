@@ -1,9 +1,9 @@
-import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
+import { Component, NgZone, OnInit } from '@angular/core';
 import { MatDatepicker } from '@angular/material/datepicker';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DateAdapter } from '@angular/material/core';
 import * as moment from 'moment';
-import { catchError, forkJoin, map, Observable, of, startWith, tap } from 'rxjs';
+import { catchError, forkJoin, of } from 'rxjs';
 
 import { ApontamentosChannelDia } from 'src/app/apontamento/models/apontamentos-channel-dia';
 import { ApontamentosChannelMes } from 'src/app/apontamento/models/apontamentos-channel-mes';
@@ -30,7 +30,8 @@ import { TfsService } from 'src/app/core/services/tfs.service';
 })
 export class ApontamentosUsuarioMesComponent extends BaseComponent implements OnInit {
 
-    public carregando: boolean = true;
+    public carregandoApontamentos: boolean = true;
+    public carregandoUsuarios: boolean = true;
 
     public get tempoTotalTrabalhadoNoMes(): number {
         return this.batidas ? this.batidas.tempoTotalTrabalhadoNoMes : 0
@@ -96,24 +97,30 @@ export class ApontamentosUsuarioMesComponent extends BaseComponent implements On
     }
 
     public ngOnInit(): void {
-        this.usuarioService.obterTodosUsuarios().subscribe(usuarios => { 
-            this.usuariosFiltrado = this.usuarios = usuarios;
+        this.carregandoUsuarios = true;
 
-            this.activeRoute
-                .queryParamMap
-                .subscribe((mapParams: any) => {
-                    let data = moment(`01-${mapParams.params.mes}-${mapParams.params.ano}`, 'DD-MM-YYYY');
-                    
-                    this.usuarioSelecionado = this.usuariosFiltrado.find(c => c.id == mapParams.params.usuario);
+        this.usuarioService.obterTodosUsuarios().subscribe({
+            next: usuarios => { 
+                this.usuariosFiltrado = this.usuarios = usuarios;
+                this.carregandoUsuarios = false;
 
-                    this.mesSelecionado = data.isValid() ? data.toDate() : new Date();
+                this.activeRoute
+                    .queryParamMap
+                    .subscribe((mapParams: any) => {
+                        let data = moment(`01-${mapParams.params.mes}-${mapParams.params.ano}`, 'DD-MM-YYYY');
+                        
+                        this.usuarioSelecionado = this.usuariosFiltrado.find(c => c.id == mapParams.params.usuario);
 
-                    if(this.usuarioSelecionado) {
-                        this.formUsuario.setValue(this.usuarioSelecionado, { emitEvent: false });
+                        this.mesSelecionado = data.isValid() ? data.toDate() : new Date();
 
-                        this.obterBatidasEApontamentosPorMes(this.usuarioSelecionado.id, this.mesSelecionado);
-                    }
-                });
+                        if(this.usuarioSelecionado) {
+                            this.formUsuario.setValue(this.usuarioSelecionado, { emitEvent: false });
+
+                            this.obterBatidasEApontamentosPorMes(this.usuarioSelecionado.id, this.mesSelecionado);
+                        }
+                    });
+            },
+            complete: () => this.carregandoUsuarios = false
         });
                             
         this.formUsuario.valueChanges.subscribe(valor => {
@@ -165,7 +172,7 @@ export class ApontamentosUsuarioMesComponent extends BaseComponent implements On
         this.apontamentosChannelMes = undefined;
         this.apontamentosTfsMes = undefined;
 
-        this.carregando = true;
+        this.carregandoApontamentos = true;
 
         let mes = dataReferencia.getMonth() + 1;
         let ano = dataReferencia.getFullYear();
@@ -187,7 +194,7 @@ export class ApontamentosUsuarioMesComponent extends BaseComponent implements On
 
                 this.selecionarUltimosApontamentos();
             },
-            complete: () => this.carregando = false
+            complete: () => this.carregandoApontamentos = false
         });
     }
 

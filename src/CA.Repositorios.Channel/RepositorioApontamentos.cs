@@ -1,6 +1,6 @@
 ﻿using CA.Core.Entidades.Channel;
 using CA.Core.Interfaces.Channel;
-using CA.Repositorios.Channel.Contexto;
+using CA.Repositorios.Contexto;
 using CA.Util.Extensions;
 using Microsoft.EntityFrameworkCore;
 
@@ -32,7 +32,11 @@ namespace CA.Repositorios.Channel
 
         public Task<IEnumerable<ApontamentoChannel>> ObterTodosApontamentosPorPeriodoAsync(DateOnly inicio, DateOnly fim)
         {
-            return Set<ApontamentoChannel>().IgnoreQueryFilters().Where(c => c.Data >= inicio.ToDateTime(new TimeOnly(0)) && c.Data <= fim.ToDateTime(new TimeOnly(0))).ToIListAsync();
+            return Set<ApontamentoChannel>()
+                        .Include(c => c.Atividade)
+                        .Include(c => c.Projeto)
+                        .Include(c => c.Usuario)
+                        .Where(c => c.Data >= inicio.ToDateTime(new TimeOnly(0)) && c.Data <= fim.ToDateTime(new TimeOnly(0))).ToIListAsync();
         }
 
         public Task<IEnumerable<ApontamentoChannel>> ObterApontamentosPorDataAsync(int idUsuario, DateOnly data)

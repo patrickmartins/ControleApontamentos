@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, SimpleChanges, ViewChild } from '@angular/core';
 import { ActiveElement, ChartConfiguration, ChartData, Point, Tooltip } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { TempoHelper } from 'src/app/helpers/tempo.helper';
@@ -11,7 +11,7 @@ import { BatidasPontoDia } from '../../models/batidas-ponto-dia';
 	templateUrl: './grafico-resumo-dia.component.html',
 	styleUrls: ['./grafico-resumo-dia.component.scss']
 })
-export class GraficoResumoDiaComponent implements OnChanges {
+export class GraficoResumoDiaComponent implements OnChanges, OnDestroy {
 
 	public configGrafico: ChartConfiguration['options'] = {
 		responsive: true,
@@ -137,6 +137,10 @@ export class GraficoResumoDiaComponent implements OnChanges {
 			return eventPosition;
 		};
 	}
+
+    public ngOnDestroy(): void {
+        this.grafico?.ngOnDestroy();
+    }
 
 	public ngOnChanges(changes: SimpleChanges): void {
 		this.atualizarGrafico();

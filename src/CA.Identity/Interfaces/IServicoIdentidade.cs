@@ -5,13 +5,13 @@ namespace CA.Identity.Interfaces
 {
     public interface IServicoIdentidade
     {
-        Task<Resultado> AtualizarUsuario(AtualizarUsuarioApp model);
-        Task<IEnumerable<UsuarioApp>> ObterTodosUsuariosAsync();
-        Task<Resultado<UsuarioApp>> ImportarUsuarioAsync(string email, string nomeUsuario, string nomeCompleto);
-        Task<Resultado<UsuarioApp>> ObterUsuarioPorEmailAsync(string email);
-        Task<Resultado<UsuarioApp>> ObterUsuarioPorIdAsync(Guid id);
-        Task<Resultado<UsuarioApp>> ExcluirUsuarioPorIdAsync(Guid id);
+        Task<IEnumerable<UsuarioIdentityModel>> ObterTodasContaUsuarioAsync();
+        Task<Resultado<UsuarioIdentityModel>> ObterContaUsuarioPorIdAsync(Guid id);
+        Task<Resultado<UsuarioIdentityModel>> ObterContaUsuarioPorEmailAsync(string email);
         Task<Resultado<CaJwt>> LoginAsync(string email);
-        Resultado<CaJwt> Login(UsuarioApp usuario);
+        Task<Resultado> ExcluirContaUsuarioAsync(string email);
+        Task<Resultado<UsuarioIdentityModel>> CriarContaUsuarioAsync(string email);
+        Task<Resultado> ConcederAcessoDeAdministradorAsync(string email);
+        Task<Resultado> RemoverAcessoDeAdministradorAsync(string email);
     }
 }

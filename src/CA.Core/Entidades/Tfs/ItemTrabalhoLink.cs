@@ -7,7 +7,6 @@
         public int TipoLink { get; set; }
         public bool Bloqueado { get; set; }
 
-
         public ItemTrabalhoLink(int origemId, int destinoId, int tipoLink, bool bloqueado)
         {
             if (origemId == 0 || destinoId == 0)

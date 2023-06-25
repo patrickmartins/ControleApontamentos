@@ -1,0 +1,67 @@
+<div class="loader">
+    <table class="mat-table cdk-table borda-1" cellspacing="0" cellpadding="0">
+        <thead role="rowgroup">
+            <tr class="mat-header-row cdk-header-row ng-star-inserted">
+                <th class="mat-header-cell cdk-header-cell cdk-column-usuario mat-column-usuario ng-star-inserted"> Email </th>
+                <th class="mat-header-cell cdk-header-cell cdk-column-usuario mat-column-usuario ng-star-inserted"> Nome </th>
+                <th class="mat-header-cell cdk-header-cell cdk-column-unidade mat-column-unidade ng-star-inserted"> Unidade </th>
+                <th class="mat-header-cell cdk-header-cell cdk-column-gerente mat-column-gerente ng-star-inserted"> Gerente </th>
+                <th class="mat-header-cell cdk-header-cell cdk-column-tempoTrabalhado mat-column-tempoTrabalhado ng-star-inserted"> Tempo<br>Trabalhado </th>
+                <th class="mat-header-cell cdk-header-cell cdk-column-tempoApontadoChannel mat-column-tempoApontadoChannel ng-star-inserted"> Tempo<br>Apontado (Channel) </th>
+                <th class="mat-header-cell cdk-header-cell cdk-column-tempoApontadoTfs mat-column-tempoApontadoTfs ng-star-inserted"> Tempo Apontado<br>Não Sincronizado (TFS) </th>
+                <th class="mat-header-cell cdk-header-cell cdk-column-diferenca mat-column-diferenca ng-star-inserted"> Diferença </th>
+                <th class="mat-header-cell cdk-header-cell cdk-column-situacao mat-column-situacao ng-star-inserted">Situação</th>                
+            </tr>
+        </thead>
+        <tbody role="rowgroup">
+            <tr class="mat-row cdk-row ng-star-inserted" *ngFor="let index of [].constructor(quantidadeLinhas)">
+                <td class="mat-cell cdk-cell cdk-column-usuario mat-column-usuario ng-star-inserted" style="width: 19.9%;">
+                    <content-loader viewBox="0 0 270 30" backgroundColor="#00000000" foregroundColor="#c4c4c4">
+                        <svg:rect x="0" y="5" rx="0" ry="0" width="260" height="19" /> 
+                    </content-loader>
+                </td>
+                <td class="mat-cell cdk-cell cdk-column-usuario mat-column-usuario ng-star-inserted" style="width: 16.7%;">
+                    <content-loader viewBox="0 0 270 30" backgroundColor="#00000000" foregroundColor="#c4c4c4">
+                        <svg:rect x="0" y="5" rx="0" ry="0" width="260" height="19" /> 
+                    </content-loader>
+                </td>
+                <td class="mat-cell cdk-cell cdk-column-unidade mat-column-unidade ng-star-inserted" style="width: 6.5%;">
+                    <content-loader viewBox="0 0 90 30" backgroundColor="#00000000" foregroundColor="#c4c4c4">
+                        <svg:rect x="0" y="5" rx="0" ry="0" width="90" height="19" /> 
+                    </content-loader>
+                </td>
+                <td class="mat-cell cdk-cell cdk-column-gerente mat-column-gerente ng-star-inserted" style="width: 17.2%;">
+                    <content-loader viewBox="0 0 200 30" backgroundColor="#00000000" foregroundColor="#c4c4c4">
+                        <svg:rect x="0" y="5" rx="0" ry="0" width="200" height="19" /> 
+                    </content-loader>
+                </td>
+                <td class="mat-cell cdk-cell cdk-column-tempoTrabalhado mat-column-tempoTrabalhado ng-star-inserted" style="width: 5.1%;">
+                    <content-loader viewBox="0 0 69 30" backgroundColor="#00000000" foregroundColor="#c4c4c4">
+                        <svg:rect x="20" y="5" rx="0" ry="0" width="50" height="19" /> 
+                    </content-loader>
+                </td>
+                <td class="mat-cell cdk-cell cdk-column-tempoApontadoChannel mat-column-tempoApontadoChannel ng-star-inserted" style="width: 9.7%;">
+                    <content-loader viewBox="0 0 145 30" backgroundColor="#00000000" foregroundColor="#c4c4c4">
+                        <svg:rect x="65" y="5" rx="0" ry="0" width="50" height="19" />
+                    </content-loader>
+                </td>
+                <td class="mat-cell cdk-cell cdk-column-tempoApontadoTfs mat-column-tempoApontadoTfs ng-star-inserted" style="width: 11.6%;">
+                    <content-loader viewBox="0 0 165 30" backgroundColor="#00000000" foregroundColor="#c4c4c4">
+                        <svg:rect x="75" y="5" rx="0" ry="0" width="50" height="19" /> 
+                    </content-loader>
+                </td>
+                <td class="mat-cell cdk-cell cdk-column-diferenca mat-column-diferenca ng-star-inserted" style="width: 5.1%;">
+                    <content-loader viewBox="0 0 68 30" backgroundColor="#00000000" foregroundColor="#c4c4c4">
+                        <svg:rect x="20" y="5" rx="0" ry="0" width="50" height="19" /> 
+                    </content-loader>
+                </td>
+                <td class="mat-cell cdk-cell cdk-column-situacao mat-column-situacao ng-star-inserted" style="width: 8.1%;">
+                    <content-loader viewBox="0 0 100 30" backgroundColor="#00000000" foregroundColor="#c4c4c4">
+                        <svg:rect x="10" y="5" rx="0" ry="0" width="85" height="19" /> 
+                    </content-loader>
+                </td>
+            </tr>
+        </tbody>
+        <tfoot role="rowgroup" class="mat-table-sticky" style="display: none; bottom: 0px; z-index: 10;"></tfoot>
+    </table>
+</div>

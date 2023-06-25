@@ -16,9 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CA.Aplicacao\CA.Aplicacao.csproj" />
     <ProjectReference Include="..\CA.Core\CA.Core.csproj" />
-    <ProjectReference Include="..\CA.Identity.Entidades\CA.Identity.Entidades.csproj" />
-    <ProjectReference Include="..\CA.Repositorios\CA.Repositorios.csproj" />
   </ItemGroup>
 
 </Project>

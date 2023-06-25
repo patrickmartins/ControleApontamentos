@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CA.Aplicacao\CA.Aplicacao.csproj" />
     <ProjectReference Include="..\CA.Core\CA.Core.csproj" />
-    <ProjectReference Include="..\CA.Identity.Entidades\CA.Identity.Entidades.csproj" />
     <ProjectReference Include="..\CA.Identity\CA.Identity.csproj" />
     <ProjectReference Include="..\CA.Servicos.Channel\CA.Servicos.Channel.csproj" />
     <ProjectReference Include="..\CA.Servicos.Graph\CA.Servicos.Graph.csproj" />
