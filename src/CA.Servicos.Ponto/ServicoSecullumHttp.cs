@@ -79,6 +79,35 @@ namespace CA.Servicos.Secullum
             return Resultado.DeValor((await resposta.GetJsonAsync<IEnumerable<BatidasPontoDia>>()).OrderBy(c => c.Data).AsEnumerable());
         }
 
+        public async Task<Resultado<IEnumerable<BatidasPontoDia>>> ObterTodasBatidasPorPeriodoAsync(DateOnly inicio, DateOnly fim)
+        {
+            var token = ObterTokenJwt();
+
+            var resposta = await _policy.ExecuteAsync(() =>
+            {
+                return _configuracoes.UrlIntegracao
+                                            .AppendPathSegment("Batidas")
+                                            .WithOAuthBearerToken(token.TokenAcesso)
+                                            .SetQueryParam("DataInicio", inicio.ToString("yyyy-MM-dd"))
+                                            .SetQueryParam("DataFim", fim.ToString("yyyy-MM-dd"))
+                                            .AllowHttpStatus("400")
+                                            .OnError(c =>
+                                            {
+                                                if (c.HttpResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
+                                                    RemoverTokenJwt();
+                                            }).GetAsync();
+            });
+
+            if (resposta.StatusCode == (int)HttpStatusCode.BadRequest)
+            {
+                var erros = await resposta.GetJsonAsync<IEnumerable<ErroRequisicao>>();
+
+                return Resultado.DeErros<IEnumerable<BatidasPontoDia>>(erros.Select(c => new Erro(c.Mensagem, c.Propriedade)).ToArray());
+            }
+
+            return Resultado.DeValor((await resposta.GetJsonAsync<IEnumerable<BatidasPontoDia>>()).OrderBy(c => c.Data).AsEnumerable());
+        }
+
         private SecullumJwt ObterTokenJwt()
         {
             lock (_lock)

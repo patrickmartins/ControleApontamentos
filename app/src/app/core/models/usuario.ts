@@ -3,6 +3,7 @@ import { IModel } from "src/app/common/models/model";
 import { UsuarioTfs } from "./usuarioTfs";
 import { Funcionario } from "./funcionario";
 import { UsuarioChannel } from "./usuarioChannel";
+import { Unidade } from "./unidade";
 
 export class Usuario implements IModel<Usuario> {
     public id: string = "";
@@ -25,7 +26,13 @@ export class Usuario implements IModel<Usuario> {
     public usuarioTfs?: UsuarioTfs;
     public usuarioChannel?: UsuarioChannel;
     public funcionarioPonto?: Funcionario;
+
+    public idUnidade?: string;
+    public unidade?: Unidade;
     
+    public idGerente?: string;	
+    public gerente?: Usuario;
+
 	constructor() {	}
 
 	public criarNovo(params: any): Usuario | undefined {
@@ -48,6 +55,11 @@ export class Usuario implements IModel<Usuario> {
 			user.possuiContaPonto = params.possuiContaPonto;
 			user.possuiContaTfs = params.possuiContaTfs;
 			user.possuiContaChannel = params.possuiContaChannel;
+            user.idUnidade = params.idUnidade
+            user.idGerente = params.idGerente
+            
+            user.unidade = new Unidade().criarNovo(params.unidade);
+            user.gerente = new Usuario().criarNovo(params.gerente);
 		}
 
 		return user;

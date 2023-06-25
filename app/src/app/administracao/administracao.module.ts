@@ -8,31 +8,41 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { NgChartsModule } from 'ng2-charts';
-
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatPseudoCheckboxModule } from '@angular/material/core';
 import { MatTableModule } from '@angular/material/table';
-import { ApontamentosUsuarioMesComponent } from './components/apontamentos-usuario-mes/apontamentos-usuario-mes.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatSortModule } from '@angular/material/sort';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSelectModule } from '@angular/material/select';
+import { MatRippleModule } from '@angular/material/core';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+
 import { LoaderModule } from '../loader/loader.module';
 import { ApontamentoModule } from '../apontamento/apontamento.module';
 import { CoreModule } from '../core/core.module';
 import { AdministracaoRoutingModule } from './administracao-routing.module';
 import { ApontamentosUsuarioDiaComponent } from './components/apontamentos-usuario-dia/apontamentos-usuario-dia.component';
 import { UsuariosComponent } from './components/usuarios/usuarios.component';
-import { MatPaginatorModule } from '@angular/material/paginator';
+import { RelatorioApontamentosComponent } from './components/relatorio-apontamentos/relatorio-apontamentos.component';
+import { QuadroRelatorioApontamentosComponent } from './components/quadro-relatorio-apontamentos/quadro-relatorio-apontamentos.component';
 import { ModalSalvarUsuarioComponent } from './components/modal-salvar-usuario/modal-salvar-usuario.component';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatSortModule } from '@angular/material/sort';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { ApontamentosUsuarioMesComponent } from './components/apontamentos-usuario-mes/apontamentos-usuario-mes.component';
+import { GridRelatorioApontamentosComponent } from './components/grid-relatorio-apontamentos/grid-relatorio-apontamentos.component';
 
 @NgModule({
 	declarations: [
 		ApontamentosUsuarioMesComponent,
         ApontamentosUsuarioDiaComponent,
         UsuariosComponent,
-        ModalSalvarUsuarioComponent
+        ModalSalvarUsuarioComponent,
+        RelatorioApontamentosComponent,
+        QuadroRelatorioApontamentosComponent,
+        GridRelatorioApontamentosComponent
 	],
 	imports: [        
         AdministracaoRoutingModule,
@@ -51,11 +61,15 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 		NgChartsModule,
         MatDialogModule,
         MatDividerModule,
+        MatFormFieldModule,
+        MatSelectModule,
         MatProgressSpinnerModule,
         MatAutocompleteModule,
         MatPseudoCheckboxModule,   
         MatPaginatorModule,   
         MatSortModule,  
+        MatRippleModule,
+        MatButtonToggleModule,
         FormsModule,
         ReactiveFormsModule,
 	]

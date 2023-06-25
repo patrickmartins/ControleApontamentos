@@ -1,4 +1,4 @@
-﻿using CA.Repositorios.Channel.Contexto;
+﻿using CA.Repositorios.Contexto;
 using Microsoft.EntityFrameworkCore;
 
 namespace CA.Api.Configuracoes

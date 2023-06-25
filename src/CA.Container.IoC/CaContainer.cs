@@ -1,15 +1,18 @@
 ﻿using CA.Aplicacao.Interfaces;
 using CA.Aplicacao.Servicos;
 using CA.Core.Configuracoes;
+using CA.Core.Interfaces.CA;
 using CA.Core.Interfaces.Channel;
 using CA.Core.Interfaces.Microsoft;
 using CA.Core.Interfaces.Ponto;
 using CA.Core.Interfaces.Tfs;
+using CA.Core.Servicos.CA;
 using CA.Core.Servicos.Channel;
 using CA.Core.Servicos.Ponto;
 using CA.Core.Servicos.Tfs;
 using CA.Identity.Interfaces;
 using CA.Identity.Servicos;
+using CA.Repositorios.CA;
 using CA.Repositorios.Channel;
 using CA.Repositorios.Ponto;
 using CA.Repositorios.Tfs;
@@ -40,15 +43,22 @@ namespace CA.Container.IoC
             services.AddScoped<IRepositorioApontamentos, RepositorioApontamentos>();            
             services.AddScoped<IRepositorioUsuariosChannel, RepositorioUsuariosChannel>();
             services.AddScoped<IRepositorioProjetos, RepositorioProjetos>();
+            services.AddScoped<IRepositorioUsuariosCa, RepositorioUsuariosCa>();
+            services.AddScoped<IRepositorioAdministracao, RepositorioAdministracao>();
 
             services.AddScoped<IServicoPonto, ServicoSecullum>();
             services.AddScoped<IServicoTfs, ServicoTfs>();
             services.AddScoped<IServicoIdentidade, ServicoIdentidade>();
             services.AddScoped<IServicoChannel, ServicoChannel>();
+            services.AddScoped<IServicoUsuariosCa, ServicoUsuariosCa>();
+            services.AddScoped<IServicoAdministracao, ServicoAdministracao>();
 
             services.AddScoped<IServicoPontoApp, ServicoSecullumApp>();
             services.AddScoped<IServicoTfsApp, ServicoTfsApp>();
             services.AddScoped<IServicoChannelApp, ServicoChannelApp>();
+            services.AddScoped<IServicoRelatorioApp, ServicoRelatorioApp>();
+            services.AddScoped<IServicoUsuariosCaApp, ServicoUsuariosCaApp>();
+            services.AddScoped<IServicoAdministracaoApp, ServicoAdministracaoApp>();
 
             services.AddScoped<IServicoIdentidadeTfsSoap, ServicoIdentidadeTfsSoap>();
             services.AddScoped<IServicoWorkitemTfsSoap, ServicoWorkitemTfsSoap>();

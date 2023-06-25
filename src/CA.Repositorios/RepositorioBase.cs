@@ -1,5 +1,4 @@
-﻿using CA.Core.Interfaces;
-using CA.Repositorios.Channel.Contexto;
+﻿using CA.Repositorios.Contexto;
 
 namespace CA.Repositorios
 {

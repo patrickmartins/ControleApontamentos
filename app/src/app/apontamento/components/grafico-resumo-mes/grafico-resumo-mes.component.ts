@@ -320,6 +320,7 @@ export class GraficoResumoMesComponent implements OnChanges, OnInit, OnDestroy, 
 
     public ngOnDestroy(): void {
         this.resizeSubscription?.unsubscribe();
+        this.grafico?.ngOnDestroy();
     }
 
     public ngOnChanges(changes: SimpleChanges): void {

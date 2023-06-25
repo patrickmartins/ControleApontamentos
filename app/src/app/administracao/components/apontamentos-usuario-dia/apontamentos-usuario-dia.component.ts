@@ -27,7 +27,8 @@ import { TfsService } from 'src/app/core/services/tfs.service';
 })
 export class ApontamentosUsuarioDiaComponent extends BaseComponent implements OnInit {
 
-	public carregando: boolean = true;
+	public carregandoRelatorio: boolean = true;
+    public carregandoUsuarios: boolean = true;
 
 	public get tempoTotalTrabalhadoNoDia() : number {
 		return this.batidas ? this.batidas.tempoTotalTrabalhadoNoDia : 0
@@ -86,24 +87,30 @@ export class ApontamentosUsuarioDiaComponent extends BaseComponent implements On
 	}
 	
 	public ngOnInit(): void {
-        this.usuarioService.obterTodosUsuarios().subscribe(usuarios => { 
-            this.usuariosFiltrado = this.usuarios = usuarios;
+        this.carregandoUsuarios = true;
 
-            this.activeRoute
-                .queryParamMap
-                .subscribe((mapParams: any) => {			
-                    let data = moment(mapParams.params.data, 'DD-MM-YYYY');
+        this.usuarioService.obterTodosUsuarios().subscribe({
+            next: usuarios => { 
+                this.usuariosFiltrado = this.usuarios = usuarios;
+                this.carregandoUsuarios = false;
 
-                    this.usuarioSelecionado = this.usuariosFiltrado.find(c => c.id == mapParams.params.usuario);
-                    this.dataSelecionada = data.isValid() ? data.toDate() : new Date();
+                this.activeRoute
+                    .queryParamMap
+                    .subscribe((mapParams: any) => {			
+                        let data = moment(mapParams.params.data, 'DD-MM-YYYY');
 
-                    if(this.usuarioSelecionado) {
-                        this.formUsuario.setValue(this.usuarioSelecionado, { emitEvent: false });
-                        this.formDataSelecionada.setValue(this.dataSelecionada, { emitEvent: false });
-                        
-                        this.obterBatidasEApontamentosPorDia(this.usuarioSelecionado.id, this.dataSelecionada);
-                    }
-                });		
+                        this.usuarioSelecionado = this.usuariosFiltrado.find(c => c.id == mapParams.params.usuario);
+                        this.dataSelecionada = data.isValid() ? data.toDate() : new Date();
+
+                        if(this.usuarioSelecionado) {
+                            this.formUsuario.setValue(this.usuarioSelecionado, { emitEvent: false });
+                            this.formDataSelecionada.setValue(this.dataSelecionada, { emitEvent: false });
+                            
+                            this.obterBatidasEApontamentosPorDia(this.usuarioSelecionado.id, this.dataSelecionada);
+                        }
+                    });		
+            },
+            complete: () => this.carregandoUsuarios = false
         });
 
         this.formUsuario.valueChanges.subscribe(valor => {
@@ -143,7 +150,7 @@ export class ApontamentosUsuarioDiaComponent extends BaseComponent implements On
 		this.apontamentosChannelDia = undefined;
 		this.apontamentosTfsDia = undefined;
 
-		this.carregando = true;
+		this.carregandoRelatorio = true;
 
         forkJoin({
             apontamentosTfsDia: this.usuarioSelecionado?.possuiContaTfs ? this.servicoTfs.obterApontamentosTfsDeUsuarioPorDia(idUsuario, data).pipe(catchError(e => this.pipeErrosDeNegocio(e))) : of(undefined),
@@ -160,7 +167,7 @@ export class ApontamentosUsuarioDiaComponent extends BaseComponent implements On
 
                 this.servicoConsolidacao.consolidarTarefasEAtividades(this.apontamentosTfsDia, this.apontamentosChannelDia, this.infoJobCarga?.ultimaExecucao);
             },
-            complete: () => this.carregando = false
+            complete: () => this.carregandoRelatorio = false
         });
 	}
 

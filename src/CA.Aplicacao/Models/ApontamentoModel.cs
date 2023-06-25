@@ -21,20 +21,7 @@ namespace CA.Aplicacao.Models
         public string Usuario { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "A coleção do TFS não foi informada!")]
-        public string Colecao { get; set; }
-
-        public static ApontamentoTfs ViewModelParaApontamento(ApontamentoTfsNovoModel viewModel)
-        {
-            return new ApontamentoTfs
-            {
-                SincronizadoChannel = false,
-                Comentario = viewModel.Comentario,
-                DataApontamento = viewModel.Data.ConverterParaFusoBrasil().ToString("d"),
-                DataCriacao = DateTime.UtcNow,
-                TempoApontamento = TimeSpan.FromMinutes(viewModel.TempoTotal).ToString("hh\\:mm"),
-                Usuario = viewModel.Usuario
-            };
-        }
+        public string Colecao { get; set; }        
     }
 
     public abstract record ApontamentoModel

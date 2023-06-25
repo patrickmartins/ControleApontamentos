@@ -1,23 +1,24 @@
 ﻿using CA.Identity.Entidades;
-using CA.Repositorios.Channel.Contexto;
+using CA.Repositorios.Contexto;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CA.Identity.Configuracao
+namespace CA.Jobs.ConsoleApp.Configuracoes
 {
     public static class ConfiguracaoIdentity
     {
-        public static void ConfigurarIdentity(IServiceCollection services, IConfiguration configuration)
+        public static void AdicionarIdentity(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<IdentityDbContext>(options =>
             {
                 options.UseSqlServer(configuration.GetConnectionString("ConexaoBd"), options => options.MigrationsAssembly("CA.Seguranca"));
             });
 
-            services.AddIdentityCore<Usuario>()
-                    .AddRoles<Role>()
+            services.AddIdentityCore<UsuarioIdentity>()
+                    .AddRoles<IdentityRole<string>>()
                     .AddEntityFrameworkStores<ContextoDadosCA>();
         }
     }

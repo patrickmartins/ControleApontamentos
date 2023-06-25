@@ -10,6 +10,7 @@ import { Usuario } from 'src/app/core/models/usuario';
 import { LoginSucesso } from 'src/app/conta/models/login-sucess';
 import { JwtToken } from 'src/app/conta/models/jwt.token';
 import { StatusLogin } from '../models/status-login';
+import { AtualizarContaUsuario } from '../models/atualizar-conta-usuario';
 
 @Injectable({
     providedIn: 'root'
@@ -57,6 +58,14 @@ export class ContaService extends BaseService {
         this._onStatusLoginAlteradoSubscription.next(StatusLogin.Desconectado);
 
 		this._token = undefined;
+    }
+    
+    public obterTodasContas(): Observable<Usuario[]> {
+        return this.get<Usuario[]>(`${environment.urlApiBase}conta`, Usuario, { });
+    }
+
+    public salvarContaUsuario(usuario: AtualizarContaUsuario): Observable<any> {
+        return this.post<any>(`${environment.urlApiBase}conta`, usuario);
     }
 
     public obterUsuarioLogado(): Observable<Usuario | undefined> {

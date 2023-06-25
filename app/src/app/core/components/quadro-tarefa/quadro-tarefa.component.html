@@ -23,6 +23,11 @@
 					</designado-tarefa>
 				</div>
 			</div>
+            <div class="adicionar-apontamento" *ngIf="tarefa.apontamentoHabilitado && permiteApontar">
+				<button mat-icon-button title="Novo Apontamento" (click)="novoApontamento()">
+					<mat-icon class="nav-toolbar-icon-menu">playlist_add</mat-icon>
+				</button>
+			</div>
 			<div class="fixar" *ngIf="permiteFixar">
 				<button mat-icon-button [title]="tarefa.fixada ? 'Desafixar Tarefa' : 'Fixar Tarefa'" (click)="tarefa.fixada ? desafixarTarefa() : fixarTarefa()">
 					<mat-icon class="nav-toolbar-icon-menu">{{ tarefa.fixada ? 'bookmark' : 'bookmark_outlined' }}</mat-icon>

@@ -95,6 +95,17 @@
 	}
 }
 
+.adicionar-apontamento {
+    align-self: center;
+
+    & .mat-icon {
+        font-size: 1.8em;
+        text-align: center;
+        display: inherit;
+        margin: 0 !important;
+    }
+}
+
 .fixar {
 	display: flex;
 	align-items: center;

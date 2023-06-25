@@ -1,6 +1,6 @@
 ﻿using CA.Api.Configuracoes;
+using CA.Core.Entidades.CA;
 using CA.Core.Entidades.Channel;
-using CA.Identity.Entidades;
 using CA.Jobs.Interfaces;
 using Hangfire.Common;
 using Hangfire.Server;
@@ -11,10 +11,10 @@ namespace CA.Api.Hangfire.Jobs
     {
         private readonly ConfiguracaoHangfire _config;
 
-        private readonly IJob<Usuario> _job;
+        private readonly IJob<UsuarioCA> _job;
         private readonly ILogger<JobCargaCompletaChannel> _logger;
 
-        public JobImportacaoUsuariosMicrosoft(ConfiguracaoHangfire config, IJob<Usuario> job, ILogger<JobCargaCompletaChannel> logger)
+        public JobImportacaoUsuariosMicrosoft(ConfiguracaoHangfire config, IJob<UsuarioCA> job, ILogger<JobCargaCompletaChannel> logger)
         {
             _config = config;
             _job = job;  

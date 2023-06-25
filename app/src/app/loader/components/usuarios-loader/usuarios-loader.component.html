@@ -3,7 +3,9 @@
         <thead role="rowgroup">
             <tr class="mat-header-row cdk-header-row ng-star-inserted">
                 <th class="mat-header-cell cdk-header-cell cdk-column-usuario mat-column-usuario ng-star-inserted"> Email </th>
-                <th class="mat-header-cell cdk-header-cell cdk-column-usuario mat-column-usuario ng-star-inserted"> Nome Completo </th>
+                <th class="mat-header-cell cdk-header-cell cdk-column-usuario mat-column-usuario ng-star-inserted"> Nome </th>
+                <th class="mat-header-cell cdk-header-cell cdk-column-unidade mat-column-unidade ng-star-inserted"> Unidade </th>
+                <th class="mat-header-cell cdk-header-cell cdk-column-gerente mat-column-gerente ng-star-inserted"> Gerente </th>
                 <th class="mat-header-cell cdk-header-cell cdk-column-usuarioTfs mat-column-usuarioTfs ng-star-inserted"> Nome de Usuário TFS </th>
                 <th class="mat-header-cell cdk-header-cell cdk-column-usuarioChannel mat-column-usuarioChannel ng-star-inserted"> Nome de Usuário Channel </th>
                 <th class="mat-header-cell cdk-header-cell cdk-column-funcionario mat-column-funcionario ng-star-inserted"> Nº Folha </th>
@@ -13,32 +15,42 @@
         </thead>
         <tbody role="rowgroup">
             <tr class="mat-row cdk-row ng-star-inserted" *ngFor="let index of [].constructor(quantidadeLinhas)">
-                <td class="mat-cell cdk-cell cdk-column-usuario mat-column-usuario ng-star-inserted" style="width: 26.2%;">
+                <td class="mat-cell cdk-cell cdk-column-usuario mat-column-usuario ng-star-inserted" style="width: 19.5%;">
                     <content-loader viewBox="0 0 280 30" backgroundColor="#00000000" foregroundColor="#c4c4c4">
                         <svg:rect x="0" y="5" rx="0" ry="0" width="280" height="19" /> 
                     </content-loader>
                 </td>
-                <td class="mat-cell cdk-cell cdk-column-usuario mat-column-usuario ng-star-inserted" style="width: 23.2%;">
+                <td class="mat-cell cdk-cell cdk-column-usuario mat-column-usuario ng-star-inserted" style="width: 17%;">
                     <content-loader viewBox="0 0 220 30" backgroundColor="#00000000" foregroundColor="#c4c4c4">
                         <svg:rect x="0" y="5" rx="0" ry="0" width="220" height="19" /> 
                     </content-loader>
                 </td>
-                <td class="mat-cell cdk-cell cdk-column-usuarioTfs mat-column-usuarioTfs ng-star-inserted" style="width: 13.7%;">
+                <td class="mat-cell cdk-cell cdk-column-unidade mat-column-unidade ng-star-inserted" style="width: 7.2%;">
+                    <content-loader viewBox="0 0 200 30" backgroundColor="#00000000" foregroundColor="#c4c4c4">
+                        <svg:rect x="0" y="5" rx="0" ry="0" width="95" height="19" /> 
+                    </content-loader>
+                </td>
+                <td class="mat-cell cdk-cell cdk-column-gerente mat-column-gerente ng-star-inserted" style="width: 16.3%;">
+                    <content-loader viewBox="0 0 200 30" backgroundColor="#00000000" foregroundColor="#c4c4c4">
+                        <svg:rect x="0" y="5" rx="0" ry="0" width="220" height="19" /> 
+                    </content-loader>
+                </td>
+                <td class="mat-cell cdk-cell cdk-column-usuarioTfs mat-column-usuarioTfs ng-star-inserted" style="width: 11.2%;">
                     <content-loader viewBox="0 0 200 30" backgroundColor="#00000000" foregroundColor="#c4c4c4">
                         <svg:rect x="0" y="5" rx="0" ry="0" width="160" height="19" /> 
                     </content-loader>
                 </td>
-                <td class="mat-cell cdk-cell cdk-column-usuarioChannel mat-column-usuarioChannel ng-star-inserted" style="width: 16.4%;">
+                <td class="mat-cell cdk-cell cdk-column-usuarioChannel mat-column-usuarioChannel ng-star-inserted" style="width: 12.7%;">
                     <content-loader viewBox="0 0 411 30" backgroundColor="#00000000" foregroundColor="#c4c4c4">
                         <svg:rect x="0" y="5" rx="0" ry="0" width="160" height="19" />
                     </content-loader>
                 </td>
-                <td class="mat-cell cdk-cell cdk-column-funcionario mat-column-funcionario ng-star-inserted" style="width: 6.4%;">
+                <td class="mat-cell cdk-cell cdk-column-funcionario mat-column-funcionario ng-star-inserted" style="width: 5.2%;">
                     <content-loader viewBox="0 0 411 30" backgroundColor="#00000000" foregroundColor="#c4c4c4">
                         <svg:rect x="0" y="5" rx="0" ry="0" width="40" height="19" /> 
                     </content-loader>
                 </td>
-                <td class="mat-cell cdk-cell cdk-column-acoes mat-column-administrador ng-star-inserted" style="width: 8.7%; padding-left: 33px;">
+                <td class="mat-cell cdk-cell cdk-column-acoes mat-column-administrador ng-star-inserted" style="width: 6.7%; padding-left: 33px;">
                     <content-loader viewBox="0 0 411 30" backgroundColor="#00000000" foregroundColor="#c4c4c4">
                         <svg:rect x="0" y="5" rx="0" ry="0" width="20" height="19" /> 
                     </content-loader>

@@ -55,12 +55,30 @@ namespace CA.Core.Servicos.Channel
             return _repositorioUsuario.ObterUsuariosAtivosAsync();
         }
 
+        public Resultado<UsuarioChannel?> ObterUsuarioPorId(int id)
+        {
+            if (id <= 0)
+                return Resultado.DeErros<UsuarioChannel?>(new Erro("O id do usuário não foi informado.", nameof(id)));
+
+            var usuario = _repositorioUsuario.ObterUsuarioPorId(id);
+
+            if(usuario is null)
+                return Resultado.DeErros<UsuarioChannel?>(new Erro("O funcionário informado não foi encontrado.", nameof(id)));
+
+            return Resultado.DeValor<UsuarioChannel?>(usuario);
+        }
+
         public Resultado<UsuarioChannel?> ObterUsuarioPorEmail(string email)
         {
             if (string.IsNullOrEmpty(email))
                 return Resultado.DeErros<UsuarioChannel?>(new Erro("O email do usuário não foi informado.", nameof(email)));
 
-            return Resultado.DeValor(_repositorioUsuario.ObterUsuarioPorEmail(email));
+            var usuario = _repositorioUsuario.ObterUsuarioPorEmail(email);
+
+            if(usuario is null)
+                return Resultado.DeErros<UsuarioChannel?>(new Erro("O usuário do Channel informado não foi encontrado.", nameof(email)));
+
+            return Resultado.DeValor<UsuarioChannel?>(usuario);
         }
 
         public Resultado<UsuarioChannel?> ObterUsuarioPorNomeCompleto(string nomeCompleto)
@@ -68,7 +86,12 @@ namespace CA.Core.Servicos.Channel
             if (string.IsNullOrEmpty(nomeCompleto))
                 return Resultado.DeErros<UsuarioChannel?>(new Erro("O nome completo do usuário não foi informado.", nameof(nomeCompleto)));
 
-            return Resultado.DeValor(_repositorioUsuario.ObterUsuarioPorNomeCompleto(nomeCompleto));
+            var usuario = _repositorioUsuario.ObterUsuarioPorNomeCompleto(nomeCompleto);
+
+            if (usuario is null)
+                return Resultado.DeErros<UsuarioChannel?>(new Erro("O usuário do Channel informado não foi encontrado.", nameof(nomeCompleto)));
+
+            return Resultado.DeValor<UsuarioChannel?>(usuario);
         }
 
         public async Task<Resultado<IEnumerable<AtividadeChannel>>> ObterAtividadesApontadasPorUsuarioPorDiaAsync(int idUsuario, DateOnly data)

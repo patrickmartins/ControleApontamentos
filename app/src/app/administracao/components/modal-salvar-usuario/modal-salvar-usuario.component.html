@@ -32,12 +32,28 @@
 
                 <mat-form-field appearance="outline" class="usuario-form-field">     
                     <mat-label>Funcionário</mat-label>               
-                    <input type="text" placeholder="Selecione um usuário" matInput formControlName="funcionarioPonto" name="funcionarioPonto" id="funcionarioPonto"  [matAutocomplete]="autoFuncionario">
+                    <input type="text" placeholder="Selecione um funcionario" matInput formControlName="funcionarioPonto" name="funcionarioPonto" id="funcionarioPonto"  [matAutocomplete]="autoFuncionario">
                     <mat-autocomplete #autoFuncionario="matAutocomplete" [displayWith]="obterNomeCompletoUsuario">
                         <mat-option *ngFor="let funcionario of funcionariosFiltrado" [value]="funcionario">{{ funcionario.nomeCompleto }}</mat-option>
                     </mat-autocomplete>
                 </mat-form-field>
 
+                <mat-form-field appearance="outline" class="usuario-form-field">     
+                    <mat-label>Unidade</mat-label>               
+                    <input type="text" placeholder="Selecione uma unidade" matInput formControlName="unidade" name="unidade" id="unidade"  [matAutocomplete]="autoUnidade">
+                    <mat-autocomplete #autoUnidade="matAutocomplete" [displayWith]="obterNomeUnidade">
+                        <mat-option *ngFor="let unidade of unidadesFiltrada" [value]="unidade">{{ unidade.nome }}</mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="usuario-form-field">     
+                    <mat-label>Gerente</mat-label>               
+                    <input type="text" placeholder="Selecione um gerente" matInput formControlName="gerente" name="gerente" id="gerente"  [matAutocomplete]="autoGerente">
+                    <mat-autocomplete #autoGerente="matAutocomplete" [displayWith]="obterNomeCompletoUsuario">
+                        <mat-option *ngFor="let gerente of gerentesFiltrado" [value]="gerente">{{ gerente.nomeCompleto }}</mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
+                
                 <mat-checkbox formControlName="ehAdministrador" name="ehAdministrador" id="ehAdministrador" color="primary">Administrador</mat-checkbox>
                 
             </div>

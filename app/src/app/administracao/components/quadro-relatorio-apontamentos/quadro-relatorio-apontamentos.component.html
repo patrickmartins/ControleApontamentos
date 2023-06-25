@@ -1,0 +1,31 @@
+<div class="quadro-relatorio">
+    <mat-card class="borda-1">
+		<div class="container">
+            <div class="pontuacao">
+                <mat-icon class="alta" [ngStyle]="{visibility: relatorio.diferencaTempoTrabalhadoApontado > 0 ? 'visible' : 'hidden'}">arrow_drop_up</mat-icon>
+                <span *ngIf="relatorio.diferencaTempoTrabalhadoApontado == 0" title="Não há diferença">0</span>
+                <span *ngIf="relatorio.diferencaTempoTrabalhadoApontado < 0" [title]="'Diferença de ' + ((relatorio.diferencaTempoTrabalhadoApontado * -1) | tempo : 'extenso')">{{ (relatorio.diferencaTempoTrabalhadoApontado * -1) | tempo : 'extenso-curto' }}</span>
+                <span *ngIf="relatorio.diferencaTempoTrabalhadoApontado > 0" [title]="'Diferença de ' + (relatorio.diferencaTempoTrabalhadoApontado | tempo : 'extenso')">{{ relatorio.diferencaTempoTrabalhadoApontado | tempo : 'extenso-curto' }}</span>
+                <mat-icon class="baixa" [ngStyle]="{visibility: relatorio.diferencaTempoTrabalhadoApontado < 0 ? 'visible' : 'hidden'}">arrow_drop_down</mat-icon>
+            </div>
+            <div class="dados">
+			    <h4 class="nome-usuario">{{ relatorio.usuario.nomeCompleto }}<span *ngIf="relatorio.usuario.unidade"> - {{ relatorio.usuario.unidade!.nome }}</span></h4>
+                <div class="grafico">
+                    <canvas *ngIf="relatorio" baseChart [options]="configGrafico" [data]="dadosGrafico" [type]="'bar'" height="52px"></canvas>                    
+                </div>                
+            </div>
+            <div class="resultado">
+                <div *ngIf="relatorio.calcularSituacao(tolerancia) == 1; then ok else verificar"></div> 
+                <ng-template #ok><span title="Ok" class="badge sucess">ok</span></ng-template>
+                <ng-template #verificar><span title="Verificar" class="badge error">verificar</span></ng-template>
+            </div>
+            <div class="acoes">
+                <a matRipple class="mat-icon-button" target="_blank" title="Visualizar apontamentos do usuários"
+                        [routerLink]="['/administracao/usuario/apontamento/por-mes']" 
+                        [queryParams]="{ mes: relatorio.mesReferencia, ano: relatorio.anoReferencia, usuario: relatorio.usuario.id }">
+                            <mat-icon>search</mat-icon>
+                </a>
+            </div>
+		</div>	
+	</mat-card>
+</div>

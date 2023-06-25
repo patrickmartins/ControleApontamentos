@@ -66,7 +66,7 @@ namespace CA.Repositorios.Tfs
             return itens;
         }
 
-        public async Task<IEnumerable<ItemTrabalhoLink>> ExecutarQueryAsync(string colecao, string query)
+        public async Task<IEnumerable<ItemTrabalhoLink>> ExecutarQueryDeLinksAsync(string colecao, string query)
         {
             var resultado = await _servicoSoap.ExecutarQueryAsync(new QueryWorkitemsRequest
                 {
@@ -88,6 +88,30 @@ namespace CA.Repositorios.Tfs
             var links = ServicosTfsHelper.ExtrairLinksItemTrabalhoDeResultado(resultado);
 
             return links;
+        }
+
+        public async Task<int[]> ExecutarQueryDeIdsAsync(string colecao, string query)
+        {
+            var resultado = await _servicoSoap.ExecutarQueryAsync(new QueryWorkitemsRequest
+            {
+                RequestHeader = new RequestHeader
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    UseDisambiguatedIdentityString = 1
+                },
+                psQuery = XmlHelper.SerializarParaXmlElement(new Query
+                {
+                    DayPrecision = true,
+                    Wiql = query
+                }),
+                useMaster = false,
+                metadataHave = null
+            }
+                , colecao);
+
+            var ids = ServicosTfsHelper.ExtrairIdsItemTrabalhoDeResultado(resultado);
+
+            return ids;
         }
 
         public async Task<IEnumerable<CampoTfs>> ObterCamposSuportadosPorColecaoAsync(string colecao)

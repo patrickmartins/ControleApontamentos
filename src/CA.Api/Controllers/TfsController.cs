@@ -5,7 +5,6 @@ using CA.Core.Extensions;
 using CA.Core.Valores;
 using CA.Identity.Extensions;
 using CA.Identity.Interfaces;
-using CA.Identity.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,15 +29,15 @@ namespace CA.Api.Controllers
         [Route("apontamento/{id:required:guid}/por-dia")]
         public async Task<ActionResult> ObterApontamentosTfsUsuarioPorDiaAsync([FromRoute] Guid id, DateTime data)
         {
-            var usuario = await _servicoIdentidade.ObterUsuarioPorIdAsync(id);
+            var usuario = await _servicoIdentidade.ObterContaUsuarioPorIdAsync(id);
 
             if (!usuario.Sucesso)
                 return NotFound(usuario.Erros);
 
-            var usuarioTfs = usuario.Valor.Claims.ObterUsuarioTfs();
+            var usuarioTfs = usuario.Valor.ExtrairUsuarioTfs();
 
             if (usuarioTfs is null)
-                return BadRequest(Resultado.DeErros<UsuarioApp>(new Erro("O usuário informado não possui uma conta no TFS.", nameof(id))));
+                return BadRequest(Resultado.DeErros<UsuarioModel>(new Erro("O usuário informado não possui uma conta no TFS.", nameof(id))));
 
             var resultado = await _servicoTfs.ObterApontamentosPorDiaAsync(usuarioTfs, DateOnly.FromDateTime(data));
 
@@ -70,15 +69,15 @@ namespace CA.Api.Controllers
         [Route("apontamento/{id:required:guid}/por-mes")]
         public async Task<ActionResult> ObterApontamentosTfsUsuarioPorMesAsync([FromRoute] Guid id, int mes, int ano)
         {
-            var usuario = await _servicoIdentidade.ObterUsuarioPorIdAsync(id);
+            var usuario = await _servicoIdentidade.ObterContaUsuarioPorIdAsync(id);
 
             if (!usuario.Sucesso)
                 return NotFound(usuario.Erros);
 
-            var usuarioTfs = usuario.Valor.Claims.ObterUsuarioTfs();
+            var usuarioTfs = usuario.Valor.ExtrairUsuarioTfs();
 
             if (usuarioTfs is null)
-                return BadRequest(Resultado.DeErros<UsuarioApp>(new Erro("O usuário informado não possui uma conta no TFS.", nameof(id))));
+                return BadRequest(Resultado.DeErros<UsuarioModel>(new Erro("O usuário informado não possui uma conta no TFS.", nameof(id))));
 
             var resultado = await _servicoTfs.ObterApontamentosPorMesAsync(usuarioTfs, mes, ano);
 

@@ -2,6 +2,7 @@
 {
     public class BatidasPontoDia
     {
+        public int FuncionarioId { get; set; }
         public TimeSpan Entrada1 { get; set; }
         public TimeSpan Saida1 { get; set; }
         public TimeSpan Entrada2 { get; set; }

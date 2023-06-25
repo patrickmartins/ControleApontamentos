@@ -1,0 +1,41 @@
+.mat-table {
+    width: 100%;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+
+    & th {        
+        font-weight: 500;
+        font-size: .85rem;
+    }
+    
+    td {
+        font-weight: 300;
+    }
+
+    & .mat-column-situacao > .badge {
+        width: 5em;
+        margin-left: 0!important;
+        text-transform: uppercase;
+    }
+
+    & .mat-column-tempoTrabalhado {
+        width: 5em;
+        text-align: center;
+    }
+
+    & .mat-column-tempoApontadoChannel {
+        text-align: center;
+    }
+
+    & .mat-column-tempoApontadoTfs {
+        text-align: center;
+    }
+
+    & .mat-column-diferenca {
+        width: 5em;
+        text-align: center;
+    }
+
+    & .mat-column-situacao {     
+        text-align: center;        
+    }
+}

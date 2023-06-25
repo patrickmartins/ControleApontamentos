@@ -1,0 +1,102 @@
+.quadro-relatorio {
+
+    .mat-card {
+        z-index: 2;
+        display: block;
+        padding: 0;        
+        border-radius: 0;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+
+        & > .container {
+            display: flex;
+            height: 5.372em;
+        }
+    }
+
+    ::ng-deep.container {
+        display: inline;
+        padding: 0.8rem;
+
+        & .pontuacao {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            align-self: center;
+            font-size: x-large;
+            margin: 0 .3em;
+            width: 4.6em;
+            letter-spacing: -.05em;
+
+            & .mat-icon {
+                height: 20px !important;
+                width: 20px !important;
+                font-size: 32px !important;
+                display: contents;
+            }
+
+            & > .alta {
+                color: #00b74a;
+            }
+
+            & > .baixa {
+                color: #f93154;
+            }
+        }
+
+        & .dados {
+            width: 100%;            
+            margin-left: 0.8em;
+            margin-right: 0.8em;
+            
+            & .nome-usuario {
+                font-weight: 500!important;
+                text-transform: uppercase;
+                margin: 0.2em 0 0.1em 0;
+
+                & span {
+                    text-transform: none;
+                    font-weight: 400;
+                }
+            }
+
+            & .grafico {
+                & canvas {
+                    width: 100%!important;
+                    height: 52px!important;
+                }
+            }
+        }
+
+        & .resultado {
+            padding: .6em;
+            width: 6em;
+            align-self: center;
+
+            & .badge {
+                margin: 0;
+                width: 5em;             
+                text-transform: uppercase;
+            }
+        }
+
+        & .acoes {
+            display: flex;
+
+            & a {
+                border-radius: 100%;
+                height: 36px;
+                align-self: center;
+                width: 36px;
+                overflow: hidden;
+
+                & .mat-icon {
+                    height: 36px;
+                    width: 36px;
+                    text-align: center;
+                    padding-top: .25em;
+                    padding-left: .01em;
+                }
+            }
+        }
+    }
+}

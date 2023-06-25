@@ -1,9 +1,10 @@
-﻿using CA.Core.Entidades.Channel;
+﻿using CA.Core.Entidades.CA;
+using CA.Core.Entidades.Channel;
 using CA.Identity.Entidades;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace CA.Repositorios.Channel.Contexto
+namespace CA.Repositorios.Contexto
 {
     public class ContextoDadosCA : DbContext
     {
@@ -11,6 +12,97 @@ namespace CA.Repositorios.Channel.Contexto
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            #region CA
+
+            modelBuilder.Entity<UsuarioCA>()
+                        .HasKey(c => c.Id);
+
+            modelBuilder.Entity<UsuarioCA>()
+                        .Property(c => c.Id)
+                        .ValueGeneratedNever();
+
+            modelBuilder.Entity<UsuarioCA>()
+                        .Property(c => c.NomeCompleto)
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)")
+                        .IsRequired();
+
+            modelBuilder.Entity<UsuarioCA>()
+                        .HasOne(c => c.ParametrosIntegracoes)
+                        .WithOne(c => c.Usuario)
+                        .HasForeignKey(typeof(ParametrosIntegracao), "IdUsuario")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<UsuarioCA>()
+                        .HasOne(c => c.Unidade)
+                        .WithMany()
+                        .HasForeignKey(c => c.IdUnidade)                        
+                        .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<UsuarioCA>()
+                        .HasOne(c => c.Gerente)
+                        .WithMany()
+                        .HasForeignKey(c => c.IdGerente)
+                        .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<ParametrosIntegracao>()
+                        .HasKey(c => c.IdUsuario);
+
+            modelBuilder.Entity<ParametrosIntegracao>()
+                        .Property(c => c.IdUsuarioChannel)
+                        .ValueGeneratedNever();
+
+            modelBuilder.Entity<ParametrosIntegracao>()
+                        .Property(c => c.IdUsuarioTfs)
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)");
+
+            modelBuilder.Entity<ParametrosIntegracao>()
+                        .Property(c => c.DominioTfs)
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)");
+
+            modelBuilder.Entity<ParametrosIntegracao>()
+                        .Property(c => c.NomeUsuarioTfs)
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)");
+
+            modelBuilder.Entity<ParametrosIntegracao>()
+                        .Property(c => c.TipoIdUsuarioTfs)
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)");
+
+            modelBuilder.Entity<ParametrosIntegracao>()
+                        .Property(c => c.IdUsuarioChannel);
+
+            modelBuilder.Entity<ParametrosIntegracao>()
+                        .Property(c => c.NomeUsuarioChannel)
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)");
+
+            modelBuilder.Entity<ParametrosIntegracao>()
+                        .Property(c => c.IdFuncionarioPonto);
+
+            modelBuilder.Entity<ParametrosIntegracao>()
+                        .Property(c => c.PisFuncionarioPonto)
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)");
+
+            modelBuilder.Entity<Unidade>()
+                        .HasKey(c => c.Id);
+
+            modelBuilder.Entity<Unidade>()
+                        .Property(c => c.Nome)
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)");
+
+            modelBuilder.Entity<Unidade>()
+                        .Property(c => c.Id)
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)")
+                        .ValueGeneratedOnAdd();
+            #endregion
+
             #region Channel
 
             modelBuilder.Entity<ApontamentoChannel>()
@@ -134,107 +226,116 @@ namespace CA.Repositorios.Channel.Contexto
 
             #region Identity
 
-            modelBuilder.Entity<Usuario>()
+            modelBuilder.Entity<UsuarioIdentity>()
                         .HasKey(c => c.Id);
 
-            modelBuilder.Entity<Usuario>()
+            modelBuilder.Entity<UsuarioIdentity>()
                         .Property(c => c.Id)
-                        .HasColumnType("varchar(450)")                        
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)")                        
                         .ValueGeneratedNever();
 
-            modelBuilder.Entity<Usuario>()
+            modelBuilder.Entity<UsuarioIdentity>()
                         .Property(c => c.UserName)
-                        .HasColumnType("varchar(256)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
-            modelBuilder.Entity<Usuario>()
+            modelBuilder.Entity<UsuarioIdentity>()
                         .Property(c => c.NormalizedUserName)
-                        .HasColumnType("varchar(256)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
-            modelBuilder.Entity<Usuario>()
+            modelBuilder.Entity<UsuarioIdentity>()
                         .Property(c => c.Email)
-                        .HasColumnType("varchar(256)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
-            modelBuilder.Entity<Usuario>()
+            modelBuilder.Entity<UsuarioIdentity>()
                         .Property(c => c.NormalizedEmail)
-                        .HasColumnType("varchar(256)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
-            modelBuilder.Entity<Usuario>()
+            modelBuilder.Entity<UsuarioIdentity>()
                         .Property(c => c.EmailConfirmed)
                         .IsRequired();
 
-            modelBuilder.Entity<Usuario>()
+            modelBuilder.Entity<UsuarioIdentity>()
                         .Property(c => c.PasswordHash)
-                        .HasColumnType("varchar(max)");
+                        .HasColumnType("nvarchar(max)");
 
-            modelBuilder.Entity<Usuario>()
+            modelBuilder.Entity<UsuarioIdentity>()
                         .Property(c => c.SecurityStamp)
-                        .HasColumnType("varchar(max)");
+                        .HasColumnType("nvarchar(max)");
 
-            modelBuilder.Entity<Usuario>()
+            modelBuilder.Entity<UsuarioIdentity>()
                         .Property(c => c.ConcurrencyStamp)
-                        .HasColumnType("varchar(max)");
+                        .HasColumnType("nvarchar(max)");
 
-            modelBuilder.Entity<Usuario>()
+            modelBuilder.Entity<UsuarioIdentity>()
                         .Property(c => c.PhoneNumber)
-                        .HasColumnType("varchar(max)");
+                        .HasColumnType("nvarchar(max)");
 
-            modelBuilder.Entity<Usuario>()
+            modelBuilder.Entity<UsuarioIdentity>()
                         .Property(c => c.PhoneNumberConfirmed)
                         .IsRequired();
 
-            modelBuilder.Entity<Usuario>()
+            modelBuilder.Entity<UsuarioIdentity>()
                         .Property(c => c.TwoFactorEnabled)
                         .IsRequired();
 
-            modelBuilder.Entity<Usuario>()
+            modelBuilder.Entity<UsuarioIdentity>()
                         .Property(c => c.LockoutEnd);
 
-            modelBuilder.Entity<Usuario>()
+            modelBuilder.Entity<UsuarioIdentity>()
                         .Property(c => c.LockoutEnabled)
                         .IsRequired();
 
-            modelBuilder.Entity<Usuario>()
+            modelBuilder.Entity<UsuarioIdentity>()
                         .Property(c => c.AccessFailedCount)
                         .IsRequired();
 
-            modelBuilder.Entity<Usuario>()
+            modelBuilder.Entity<UsuarioIdentity>()
                         .HasMany(c => c.UserClaims)
                         .WithOne()
                         .OnDelete(DeleteBehavior.Cascade)
                         .HasForeignKey(c => c.UserId);
 
-            modelBuilder.Entity<Usuario>()
-                        .HasMany(c => c.UserRoles)
+            modelBuilder.Entity<UsuarioIdentity>()
+                        .HasOne(c => c.Usuario)
                         .WithOne()
                         .OnDelete(DeleteBehavior.Cascade)
-                        .HasForeignKey(c => c.UserId);
+                        .HasForeignKey(typeof(UsuarioIdentity), "Id");
 
-            modelBuilder.Entity<Role>()
+            modelBuilder.Entity<IdentityRole<string>>()
+                        .ToTable("Role")
                         .HasKey(c => c.Id);
 
-            modelBuilder.Entity<Role>()
+            modelBuilder.Entity<IdentityRole<string>>()
                         .Property(c => c.Id)
                         .HasColumnType("varchar(450)")
+                        .HasMaxLength(450)
                         .ValueGeneratedNever();
 
-            modelBuilder.Entity<Role>()
+            modelBuilder.Entity<IdentityRole<string>>()
                         .Property(c => c.Name)
                         .HasColumnType("varchar(450)")
+                        .HasMaxLength(450)
                         .IsRequired();
 
-            modelBuilder.Entity<Role>()
+            modelBuilder.Entity<IdentityRole<string>>()
                         .Property(c => c.NormalizedName)
+                        .HasMaxLength(450)
                         .HasColumnType("varchar(450)");
 
-            modelBuilder.Entity<Role>()
+            modelBuilder.Entity<IdentityRole<string>>()
                         .Property(c => c.ConcurrencyStamp)
                         .HasColumnType("varchar(max)");
 
             modelBuilder.Entity<IdentityUserClaim<string>>()
+                        .ToTable("UsuarioIdentityClaims")
                         .HasKey(c => c.Id);
 
-            modelBuilder.Entity<IdentityUserClaim<string>>()
-                        .ToTable("UsuarioClaims")
+            modelBuilder.Entity<IdentityUserClaim<string>>()                        
                         .Property(c => c.Id)
                         .ValueGeneratedOnAdd();
 
@@ -250,13 +351,15 @@ namespace CA.Repositorios.Channel.Contexto
                         .HasKey(c => new { c.UserId, c.RoleId });
 
             modelBuilder.Entity<IdentityUserRole<string>>()
-                        .ToTable("UsuarioRoles")
+                        .ToTable("UsuarioIdentityRoles")
                         .Property(c => c.RoleId)
+                        .HasMaxLength(450)
                         .HasColumnType("varchar(450)")
                         .ValueGeneratedNever();
 
             modelBuilder.Entity<IdentityUserRole<string>>()
                         .Property(c => c.UserId)
+                        .HasMaxLength(450)
                         .HasColumnType("varchar(450)")
                         .ValueGeneratedNever();
 
@@ -266,6 +369,7 @@ namespace CA.Repositorios.Channel.Contexto
             modelBuilder.Entity<IdentityRoleClaim<string>>()
                         .ToTable("RoleClaims")
                         .Property(c => c.Id)
+                        .HasMaxLength(450)
                         .HasColumnType("varchar(450)")
                         .ValueGeneratedOnAdd();
 

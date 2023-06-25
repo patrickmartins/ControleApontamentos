@@ -1,11 +1,12 @@
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { FormModel } from 'src/app/common/models/form.model';
 import 'moment/locale/pt-br';
 import * as moment from 'moment';
 
+import { FormModel } from 'src/app/common/models/form.model';
 import { ValidatorWrapper } from 'src/app/common/validators/validator-wrapper';
 import { IModel } from 'src/app/common/models/model';
 import { ValidatorTimeMin } from 'src/app/common/validators/validator-time-min';
+import { TempoHelper } from 'src/app/helpers/tempo.helper';
 
 export class NovoApontamento extends FormModel<NovoApontamento> implements IModel<NovoApontamento> {
 	
@@ -31,7 +32,7 @@ export class NovoApontamento extends FormModel<NovoApontamento> implements IMode
 
 		model.idTarefa = form.contains('idTarefa') ? form.controls['idTarefa'].value : '';
 		model.data = form.contains('data') ? moment(form.controls['data'].value).toDate() : new Date();
-		model.tempoTotal = form.contains('tempoTotal') ? this.stringParaMinutos(form.controls['tempoTotal'].value) : 0;
+		model.tempoTotal = form.contains('tempoTotal') ? TempoHelper.stringParaMinutos(form.controls['tempoTotal'].value) : 0;
 		model.comentario = form.contains('comentario') ? form.controls['comentario'].value : '';
 		model.colecao = form.contains('colecao') ? form.controls['colecao'].value : '';		
 
@@ -53,15 +54,5 @@ export class NovoApontamento extends FormModel<NovoApontamento> implements IMode
 		}
 
 		return apontamento;
-	}
-
-	public formatarTempoTotal(format: string): string {
-		return moment.utc(this.tempoTotal*1000).format(format);
-	}
-
-	private stringParaMinutos(valor: any): number {
-		const tempo = moment.duration(valor);
-
-		return tempo.minutes() + (tempo.hours() * 60);
 	}
 }

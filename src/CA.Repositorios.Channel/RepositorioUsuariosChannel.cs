@@ -1,6 +1,6 @@
 ﻿using CA.Core.Entidades.Channel;
 using CA.Core.Interfaces.Channel;
-using CA.Repositorios.Channel.Contexto;
+using CA.Repositorios.Contexto;
 using CA.Util.Extensions;
 
 namespace CA.Repositorios.Channel
@@ -41,17 +41,17 @@ namespace CA.Repositorios.Channel
 
         public UsuarioChannel? ObterUsuarioPorId(int id)
         {
-            return Set<UsuarioChannel>().FirstOrDefault(c => c.Id == id);
+            return Set<UsuarioChannel>().FirstOrDefault(c => c.Ativo && c.Id == id);
         }
 
         public UsuarioChannel? ObterUsuarioPorEmail(string email)
         {
-            return Set<UsuarioChannel>().FirstOrDefault(c => c.Email.ToLower().Equals(email.ToLower()));
+            return Set<UsuarioChannel>().FirstOrDefault(c => c.Ativo && c.Email.ToLower().Equals(email.ToLower()));
         }
 
         public UsuarioChannel? ObterUsuarioPorNomeCompleto(string nomeCompleto)
         {
-            return Set<UsuarioChannel>().FirstOrDefault(c => c.NomeCompleto.ToLower().Equals(nomeCompleto.ToLower()));
+            return Set<UsuarioChannel>().FirstOrDefault(c => c.Ativo && c.NomeCompleto.ToLower().Equals(nomeCompleto.ToLower()));
         }
     }
 }

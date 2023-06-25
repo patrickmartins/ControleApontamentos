@@ -2,7 +2,7 @@ import { FormGroup } from "@angular/forms";
 import { filter } from "rxjs/operators";
 
 import { Erro } from "../models/erro";
-import { FormModel } from "../models/form.model";
+import { FormModel } from 'src/app/common/models/form.model';
 
 export class FormBase<TModel extends FormModel<TModel>> {
     public formGroup!: FormGroup;

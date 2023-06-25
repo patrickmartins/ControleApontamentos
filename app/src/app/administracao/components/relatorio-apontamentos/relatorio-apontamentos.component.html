@@ -1,0 +1,160 @@
+<div *ngIf="usuarioLogado" class="container s4 relatorio-apontamentos">
+    <div class="loading-spinning" *ngIf="carregandoFiltros">
+        <mat-spinner></mat-spinner>    
+    </div>
+    
+    <mat-expansion-panel #painelParametros class="borda-1 filtros" [expanded]="true">
+        <mat-expansion-panel-header class="cabecalho" matRipple>
+            <h2 class="titulo">Relatório de Apontamentos</h2>
+        </mat-expansion-panel-header>
+
+        <ng-template matExpansionPanelContent>
+            <form class="corpo" [formGroup]="form.formGroup" novalidate>
+                <div class="linha-filtro">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Mês</mat-label>
+                        <mat-select formControlName="mes" id="mes" name="mes">
+                            <mat-option value="1">Janeiro</mat-option>
+                            <mat-option value="2">Fevereiro</mat-option>
+                            <mat-option value="3">Março</mat-option>
+                            <mat-option value="4">Abril</mat-option>
+                            <mat-option value="5">Maio</mat-option>
+                            <mat-option value="6">Junho</mat-option>
+                            <mat-option value="7">Julho</mat-option>
+                            <mat-option value="8">Agosto</mat-option>
+                            <mat-option value="9">Setembro</mat-option>
+                            <mat-option value="10">Outubro</mat-option>
+                            <mat-option value="11">Novembro</mat-option>
+                            <mat-option value="12">Dezembro</mat-option>
+                        </mat-select>
+                        <mat-error *ngFor="let error of form.errors.mes">{{ error.descricao }}</mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Ano</mat-label>
+                        <mat-select formControlName="ano" id="ano" name="ano">
+                            <mat-option *ngFor="let ano of anos" [value]="ano">{{ ano }}</mat-option>
+                        </mat-select>
+                        <mat-error *ngFor="let error of form.errors.ano">{{ error.descricao }}</mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Ordenação</mat-label>
+                        <mat-select formControlName="ordenacao" id="ordenacao" name="ordenacao">
+                            <mat-option value="0">Por nome de usuário</mat-option>
+                            <mat-option value="1">Por diferença de tempo</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+
+                <div class="linha-filtro">
+                    <mat-checkbox color="primary" formControlName="somenteSincronizados" id="somenteSincronizados" name="somenteSincronizados">
+                        Ignorar apontamentos não sincronizados
+                    </mat-checkbox>
+                    <mat-checkbox color="primary" formControlName="somenteUsuariosPonto" id="somenteUsuariosPonto" name="somenteUsuariosPonto">
+                        Somente usuários com cadastro no sistema de ponto
+                    </mat-checkbox>
+                    <mat-checkbox color="primary" formControlName="somenteComTempoTrabalhado"
+                        id="somenteComTempoTrabalhado" name="somenteComTempoTrabalhado">
+                        Somente usuários com tempo trabalhado
+                    </mat-checkbox>
+                </div>
+
+                <div class="acoes-filtro">
+                    <button mat-raised-button color="primary" (click)="visualizarRelatorio()" [disabled]="!form.formGroup.valid || carregandoRelatorio">
+                        <mat-icon fontIcon="search"></mat-icon>Visualizar</button>
+                </div>
+            </form>
+        </ng-template>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel class="borda-1 filtros" [expanded]="true" *ngIf="carregandoRelatorio || relatorio.data.length > 0">
+        <mat-expansion-panel-header class="cabecalho" matRipple>
+            <h2 class="titulo">Filtros</h2>
+        </mat-expansion-panel-header>
+
+        <ng-template matExpansionPanelContent>
+            <div class="configuracoes">
+                <mat-form-field appearance="outline" class="tolerancia">
+                    <mat-label>Tempo de Tolerância</mat-label>
+                    <input matInput type="time" [(ngModel)]="toleranciaModel" (keyup)="onFiltrarGrid()" [disabled]="carregandoRelatorio">
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" floatLabel="always">
+                    <mat-label>Unidade</mat-label>
+                    <mat-select id="unidade" name="unidade" [(ngModel)]="unidadeSelecionada" (selectionChange)="onFiltrarGrid()" [disabled]="carregandoRelatorio">
+                        <mat-option *ngFor="let unidade of unidades" [value]="unidade">{{ unidade.nome }}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" floatLabel="always">
+                    <mat-label>Gerente</mat-label>
+                    <mat-select id="gerente" name="gerente" [(ngModel)]="gerenteSelecionado" (selectionChange)="onFiltrarGrid()" [disabled]="carregandoRelatorio">
+                        <mat-option *ngFor="let gerente of gerentes" [value]="gerente">{{ gerente.nomeCompleto }}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" floatLabel="always">
+                    <mat-label>Situação</mat-label>
+                    <mat-select id="situacaoApontamento" name="situacaoApontamento" [(ngModel)]="situacaoSelecionada" (selectionChange)="onFiltrarGrid()" [disabled]="carregandoRelatorio">
+                        <mat-option value="0">Todas</mat-option>
+                        <mat-option value="1">Ok</mat-option>
+                        <mat-option value="2">Verificar</mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" floatLabel="always" class="busca-usuario">
+                    <mat-label>Usuário</mat-label>
+                    <input matInput (keyup)="onFiltrarGrid()" [(ngModel)]="nomeUsuarioBusca" placeholder="Buscar Usuário" #input  [disabled]="carregandoRelatorio">
+                </mat-form-field>
+
+                <div class="visualizacao">
+                    <mat-button-toggle-group class="visualizacao" #exibicao="matButtonToggleGroup" [(ngModel)]="tipoExibicaoSelecionado"  [disabled]="carregandoRelatorio">
+                        <mat-button-toggle selected value="quadros">
+                            <mat-icon>table_rows_narrow</mat-icon>
+                        </mat-button-toggle>
+                        <mat-button-toggle value="grid">
+                            <mat-icon>grid_on</mat-icon>
+                        </mat-button-toggle>
+                    </mat-button-toggle-group>
+                </div>
+            </div>
+        </ng-template>
+    </mat-expansion-panel>
+
+    <div class="resultados" *ngIf="tipoExibicaoSelecionado == 'quadros'">
+        <div *ngIf="!carregandoRelatorio">
+            <div *ngIf="relatorio?.connect() | async as rel">
+                <ng-container *ngIf="rel.length; else vazio">
+                    <quadro-relatorio-apontamentos class="quadro-relatorio" *ngFor="let relatorioUsuario of rel" [tolerancia]="tolerancia" [relatorio]="relatorioUsuario"></quadro-relatorio-apontamentos>
+                </ng-container>
+                <ng-template #vazio>                    
+                    <mat-card class="borda-1 template-sem-resultados" *ngIf="relatorio.data.length > 0">
+                        <span>A busca não retornou resultados</span>
+                    </mat-card>
+                </ng-template>
+            </div>
+        </div>
+        <div *ngIf="carregandoRelatorio">
+            <quadro-relatorio-apontamentos-loader class="quadro-relatorio" *ngFor="let index of [].constructor(20)"></quadro-relatorio-apontamentos-loader>
+        </div>
+    </div>
+
+    <div class="resultados" *ngIf="tipoExibicaoSelecionado == 'grid'">
+        <div *ngIf="relatorio?.connect() | async as rel">
+            <ng-container *ngIf="rel.length; else vazio">
+                <grid-relatorio-apontamentos *ngIf="!carregandoRelatorio" [relatorioDataSource]="relatorio" [tolerancia]="tolerancia"></grid-relatorio-apontamentos>
+            </ng-container>
+            <ng-template #vazio>                    
+                <mat-card class="borda-1 template-sem-resultados" *ngIf="relatorio.data.length > 0">
+                    <span>A busca não retornou resultados</span>
+                </mat-card>
+            </ng-template>
+        </div>
+        <div *ngIf="carregandoRelatorio">
+            <grid-relatorio-apontamentos-loader [quantidadeLinhas]="20"></grid-relatorio-apontamentos-loader>
+        </div>
+    </div>
+
+    <mat-paginator [pageSize]="20" [pageSizeOptions]="[15,20,25]" [ngStyle]="{'display': relatorio.data.length > 0 ? 'block' : 'none'}" class="borda-1 paginador"></mat-paginator>
+</div>

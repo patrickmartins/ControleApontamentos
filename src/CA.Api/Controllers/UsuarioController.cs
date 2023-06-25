@@ -1,6 +1,4 @@
-﻿using CA.Core.Valores;
-using CA.Identity.Interfaces;
-using CA.Identity.Models;
+﻿using CA.Aplicacao.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,32 +9,29 @@ namespace CA.Api.Controllers
     [Route("api/usuario")]
     public class UsuarioController : ControllerBase
     {
-        private readonly IServicoIdentidade _servicoIdentidade;
+        private readonly IServicoUsuariosCaApp _servicoUsuariosCa;
 
-        public UsuarioController(IServicoIdentidade servicoIdentidade)
+        public UsuarioController(IServicoUsuariosCaApp servicoUsuarios)
         {
-            _servicoIdentidade = servicoIdentidade;
+            _servicoUsuariosCa = servicoUsuarios;
         }
 
         [HttpGet]
         [Route("")]
         public async Task<ActionResult> ObterTodosUsuariosAsync()
         {
-            var usuarios = await _servicoIdentidade.ObterTodosUsuariosAsync();
+            var usuarios = await _servicoUsuariosCa.ObterTodosUsuariosAsync();
             
             return Ok(usuarios);
         }
 
-        [HttpPost]
-        [Route("")]
-        public async Task<ActionResult> AtualizarUsuarioAsync(AtualizarUsuarioApp model)
+        [HttpGet]
+        [Route("gerentes")]
+        public async Task<ActionResult> ObterTodosGerentesAsync()
         {
-            var resultado = await _servicoIdentidade.AtualizarUsuario(model);
+            var usuarios = await _servicoUsuariosCa.ObterTodosGerentesAsync();
 
-            if (!resultado.Sucesso)
-                return BadRequest(resultado.Erros);
-
-            return Ok();
+            return Ok(usuarios);
         }
     }
 }

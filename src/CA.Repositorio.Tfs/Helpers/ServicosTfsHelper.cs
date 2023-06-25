@@ -134,6 +134,28 @@ namespace CA.Repositorios.Tfs.Helpers
             }
         }
 
+        internal static int[] ExtrairIdsItemTrabalhoDeResultado(QueryWorkitemsResponse resultado)
+        {
+            var lista = new List<int>();
+
+            var ids = resultado.resultIds.SelectSingleNode("QueryIds");
+
+            if (ids != null)
+            {
+                foreach (XmlElement filho in ids.ChildNodes)
+                {
+                    if (filho.Name.Equals("id", StringComparison.OrdinalIgnoreCase))
+                    {
+                        var id = XmlConvert.ToInt32(filho.GetAttribute("s"));
+                        
+                        lista.Add(id);
+                    }
+                }
+            }
+
+            return lista.ToArray();
+        }
+
         internal static IEnumerable<ItemTrabalho> ExtrairItemTrabalhoDeResultadoXml(PageWorkitemsByIdsResponse resultado, string colecao, IEnumerable<CampoTfs> camposSuportadosColecao)
         {
             var workitens = new List<ItemTrabalho>();
@@ -217,7 +239,14 @@ namespace CA.Repositorios.Tfs.Helpers
                         {
                             var valorTextoLongoTratado = TratarXmlApontamento((string)valorTextoLongo);
 
-                            workitem.ListaApontamentos = XmlHelper.DesserializarDeString<ListaApontamentos>(valorTextoLongoTratado);
+                            try
+                            {
+                                workitem.ListaApontamentos = XmlHelper.DesserializarDeString<ListaApontamentos>(valorTextoLongoTratado);
+                            }
+                            catch
+                            {
+
+                            }
                         }
                     }
 

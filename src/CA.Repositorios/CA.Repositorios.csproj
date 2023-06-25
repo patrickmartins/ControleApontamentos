@@ -21,7 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CA.Core\CA.Core.csproj" />
-    <ProjectReference Include="..\CA.Identity.Entidades\CA.Identity.Entidades.csproj" />
+    <ProjectReference Include="..\CA.Identity\CA.Identity.csproj" />
   </ItemGroup>
 
 </Project>

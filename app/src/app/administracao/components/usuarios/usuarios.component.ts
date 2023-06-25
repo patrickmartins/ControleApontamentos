@@ -5,7 +5,6 @@ import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
 import { forkJoin } from 'rxjs';
 
-import { UsuarioService } from '../../services/usuario.service';
 import { TfsService } from 'src/app/core/services/tfs.service';
 import { ChannelService } from 'src/app/core/services/channel.service';
 import { PontoService } from 'src/app/apontamento/services/ponto.service';
@@ -17,7 +16,11 @@ import { ContaService } from 'src/app/core/services/conta.service';
 import { PaginatorPortugues } from 'src/app/core/configs/paginator-portugues';
 import { ModalSalvarUsuarioComponent } from '../modal-salvar-usuario/modal-salvar-usuario.component';
 import { Usuario } from 'src/app/core/models/usuario';
-import { AtualizarUsuario } from '../../models/atualizar-usuario';
+import { AtualizarContaUsuario } from '../../../core/models/atualizar-conta-usuario';
+import { Erro } from 'src/app/common/models/erro';
+import { UnidadeService } from '../../services/unidade.service';
+import { Unidade } from 'src/app/core/models/unidade';
+import { UsuarioService } from '../../services/usuario.service';
 
 @Component({
     selector: 'usuarios',
@@ -30,12 +33,14 @@ import { AtualizarUsuario } from '../../models/atualizar-usuario';
 })
 export class UsuariosComponent extends BaseComponent implements OnInit {
 
-    public colunasGridUsuarios: string[] = ["email", "nomeCompleto", "usuarioTfs", "usuarioChannel", "numeroFolha", "administrador", "acoes"];
+    public colunasGridUsuarios: string[] = ["email", "nomeCompleto", "unidade", "gerente", "usuarioTfs", "usuarioChannel", "numeroFolha", "administrador", "acoes"];
 
     public usuariosApp: MatTableDataSource<Usuario> = new MatTableDataSource<Usuario>([]);
     public usuariosTfs: UsuarioTfs[] = [];
     public usuariosChannel: UsuarioChannel[] = [];
     public funcionarios: Funcionario[] = [];
+    public unidades: Unidade[] = [];
+    public gerentes: Usuario[] = [];
 
     public carregando: boolean = true;
     public salvando: boolean = false;
@@ -46,10 +51,11 @@ export class UsuariosComponent extends BaseComponent implements OnInit {
     constructor(servicoConta: ContaService,
         snackBar: MatSnackBar,
         private dialog: MatDialog,
-        private servicoUsuario: UsuarioService,
-        private servicoTfs: TfsService,
+        private servicotfs: TfsService,
         private servicoChannel: ChannelService,
-        private servicoPonto: PontoService) {
+        private servicoPonto: PontoService,
+        private servicoUsuario: UsuarioService,
+        private servicoUnidade: UnidadeService) {
         super(servicoConta, snackBar);
     }
 
@@ -57,10 +63,12 @@ export class UsuariosComponent extends BaseComponent implements OnInit {
         this.carregando = true;
 
         forkJoin({
-            usuariosApp: this.servicoUsuario.obterTodosUsuarios(),
-            usuariosTfs: this.servicoTfs.obterTodosUsuarios(),
+            usuariosApp: this.servicoConta.obterTodasContas(),
+            usuariosTfs: this.servicotfs.obterTodosUsuarios(), 
             usuariosChannel: this.servicoChannel.obterTodosUsuarios(),
-            funcionarios: this.servicoPonto.obterTodosFuncionarios()
+            funcionarios: this.servicoPonto.obterTodosFuncionarios(),
+            unidades: this.servicoUnidade.obterTodasUnidades(),
+            gerentes: this.servicoUsuario.obterTodosGerentes()
         })
         .subscribe({
             next: (resultado: any) => {
@@ -68,11 +76,15 @@ export class UsuariosComponent extends BaseComponent implements OnInit {
                 this.usuariosTfs = resultado.usuariosTfs;
                 this.usuariosChannel = resultado.usuariosChannel;
                 this.funcionarios = resultado.funcionarios;
-
+                this.unidades = resultado.unidades;
+                this.gerentes = resultado.gerentes;
+                
                 for (let usuario of usuariosApp) {
                     usuario.usuarioChannel = this.usuariosChannel.find(c => c.id == usuario.idUsuarioChannel);
                     usuario.usuarioTfs = this.usuariosTfs.find(c => c.id == usuario.idUsuarioTfs);
                     usuario.funcionarioPonto = this.funcionarios.find(c => c.id == usuario.idFuncionarioPonto);
+                    usuario.unidade = this.unidades.find(c => c.id == usuario.idUnidade);
+                    usuario.gerente = this.gerentes.find(c => c.id == usuario.idGerente);
                 }
 
                 this.usuariosApp = new MatTableDataSource(usuariosApp);
@@ -85,10 +97,10 @@ export class UsuariosComponent extends BaseComponent implements OnInit {
     public editarUsuario(usuario: Usuario) {
         let dialogRef = this.dialog.open(ModalSalvarUsuarioComponent, {
             width: '500px',
-            height: '470px',
+            height: '600px',
             disableClose: true,
             data: {
-                usuario: new AtualizarUsuario().criarNovo({
+                usuario: new AtualizarContaUsuario().criarNovo({
                     idUsuario: usuario.id,
                     idUsuarioTfs: usuario.idUsuarioTfs,
                     idUsuarioChannel: usuario.idUsuarioChannel,
@@ -97,26 +109,32 @@ export class UsuariosComponent extends BaseComponent implements OnInit {
                     nomeCompleto: usuario.nomeCompleto,
                     usuarioTfs: usuario.usuarioTfs,
                     usuarioChannel: usuario.usuarioChannel,
-                    funcionarioPonto: usuario.funcionarioPonto
+                    funcionarioPonto: usuario.funcionarioPonto,
+                    gerente: usuario.gerente,
+                    unidade: usuario.unidade
                 }),
                 usuariosTfs: this.usuariosTfs,
                 usuariosChannel: this.usuariosChannel,
-                funcionarios: this.funcionarios
+                funcionarios: this.funcionarios,
+                unidades: this.unidades,
+                gerentes: this.gerentes
             }
         });
 
-        dialogRef.afterClosed().subscribe((usuarioAlterado: AtualizarUsuario) => {
+        dialogRef.afterClosed().subscribe((usuarioAlterado: AtualizarContaUsuario) => {
             if (usuarioAlterado) {
                 this.salvando = true;
 
-                this.servicoUsuario.salvarUsuario(usuarioAlterado).subscribe({
+                this.servicoConta.salvarContaUsuario(usuarioAlterado).subscribe({
                     next: () => {
                         var usuario = this.usuariosApp.data.find(c => c.id == usuarioAlterado.idUsuario);
 
                         usuario!.usuarioTfs = usuarioAlterado.usuarioTfs;
                         usuario!.usuarioChannel = usuarioAlterado.usuarioChannel;
                         usuario!.funcionarioPonto = usuarioAlterado.funcionarioPonto;
-                        usuario!.ehAdministrador = usuarioAlterado.ehAdministrador;
+                        usuario!.unidade = usuarioAlterado.unidade;
+                        usuario!.gerente = usuarioAlterado.gerente;
+                        usuario!.ehAdministrador = usuarioAlterado.ehAdministrador;                        
 
                         this.snackBar.open("Usuário salvo com sucesso!", "OK", {
                             duration: 5000,
@@ -125,13 +143,17 @@ export class UsuariosComponent extends BaseComponent implements OnInit {
                             panelClass: "sucesso"
                         });
                     },
-                    error: () => {
-                        this.snackBar.open("Ocorreu um erro interno. Atualize a página e tente novamente.", "OK", {
-                            duration: 5000,
-                            verticalPosition: "top",
-                            horizontalPosition: "center",
-                            panelClass: "erro"
-                        });
+                    error: (erros: Erro[]) => {
+                        for(let erro of erros) {
+                            this.snackBar.open(erro.descricao, "OK", {
+                                duration: 5000,
+                                verticalPosition: "top",
+                                horizontalPosition: "center",
+                                panelClass: "erro"
+                            });
+                        }
+
+                        this.salvando = false;
                     },
                     complete: () => this.salvando = false
                 });

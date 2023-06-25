@@ -1,6 +1,6 @@
 ﻿using CA.Core.Entidades.Channel;
 using CA.Core.Interfaces.Channel;
-using CA.Repositorios.Channel.Contexto;
+using CA.Repositorios.Contexto;
 using CA.Util.Extensions;
 using Microsoft.EntityFrameworkCore;
 
