@@ -205,6 +205,8 @@ namespace CA.Identity.Servicos
             var colecoes = usuarioTfs is not null ? await _servicoTfs.ObterColecoesPorUsuarioAsync(usuarioTfs) : new string[0];
             var roles = await _userManager.GetRolesAsync(usuarioIdentity);
 
+            claims.Add(new Claim(TiposClaims.Email, usuarioIdentity.Email));
+            claims.Add(new Claim(TiposClaims.NomeCompleto, usuarioIdentity.Usuario.NomeCompleto));
             claims.Add(new Claim(TiposClaims.ColecoesTfs, string.Join(";", colecoes)));
 
             foreach (var role in roles)
