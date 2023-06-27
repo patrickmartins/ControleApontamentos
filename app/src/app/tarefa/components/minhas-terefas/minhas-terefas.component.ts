@@ -39,7 +39,7 @@ export class MinhasTerefasComponent extends BaseComponent implements OnInit {
 
 	private obterTarefasAtivas(): void {
 		if(this.usuarioLogado?.possuiContaTfs) {
-			let tarefasFixadas = TarefaHelper.obterTarefasFixadas(this.usuarioLogado!.nomeUsuario);
+			let tarefasFixadas = TarefaHelper.obterTarefasFixadas(this.usuarioLogado!.email);
 			let tarefasAgrupadas = TarefaHelper.agruparTarefasFixadas(tarefasFixadas);
 			
 			forkJoin({

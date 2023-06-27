@@ -24,7 +24,7 @@
 				</div>
 			</div>
             <div class="adicionar-apontamento" *ngIf="tarefa.apontamentoHabilitado && permiteApontar">
-				<button mat-icon-button title="Novo Apontamento" (click)="novoApontamento()">
+				<button mat-icon-button title="Novo Apontamento" (click)="novoApontamento()" [disabled]="salvandoApontamento">
 					<mat-icon class="nav-toolbar-icon-menu">playlist_add</mat-icon>
 				</button>
 			</div>

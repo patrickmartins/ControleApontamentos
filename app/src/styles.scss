@@ -6,7 +6,12 @@ body {
 
 html,
 body {
+    display: inline;
 	height: 100%;
+}
+
+app-root {
+    overflow: overlay;
 }
 
 .badge {

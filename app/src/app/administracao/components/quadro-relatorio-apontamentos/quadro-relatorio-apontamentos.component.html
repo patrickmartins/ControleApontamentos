@@ -20,7 +20,7 @@
                 <ng-template #verificar><span title="Verificar" class="badge error">verificar</span></ng-template>
             </div>
             <div class="acoes">
-                <a matRipple class="mat-icon-button" target="_blank" title="Visualizar apontamentos do usuários"
+                <a matRipple class="mat-icon-button" target="_blank" title="Visualizar apontamentos do usuário"
                         [routerLink]="['/administracao/usuario/apontamento/por-mes']" 
                         [queryParams]="{ mes: relatorio.mesReferencia, ano: relatorio.anoReferencia, usuario: relatorio.usuario.id }">
                             <mat-icon>search</mat-icon>
