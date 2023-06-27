@@ -47,7 +47,7 @@ export class QuadroTarefaComponent extends BaseComponent {
 		if (this.permiteFixar) {
 			this.tarefa.fixada = true;
 
-			TarefaHelper.fixarTarefa(this.usuarioLogado!.nomeUsuario, this.tarefa);
+			TarefaHelper.fixarTarefa(this.usuarioLogado!.email, this.tarefa);
 		}
 	}
 
@@ -55,7 +55,7 @@ export class QuadroTarefaComponent extends BaseComponent {
 		if (this.permiteFixar) {
 			this.tarefa.fixada = false;
 
-			TarefaHelper.desafixarTarefa(this.usuarioLogado!.nomeUsuario, this.tarefa);
+			TarefaHelper.desafixarTarefa(this.usuarioLogado!.email, this.tarefa);
 		}
 	}
 
@@ -84,7 +84,7 @@ export class QuadroTarefaComponent extends BaseComponent {
 		this.servicoTfs
 			.salvarApontamento(novoApontamento).subscribe({
 				next: (apontamento) => {
-					let usuario = this.usuarioLogado?.nomeUsuario.split('@')[0];
+					let usuario = this.usuarioLogado?.nomeUsuarioTfs;
 
 					this.tarefa.adicionarApontamento(apontamento!);
 

@@ -32,6 +32,8 @@ export class RelatorioApontamentosComponent extends BaseComponent implements OnI
     public form = new FormBase<FiltroRelatorio>(FiltroRelatorio);
 
     public anos: number[] = [];
+    public meses: any[] = [];
+
     public unidades: Unidade[] = [];
     public gerentes: Usuario[] = [];
 
@@ -63,14 +65,15 @@ export class RelatorioApontamentosComponent extends BaseComponent implements OnI
     constructor(servicoConta: ContaService, snackBar: MatSnackBar, private servicoUsuario: UsuarioService, private servicoRelatorio: RelatorioService, private servicoUnidade: UnidadeService) {
         super(servicoConta, snackBar);
 
-        this.anos = Array(this.anoAtual - (this.anoAtual - 10)).fill('').map((v, i) => this.anoAtual - i).sort((n1, n2) => n1 - n2);
-
         this.form.formGroup.controls['ano'].setValue(this.anoAtual);
-        this.form.formGroup.controls['mes'].setValue(this.mesAtual.toString());
+        this.form.formGroup.controls['mes'].setValue(this.mesAtual);
         this.form.formGroup.controls['ordenacao'].setValue("0");
         this.form.formGroup.controls['somenteSincronizados'].setValue(false);
         this.form.formGroup.controls['somenteUsuariosPonto'].setValue(true);
         this.form.formGroup.controls['somenteComTempoTrabalhado'].setValue(true);
+
+        this.anos = this.obterOpcoesFiltroAnos();
+        this.meses = this.obterOpcoesFiltroMeses();
     }
 
     public ngOnInit(): void {
@@ -80,26 +83,26 @@ export class RelatorioApontamentosComponent extends BaseComponent implements OnI
             unidades: this.servicoUnidade.obterTodasUnidades(),
             gerentes: this.servicoUsuario.obterTodosGerentes()
         })
-        .subscribe({
-            next: resultado => {
-                var unidades = resultado.unidades;
-                var gerentes = resultado.gerentes;
+            .subscribe({
+                next: resultado => {
+                    var unidades = resultado.unidades;
+                    var gerentes = resultado.gerentes;
 
-                this.unidadeSelecionada = new Unidade().criarNovo({
-                    id: "0",
-                    nome: "Todas"
-                });
+                    this.unidadeSelecionada = new Unidade().criarNovo({
+                        id: "0",
+                        nome: "Todas"
+                    });
 
-                this.gerenteSelecionado = new Usuario().criarNovo({
-                    id: "0",
-                    nomeCompleto: "Todos"
-                });
+                    this.gerenteSelecionado = new Usuario().criarNovo({
+                        id: "0",
+                        nomeCompleto: "Todos"
+                    });
 
-                this.unidades = [this.unidadeSelecionada!].concat(unidades);
-                this.gerentes = [this.gerenteSelecionado!].concat(gerentes);
-            },
-            complete: () => this.carregandoFiltros = false
-        });
+                    this.unidades = [this.unidadeSelecionada!].concat(unidades);
+                    this.gerentes = [this.gerenteSelecionado!].concat(gerentes);
+                },
+                complete: () => this.carregandoFiltros = false
+            });
     }
 
     public visualizarRelatorio(): void {
@@ -117,8 +120,8 @@ export class RelatorioApontamentosComponent extends BaseComponent implements OnI
                         this.relatorio = new MatTableDataSource<RelatorioApontamentosUsuarioPorMes>(relatorios);
                         this.relatorio.paginator = this.paginator;
 
-                        this.relatorio.filterPredicate = this.filtrarGrid;   
-                        
+                        this.relatorio.filterPredicate = this.filtrarGrid;
+
                         this.onFiltrarGrid();
                     },
                     complete: () => this.carregandoRelatorio = false
@@ -145,8 +148,27 @@ export class RelatorioApontamentosComponent extends BaseComponent implements OnI
         var situacao = filtro.situacao ? (filtro.situacao == "1" ? SituacaoApontamentos.Ok : SituacaoApontamentos.Verificar) : undefined;
 
         return (!filtro.nomeCompleto || filtro.nomeCompleto == "" || relatorio.usuario.nomeCompleto.toLowerCase().indexOf(filtro.nomeCompleto) >= 0) &&
-                (!filtro.idUnidade || filtro.idUnidade == "" || relatorio.usuario.unidade?.id == filtro.idUnidade) &&
-                (!filtro.idGerente || filtro.idGerente == "" || relatorio.usuario.idGerente == filtro.idGerente) &&
-                (!situacao || relatorio.calcularSituacao(filtro.tolerancia) == situacao);
+            (!filtro.idUnidade || filtro.idUnidade == "" || relatorio.usuario.unidade?.id == filtro.idUnidade) &&
+            (!filtro.idGerente || filtro.idGerente == "" || relatorio.usuario.idGerente == filtro.idGerente) &&
+            (!situacao || relatorio.calcularSituacao(filtro.tolerancia) == situacao);
+    }
+
+    private obterOpcoesFiltroAnos(): number[] {
+        return Array(this.anoAtual - (this.anoAtual - 10)).fill('').map((v, i) => this.anoAtual - i).sort((n1, n2) => n1 - n2);
+    }
+
+    private obterOpcoesFiltroMeses(): any[] {
+        return ([{ mes: 1, nome: "Janeiro" },
+        { mes: 2, nome: "Fevereiro" },
+        { mes: 3, nome: "Março" },
+        { mes: 4, nome: "Abril" },
+        { mes: 5, nome: "Maio" },
+        { mes: 6, nome: "Junho" },
+        { mes: 7, nome: "Julho" },
+        { mes: 8, nome: "Agosto" },
+        { mes: 9, nome: "Setembro" },
+        { mes: 10, nome: "Outubro" },
+        { mes: 11, nome: "Novembro" },
+        { mes: 12, nome: "Dezembro" }]).filter(c => c.mes <= this.mesAtual);
     }
 }

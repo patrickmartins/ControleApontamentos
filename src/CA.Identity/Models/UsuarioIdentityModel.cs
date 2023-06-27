@@ -11,7 +11,8 @@ namespace CA.Identity.Models
         public Guid Id { get; set; }
         
         public string NomeCompleto { get; set; }
-        public string Email { get; set; }        
+        public string Email { get; set; }
+        public string? NomeUsuarioTfs { get; set; }
         public string? IdUsuarioTfs { get; set; }
         public int? IdUsuarioChannel { get; set; }
         public int? IdFuncionarioPonto { get; set; }
@@ -24,9 +25,6 @@ namespace CA.Identity.Models
 
         [JsonIgnore]
         public string? NomeUsuarioChannel { get; set; }
-
-        [JsonIgnore]
-        public string? NomeUsuarioTfs { get; set; }
 
         [JsonIgnore]
         public string? DominioTfs { get; set; }

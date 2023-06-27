@@ -17,6 +17,11 @@
         text-transform: uppercase;
     }
 
+    & .mat-column-unidade {
+        padding-left: .5em;
+        padding-right: .5em;
+    }
+
     & .mat-column-tempoTrabalhado {
         width: 5em;
         text-align: center;
@@ -37,5 +42,9 @@
 
     & .mat-column-situacao {     
         text-align: center;        
+    }
+
+    & .mat-column-acoes .mat-icon {     
+        vertical-align: middle;       
     }
 }

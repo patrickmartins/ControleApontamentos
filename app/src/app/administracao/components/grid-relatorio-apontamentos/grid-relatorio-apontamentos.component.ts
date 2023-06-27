@@ -15,7 +15,7 @@ export class GridRelatorioApontamentosComponent {
     @Input()
     public tolerancia: number = 0;
 
-    public colunasGridRelatorio: string[] = ["email", "nomeCompleto", "unidade", "gerente", "tempoTrabalhado", "tempoApontadoChannel", "tempoApontadoTfs", "diferenca", "situacao"];
+    public colunasGridRelatorio: string[] = ["email", "nomeCompleto", "unidade", "gerente", "tempoTrabalhado", "tempoApontadoChannel", "tempoApontadoTfs", "diferenca", "situacao", "acoes"];
 
     constructor() { }
 }

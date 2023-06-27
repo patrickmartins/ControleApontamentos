@@ -14,18 +14,7 @@
                     <mat-form-field appearance="outline">
                         <mat-label>Mês</mat-label>
                         <mat-select formControlName="mes" id="mes" name="mes">
-                            <mat-option value="1">Janeiro</mat-option>
-                            <mat-option value="2">Fevereiro</mat-option>
-                            <mat-option value="3">Março</mat-option>
-                            <mat-option value="4">Abril</mat-option>
-                            <mat-option value="5">Maio</mat-option>
-                            <mat-option value="6">Junho</mat-option>
-                            <mat-option value="7">Julho</mat-option>
-                            <mat-option value="8">Agosto</mat-option>
-                            <mat-option value="9">Setembro</mat-option>
-                            <mat-option value="10">Outubro</mat-option>
-                            <mat-option value="11">Novembro</mat-option>
-                            <mat-option value="12">Dezembro</mat-option>
+                            <mat-option *ngFor="let mes of meses" [value]="mes.mes" selected>{{ mes.nome }}</mat-option>
                         </mat-select>
                         <mat-error *ngFor="let error of form.errors.mes">{{ error.descricao }}</mat-error>
                     </mat-form-field>
@@ -110,10 +99,10 @@
 
                 <div class="visualizacao">
                     <mat-button-toggle-group class="visualizacao" #exibicao="matButtonToggleGroup" [(ngModel)]="tipoExibicaoSelecionado"  [disabled]="carregandoRelatorio">
-                        <mat-button-toggle selected value="quadros">
+                        <mat-button-toggle selected value="quadros" title="Visualização em quadros">
                             <mat-icon>table_rows_narrow</mat-icon>
                         </mat-button-toggle>
-                        <mat-button-toggle value="grid">
+                        <mat-button-toggle value="grid" title="Visualização em lista">
                             <mat-icon>grid_on</mat-icon>
                         </mat-button-toggle>
                     </mat-button-toggle-group>

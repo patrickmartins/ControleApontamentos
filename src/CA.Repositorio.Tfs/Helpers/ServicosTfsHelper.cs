@@ -146,9 +146,15 @@ namespace CA.Repositorios.Tfs.Helpers
                 {
                     if (filho.Name.Equals("id", StringComparison.OrdinalIgnoreCase))
                     {
-                        var id = XmlConvert.ToInt32(filho.GetAttribute("s"));
-                        
-                        lista.Add(id);
+                        var idInicio = filho.HasAttribute("s") ? XmlConvert.ToInt32(filho.GetAttribute("s")) : 0;
+                        var idFim = filho.HasAttribute("e") ? XmlConvert.ToInt32(filho.GetAttribute("e")) : idInicio;
+
+                        for(int i = idInicio + 1; i <= idFim; i++)
+                        {
+                            lista.Add(i);
+                        }
+
+                        lista.Add(idInicio);
                     }
                 }
             }

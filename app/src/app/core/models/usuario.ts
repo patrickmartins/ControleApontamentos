@@ -11,7 +11,7 @@ export class Usuario implements IModel<Usuario> {
     public idUsuarioChannel?: number;
     public idFuncionarioPonto?: number;
     public nomeCompleto: string = "";
-	public nomeUsuario: string = "";
+	public nomeUsuarioTfs: string = "";
 	public foto?: SafeUrl;
     public email: string = "";
 	public roles: string[] = [];
@@ -47,7 +47,7 @@ export class Usuario implements IModel<Usuario> {
             user.idUsuarioChannel = params.idUsuarioChannel;
             user.idFuncionarioPonto = params.idFuncionarioPonto;
 			user.nomeCompleto = params.nomeCompleto;
-			user.nomeUsuario = params.nomeUsuario;
+			user.nomeUsuarioTfs = params.nomeUsuarioTfs;
 			user.email = params.email;
 			user.roles = params.roles;
 			user.colecoes = params.colecoes;
