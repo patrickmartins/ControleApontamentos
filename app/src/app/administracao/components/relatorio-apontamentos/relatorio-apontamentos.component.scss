@@ -33,6 +33,11 @@
         ::ng-deep.mat-expansion-panel-content {
             .mat-expansion-panel-body {
                 padding: 0 24px 15px 24px;
+                display: flex;
+
+                & form {
+                    width: 100%;
+                }
             }
 
             .linha-filtro {
@@ -79,8 +84,8 @@
 
     & .configuracoes {
         margin-bottom: 1.3em;
-        display: flex;
-        margin-top: .5em;
+        display: inline-block;
+        width: 100%;
 
         & .tolerancia {
             margin-bottom: 0;
@@ -96,7 +101,10 @@
             margin-top: .1em;
             flex-grow: 1;
             text-align: end;
-            
+            display: flex;
+            float: right;
+            margin-top: 1em;
+
             & ::ng-deep.mat-button-toggle-button {
                 
                 & .mat-button-toggle-label-content {
@@ -110,11 +118,16 @@
                     font-size: 20px;
                 }
             }
-        }
 
-        & .mat-form-field {
-            margin-right: 1em;
+            & .mat-button-toggle-group {
+                align-self: center;
+            }
         }
+        
+        & .mat-form-field, .mat-checkbox {
+            margin-top: .5em;
+            margin-right: 1em;
+        }   
     }
 
     & .resultados {

@@ -47,12 +47,17 @@
             width: 100%;            
             margin-left: 0.8em;
             margin-right: 0.8em;
-            
+            overflow: hidden;
+
             & .nome-usuario {
                 font-weight: 500!important;
                 text-transform: uppercase;
                 margin: 0.2em 0 0.1em 0;
-
+                text-wrap: nowrap;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                display: block;
+                
                 & span {
                     text-transform: none;
                     font-weight: 400;

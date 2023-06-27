@@ -98,7 +98,7 @@
                 </mat-form-field>
 
                 <div class="visualizacao">
-                    <mat-button-toggle-group class="visualizacao" #exibicao="matButtonToggleGroup" [(ngModel)]="tipoExibicaoSelecionado"  [disabled]="carregandoRelatorio">
+                    <mat-button-toggle-group #exibicao="matButtonToggleGroup" [(ngModel)]="tipoExibicaoSelecionado"  [disabled]="carregandoRelatorio">
                         <mat-button-toggle selected value="quadros" title="Visualização em quadros">
                             <mat-icon>table_rows_narrow</mat-icon>
                         </mat-button-toggle>
