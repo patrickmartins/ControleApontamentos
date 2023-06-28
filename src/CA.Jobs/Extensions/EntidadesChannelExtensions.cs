@@ -46,8 +46,11 @@ namespace CA.Jobs.Extensions
             apontamento1.Comentario = apontamento2.Comentario;
             apontamento1.TempoApontado = apontamento2.TempoApontado;
             apontamento1.Tipo = apontamento2.Tipo;
+            apontamento1.ProjetoId = apontamento2.ProjetoId;
             apontamento1.Projeto = apontamento2.Projeto;
+            apontamento1.AtividadeId = apontamento2.AtividadeId;
             apontamento1.Atividade = apontamento2.Atividade;
+            apontamento1.UsuarioId = apontamento2.UsuarioId;
             apontamento1.Usuario = apontamento2.Usuario;
         }
     }

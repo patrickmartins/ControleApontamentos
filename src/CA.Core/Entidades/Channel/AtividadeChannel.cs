@@ -7,6 +7,8 @@ namespace CA.Core.Entidades.Channel
         public int Id { get; set; }
         public string Nome { get; set; }
         public string Codigo { get; set; }
+
+        public int ProjetoId { get; set; }
         public ProjetoChannel Projeto { get; set; }
 
         public IEnumerable<ApontamentoChannel> Apontamentos { get; set; }
@@ -20,7 +22,7 @@ namespace CA.Core.Entidades.Channel
         {
             var erros = new List<Erro>();
 
-            if (Projeto is null)
+            if (Projeto is null || ProjetoId == 0)
                 erros.Add(new Erro("O projeto não foi informado.", nameof(Projeto)));
 
             if (string.IsNullOrEmpty(Nome))
@@ -51,6 +53,7 @@ namespace CA.Core.Entidades.Channel
             return atividade.Id == Id &&
                     atividade.Codigo == Codigo &&
                     atividade.Nome == Nome &&
+                    atividade.ProjetoId == ProjetoId &&
                     atividade.Projeto == Projeto;
         }
 

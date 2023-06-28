@@ -6,6 +6,6 @@ namespace CA.Aplicacao.Interfaces
 {
     public interface IServicoRelatorioApp
     {
-        Task<Resultado<IEnumerable<RelatorioApontamentosUsuarioPorMes>>> ObterRelatorioDeApontamentosPorMesAsync(int mes, int ano, TipoOrdenacaoRelatorio ordenacao, bool somenteApontamentosSincronizados = false, bool somenteUsuariosComCadastroNoPonto = false, bool somenteUsuariosComTempoTrabalhado = false);
+        Task<Resultado<IEnumerable<RelatorioApontamentosUsuarioPorMes>>> ObterRelatorioDeApontamentosPorMesAsync(int mes, int ano, TipoOrdenacaoRelatorio ordenacao, bool somenteApontamentosAteDiaAnterior = false, bool somenteApontamentosSincronizados = false, bool somenteUsuariosComCadastroNoPonto = false, bool somenteUsuariosComTempoTrabalhado = false);
     }
 }

@@ -9,6 +9,7 @@ namespace CA.Aplicacao.Interfaces
         Task<IEnumerable<UsuarioModel>> ObterTodosUsuariosAsync();
         Task<IEnumerable<UsuarioModel>> ObterTodosGerentesAsync();
         Resultado<UsuarioModel?> ObterUsuarioPorId(Guid id);
+        Resultado<UsuarioModel?> ObterUsuarioPorEmail(string email);
         Task<Resultado> ExcluirUsuarioPorIdAsync(Guid id);
         Task<IEnumerable<UsuarioModel>> ObterUsuariosPorUnidadeAsync(string idUnidade);
         Task<Resultado<UsuarioModel>> ImportarUsuarioAsync(string email, string nomeCompleto);

@@ -110,6 +110,7 @@ namespace CA.Core.Servicos.CA
                 if (!resultadoUnidade.Sucesso)
                     return Resultado.DeErros<UsuarioModel>(resultadoUnidade.Erros);
 
+                usuario.IdUnidade = resultadoUnidade.Valor.Id;
                 usuario.Unidade = resultadoUnidade.Valor;
             }
             else
@@ -125,6 +126,7 @@ namespace CA.Core.Servicos.CA
                 if (!resultadoGerente.Sucesso)
                     return Resultado.DeErros<UsuarioModel>(resultadoGerente.Erros);
 
+                usuario.IdGerente = resultadoGerente.Valor.IdGerente;
                 usuario.Gerente = resultadoGerente.Valor;
             }
             else
@@ -171,6 +173,7 @@ namespace CA.Core.Servicos.CA
 
             usuario.ParametrosIntegracoes = new ParametrosIntegracao
             {
+                IdUsuario = usuario.Id,
                 DominioTfs = resultadoUsuarioTfs.Sucesso ? resultadoUsuarioTfs.Valor?.Dominio : null,
                 IdUsuarioTfs = resultadoUsuarioTfs.Sucesso ? resultadoUsuarioTfs.Valor?.Identidade?.Id : null,
                 TipoIdUsuarioTfs = resultadoUsuarioTfs.Sucesso ? resultadoUsuarioTfs.Valor?.Identidade?.Tipo : null,
@@ -208,6 +211,16 @@ namespace CA.Core.Servicos.CA
             var resultado = _servicoUsuarioCa.ObterUsuarioPorId(id.ToString());
 
             if(!resultado.Sucesso)
+                return Resultado.DeErros<UsuarioModel?>(resultado.Erros);
+
+            return Resultado.DeValor<UsuarioModel?>(resultado.Valor.UsuarioCaParaUsuarioModel());
+        }
+
+        public Resultado<UsuarioModel?> ObterUsuarioPorEmail(string email)
+        {
+            var resultado = _servicoUsuarioCa.ObterUsuarioPorEmail(email);
+
+            if (!resultado.Sucesso)
                 return Resultado.DeErros<UsuarioModel?>(resultado.Erros);
 
             return Resultado.DeValor<UsuarioModel?>(resultado.Valor.UsuarioCaParaUsuarioModel());

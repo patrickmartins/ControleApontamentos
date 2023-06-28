@@ -255,6 +255,25 @@ namespace CA.Aplicacao.Extensions
             };
         }
 
+        public static ApontamentosTfsMesModel ItemTrabalhoParaApontamentoTfsMesModel(this IEnumerable<ItemTrabalho> itensTrabalho, string usuario, DateOnly dataInicio, DateOnly dataFim)
+        {
+            var apontamentosDiarios = DateTimeHelper.ObterIntervalo(dataInicio, dataFim)
+                                                    .Select(c => itensTrabalho.ItemTrabalhoParaApontamentoTfsDiaModel(usuario, c))
+                                                    .ToList();
+
+            return new ApontamentosTfsMesModel
+            {
+                UsuarioReferencia = usuario,
+                MesReferencia = dataInicio.Month,
+                AnoReferencia = dataInicio.Year,
+                DiasApontados = apontamentosDiarios.Where(c => c.TempoTotalApontadoNoDia.Ticks > 0).Count(),
+                ApontamentosDiarios = apontamentosDiarios.OrderBy(c => c.DataReferencia).ToList(),
+                TempoTotalApontadoNoMes = new TimeSpan(apontamentosDiarios.Sum(c => c.TempoTotalApontadoNoDia.Ticks)),
+                TempoTotalApontadoSincronizadoChannel = new TimeSpan(apontamentosDiarios.Sum(c => c.TempoTotalApontadoSincronizadoChannel.Ticks)),
+                TempoTotalApontadoNaoSincronizadoChannel = new TimeSpan(apontamentosDiarios.Sum(c => c.TempoTotalApontadoNaoSincronizadoChannel.Ticks)),
+            };
+        }
+
         public static ApontamentoTfs ViewModelParaApontamento(this ApontamentoTfsNovoModel viewModel)
         {
             return new ApontamentoTfs

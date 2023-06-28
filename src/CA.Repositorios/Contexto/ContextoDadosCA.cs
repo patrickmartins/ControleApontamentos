@@ -8,7 +8,7 @@ namespace CA.Repositorios.Contexto
 {
     public class ContextoDadosCA : DbContext
     {
-        public ContextoDadosCA(DbContextOptions<ContextoDadosCA> options) : base(options) { }
+        public ContextoDadosCA(DbContextOptions<ContextoDadosCA> options) : base(options) { ChangeTracker.AutoDetectChangesEnabled = false; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -139,6 +139,16 @@ namespace CA.Repositorios.Contexto
                         .IsRequired();
 
             modelBuilder.Entity<ApontamentoChannel>()
+                        .Property(c => c.AtividadeId);
+
+            modelBuilder.Entity<ApontamentoChannel>()
+                        .Property(c => c.AtividadeId);
+
+            modelBuilder.Entity<ApontamentoChannel>()
+                        .Property(c => c.UsuarioId)
+                        .IsRequired();
+
+            modelBuilder.Entity<ApontamentoChannel>()
                         .Property(c => c.Comentario)
                         .HasColumnType("varchar(5000)")
                         .IsRequired();
@@ -149,7 +159,8 @@ namespace CA.Repositorios.Contexto
 
             modelBuilder.Entity<ApontamentoChannel>()
                         .HasOne(c => c.Usuario)
-                        .WithMany(c => c.Apontamentos);
+                        .WithMany(c => c.Apontamentos)
+                        .HasForeignKey(c => c.UsuarioId);
 
             modelBuilder.Entity<UsuarioChannel>()
                         .HasKey(c => c.Id);
@@ -195,11 +206,13 @@ namespace CA.Repositorios.Contexto
 
             modelBuilder.Entity<ProjetoChannel>()
                         .HasMany(c => c.Atividades)
-                        .WithOne(c => c.Projeto);
+                        .WithOne(c => c.Projeto)
+                        .HasForeignKey(c => c.ProjetoId);
 
             modelBuilder.Entity<ProjetoChannel>()
                         .HasMany(c => c.Apontamentos)
-                        .WithOne(c => c.Projeto);
+                        .WithOne(c => c.Projeto)
+                        .HasForeignKey(c => c.ProjetoId);
 
             modelBuilder.Entity<AtividadeChannel>()
                         .HasKey(c => c.Id);
@@ -207,6 +220,9 @@ namespace CA.Repositorios.Contexto
             modelBuilder.Entity<AtividadeChannel>()
                         .Property(c => c.Id)
                         .ValueGeneratedNever();
+
+            modelBuilder.Entity<AtividadeChannel>()
+                        .Property(c => c.ProjetoId);
 
             modelBuilder.Entity<AtividadeChannel>()
                         .Property(c => c.Nome)
@@ -220,7 +236,8 @@ namespace CA.Repositorios.Contexto
 
             modelBuilder.Entity<AtividadeChannel>()
                         .HasMany(c => c.Apontamentos)
-                        .WithOne(c => c.Atividade);
+                        .WithOne(c => c.Atividade)
+                        .HasForeignKey(c => c.AtividadeId);
 
             #endregion
 

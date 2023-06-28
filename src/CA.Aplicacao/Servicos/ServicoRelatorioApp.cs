@@ -29,7 +29,7 @@ namespace CA.Aplicacao.Servicos
             _servicoUsuarioCa = servicoUsuarioCa;
         }
 
-        public async Task<Resultado<IEnumerable<RelatorioApontamentosUsuarioPorMes>>> ObterRelatorioDeApontamentosPorMesAsync(int mes, int ano, TipoOrdenacaoRelatorio ordenacao, bool somenteApontamentosSincronizados = false, bool somenteUsuariosComCadastroNoPonto = false, bool somenteUsuariosComTempoTrabalhado = false)
+        public async Task<Resultado<IEnumerable<RelatorioApontamentosUsuarioPorMes>>> ObterRelatorioDeApontamentosPorMesAsync(int mes, int ano, TipoOrdenacaoRelatorio ordenacao, bool somenteApontamentosAteDiaAnterior = false, bool somenteApontamentosSincronizados = false, bool somenteUsuariosComCadastroNoPonto = false, bool somenteUsuariosComTempoTrabalhado = false)
         {
             if (mes < 1 || mes > 12)
                 return Resultado.DeErros<IEnumerable<RelatorioApontamentosUsuarioPorMes>>(new Erro("O mês informado é inválido.", nameof(mes)));
@@ -42,7 +42,10 @@ namespace CA.Aplicacao.Servicos
             var batidasPonto = new List<BatidasPontoDia>();
 
             var dataInicio = new DateOnly(ano, mes, 1);
-            var dataFim = new DateOnly(ano, mes, DateTime.DaysInMonth(ano, mes));
+            var dataFim = new DateOnly(ano, mes, DateTime.Now.Month == mes ? DateTime.Now.Day : DateTime.DaysInMonth(ano, mes));
+
+            if(somenteApontamentosAteDiaAnterior && DateTime.Now.Month == mes)
+                dataFim = dataFim.AddDays(-1);
 
             var usuarios = (await _servicoUsuarioCa.ObterTodosUsuariosAsync()).Where(c => c.PossuiIntegracaoChannel() && (!somenteUsuariosComCadastroNoPonto || !somenteUsuariosComTempoTrabalhado || c.PossuiIntegracaoPonto())).ToList();
 
@@ -92,7 +95,7 @@ namespace CA.Aplicacao.Servicos
 
                 if (usuarioTfs is not null)
                 {
-                    var apontamentosUsuarioTfs = apontamentosTfsNaoSincronizados.ItemTrabalhoParaApontamentoTfsMesModel(usuarioTfs.NomeUsuario, mes, ano);
+                    var apontamentosUsuarioTfs = apontamentosTfsNaoSincronizados.ItemTrabalhoParaApontamentoTfsMesModel(usuarioTfs.NomeUsuario, dataInicio, dataFim);
 
                     apontamentosUsuarioPorMes.TempoTotalApontadoNaoSincronizadoNoTfsNoMes = apontamentosUsuarioTfs.TempoTotalApontadoNaoSincronizadoChannel;
                 }

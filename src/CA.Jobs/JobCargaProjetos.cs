@@ -58,7 +58,7 @@ namespace CA.Jobs
                 await AtualizarProjetoAsync(projetobanco);
             }
 
-            await _repositorioProjetos.SalvarAlteracoesAsync();
+            var teste = await _repositorioProjetos.SalvarAlteracoesAsync();
 
             LogarInformacao("===> Finalizando a execução do Job de Carga de Projetos. <====");
         }
@@ -137,6 +137,8 @@ namespace CA.Jobs
                 {
                     projetoBanco.AdicionarAtividade(atividade);
 
+                    await _repositorioProjetos.InserirAtividadeAsync(atividade);
+
                     LogarInformacao($"Atividade {atividade.Id} inserida no projeto {projetoBanco.Id}.");
                 }
                 else
@@ -144,7 +146,7 @@ namespace CA.Jobs
                     LogarInformacao($"Não foi possível inserir à atividade {atividade.Id}. Devido aos erros abaixo:");
 
                     LogarErros(resultado.Erros.ToArray());
-                }
+                }                
             }
 
             foreach (var atividadeServico in atividadesAtualizadas)
@@ -158,6 +160,8 @@ namespace CA.Jobs
                     atividadeBanco.Atualizar(atividadeServico);
                     atividadeBanco.AlterarProjeto(projetoBanco);
 
+                    _repositorioProjetos.AtualizarAtividade(atividadeBanco);
+
                     LogarInformacao($"Atividade {atividadeBanco.Id} atualizada.");
                 }
                 else
@@ -166,6 +170,7 @@ namespace CA.Jobs
 
                     LogarErros(resultado.Erros.ToArray());
                 }
+                
             }
         }
     }

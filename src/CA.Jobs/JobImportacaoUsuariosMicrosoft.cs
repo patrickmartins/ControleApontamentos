@@ -44,19 +44,22 @@ namespace CA.Jobs
 
                 foreach (var usuario in usuariosMicrosoftImportar)
                 {
-                    var resultadoImportacao = await _servicoUsuariosCa.ImportarUsuarioAsync(usuario.Email, usuario.NomeCompleto);
+                    var resultadoUsuarioCa = _servicoUsuariosCa.ObterUsuarioPorEmail(usuario.Email);
+                    
+                    if(!resultadoUsuarioCa.Sucesso)
+                        resultadoUsuarioCa = await _servicoUsuariosCa.ImportarUsuarioAsync(usuario.Email, usuario.NomeCompleto);
 
-                    if (resultadoImportacao.Sucesso)
+                    if (resultadoUsuarioCa.Sucesso)
                     {
                         LogarInformacao($"Usuário '{usuario.Email}' importado com sucesso.");
                         
-                        if(!resultadoImportacao.Valor.PossuiContaTfs)
+                        if(!resultadoUsuarioCa.Valor.PossuiContaTfs)
                             LogarAlerta($"Usuário '{usuario.Email}' não possui conta no Tfs.");
 
-                        if(!resultadoImportacao.Valor.PossuiContaChannel)
+                        if(!resultadoUsuarioCa.Valor.PossuiContaChannel)
                             LogarAlerta($"Usuário '{usuario.Email}' não possui conta no Channel.");
 
-                        if(!resultadoImportacao.Valor.PossuiContaPonto)
+                        if(!resultadoUsuarioCa.Valor.PossuiContaPonto)
                             LogarAlerta($"Usuário '{usuario.Email}' não possui conta no Secullum.");
 
                         var resultadoConta = await _servicoIdentidade.CriarContaUsuarioAsync(usuario.Email);
@@ -72,7 +75,7 @@ namespace CA.Jobs
                     {
                         LogarInformacao($"Não foi possível importar o usuário '{usuario.Email}'. Devido aos erros abaixo:");
 
-                        LogarErros(resultadoImportacao.Erros.ToArray());
+                        LogarErros(resultadoUsuarioCa.Erros.ToArray());
                     }
                 }
             }

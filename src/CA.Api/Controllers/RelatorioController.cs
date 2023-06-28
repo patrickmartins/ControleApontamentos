@@ -19,9 +19,9 @@ namespace CA.Api.Controllers
 
         [HttpGet]
         [Route("apontamentos-por-mes")]
-        public async Task<ActionResult> ObterRelatorioDeApontamentosPorMesAsync(int mes, int ano, TipoOrdenacaoRelatorio ordenacao, bool somenteApontamentosSincronizados = false, bool somenteUsuariosComCadastroNoPonto = false, bool somenteUsuariosComTempoTrabalhado = false)
+        public async Task<ActionResult> ObterRelatorioDeApontamentosPorMesAsync(int mes, int ano, TipoOrdenacaoRelatorio ordenacao, bool somenteApontamentosAteDiaAnterior = false, bool somenteApontamentosSincronizados = false, bool somenteUsuariosComCadastroNoPonto = false, bool somenteUsuariosComTempoTrabalhado = false)
         {
-            var relatorioResult = await _servico.ObterRelatorioDeApontamentosPorMesAsync(mes, ano, ordenacao, somenteApontamentosSincronizados, somenteUsuariosComCadastroNoPonto, somenteUsuariosComTempoTrabalhado);
+            var relatorioResult = await _servico.ObterRelatorioDeApontamentosPorMesAsync(mes, ano, ordenacao, somenteApontamentosAteDiaAnterior, somenteApontamentosSincronizados, somenteUsuariosComCadastroNoPonto, somenteUsuariosComTempoTrabalhado);
 
             if (!relatorioResult.Sucesso)
                 return BadRequest(relatorioResult.Erros);

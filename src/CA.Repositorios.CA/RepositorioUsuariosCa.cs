@@ -11,13 +11,15 @@ namespace CA.Repositorios.CA
         public RepositorioUsuariosCa(ContextoDadosCA contexto) : base(contexto)
         { }
 
-        public Task InserirUsuarioAsync(UsuarioCA usuario)
+        public async Task InserirUsuarioAsync(UsuarioCA usuario)
         {
-            return InserirAsync(usuario);
+            await InserirAsync(usuario.ParametrosIntegracoes);
+            await InserirAsync(usuario);
         }
 
         public void AtualizarUsuario(UsuarioCA usuario)
         {
+            Atualizar(usuario.ParametrosIntegracoes);
             Atualizar(usuario);
         }
 

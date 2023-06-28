@@ -71,7 +71,8 @@ export class RelatorioApontamentosComponent extends BaseComponent implements OnI
         this.form.formGroup.controls['somenteSincronizados'].setValue(false);
         this.form.formGroup.controls['somenteUsuariosPonto'].setValue(true);
         this.form.formGroup.controls['somenteComTempoTrabalhado'].setValue(true);
-
+        this.form.formGroup.controls['somenteAteDiaAnterior'].setValue(true);
+        
         this.anos = this.obterOpcoesFiltroAnos();
         this.meses = this.obterOpcoesFiltroMeses();
     }

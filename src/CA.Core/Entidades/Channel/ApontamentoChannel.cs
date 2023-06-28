@@ -28,8 +28,14 @@ namespace CA.Core.Entidades.Channel
         public string Comentario { get; set; }
         public StatusApontamento Status { get; set; }
         public TimeSpan TempoApontado { get; set; }
+
+        public int UsuarioId { get; set; }
         public UsuarioChannel Usuario { get; set; }
+
+        public int? ProjetoId { get; set; }
         public ProjetoChannel? Projeto { get; set; }
+
+        public int? AtividadeId { get; set; }
         public AtividadeChannel? Atividade { get; set; }
 
         public string Hash { get; set; }
@@ -41,14 +47,14 @@ namespace CA.Core.Entidades.Channel
             if (Id <= 0)
                 erros.Add(new Erro("O id não foi informado.", nameof(Id)));
 
-            if (Usuario == null)
+            if (Usuario == null || UsuarioId == 0)
                 erros.Add(new Erro("O usuário não foi informado.", nameof(Usuario)));
 
-            if (Tipo == TipoApontamento.Atividade && Atividade is null)
+            if (Tipo == TipoApontamento.Atividade && (Atividade is null || AtividadeId is null || AtividadeId == 0))
                 erros.Add(new Erro("A atividade não foi informada.", nameof(Atividade)));
 
-            if (Tipo == TipoApontamento.Projeto && Projeto is null)
-                erros.Add(new Erro("O projeto não foi informada.", nameof(Projeto)));
+            if (Tipo == TipoApontamento.Projeto && (Projeto is null || ProjetoId is null || ProjetoId == 0))
+                erros.Add(new Erro("O projeto não foi informado.", nameof(Projeto)));
 
             if (Comentario.Length > 5000)
                 erros.Add(new Erro("O comentário contém mais de 5000 caracteres.", nameof(Comentario)));
@@ -83,8 +89,11 @@ namespace CA.Core.Entidades.Channel
                     apontamento.Data == Data &&
                     apontamento.TempoApontado.Ticks == TempoApontado.Ticks &&
                     apontamento.Tipo == Tipo &&
+                    apontamento.ProjetoId == ProjetoId &&
                     apontamento.Projeto == Projeto &&
+                    apontamento.AtividadeId == AtividadeId &&
                     apontamento.Atividade == Atividade &&
+                    apontamento.UsuarioId == UsuarioId &&
                     apontamento.Usuario == Usuario &&
                     string.Compare(apontamento.Comentario, Comentario, CultureInfo.CurrentCulture, CompareOptions.IgnoreNonSpace) == 0;
         }

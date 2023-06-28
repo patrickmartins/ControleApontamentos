@@ -50,6 +50,7 @@ namespace CA.Jobs.Extensions
                 Id = response.Id,
                 Nome = response.Nome.Trim().Truncar(200).ParaUTF8().RemoverCaracteresNaoReconhecidos().RemoverQuebrasDeLinha(),
                 Codigo = response.Codigo.Trim().Truncar(30),
+                ProjetoId = projeto.Id,
                 Projeto = projeto
             };
         }
@@ -79,8 +80,11 @@ namespace CA.Jobs.Extensions
                 Tipo = response.ObterTipoDoApontamento(),
                 Id = response.Id,
                 Data = response.Data,
+                UsuarioId = usuario.Id,
                 Usuario = usuario,
+                ProjetoId = projeto?.Id,
                 Projeto = projeto,
+                AtividadeId = atividade?.Id,
                 Atividade = atividade,
                 Comentario = response.Comentario.Trim().RemoverCaracteresNaoReconhecidos(),
                 TempoApontado = response.TempoApontado
