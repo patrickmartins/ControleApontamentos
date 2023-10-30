@@ -15,7 +15,7 @@ namespace CA.Jobs.Extensions
                 Email = response.Email,
                 NomeUsuario = response.NomeUsuario,
                 NomeCompleto = response.NomeCompleto,
-                Ativo = response.Status.Equals("ACTIVED")
+                Ativo = !response.Status.Equals("BLOCKED")
             };
         }
 
