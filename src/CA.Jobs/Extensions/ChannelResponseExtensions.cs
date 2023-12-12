@@ -76,7 +76,9 @@ namespace CA.Jobs.Extensions
             {
                 IdApontamentoTfs = !string.IsNullOrEmpty(response.ObterIdDoApontamentoTfs()) 
                                             ? response.ObterIdDoApontamentoTfs()
-                                            : Sha1Helper.GerarHashPorString($"{response.ObterIdDaTarefaTfs()} - {usuario.NomeUsuario} - {response.ObterComentarioDoApontamentoTfs().Trim().RemoverEspacosDuplicados()} - {DateOnly.FromDateTime(response.Data)} - {response.TempoApontado}"),                                            
+                                            : response.EhApontamentoTfs() 
+                                                ? Sha1Helper.GerarHashPorString($"{response.ObterIdDaTarefaTfs()} - {usuario.NomeUsuario} - {response.ObterComentarioDoApontamentoTfs().Trim().RemoverEspacosDuplicados()} - {DateOnly.FromDateTime(response.Data)} - {response.TempoApontado}")
+                                                : null,                
                 ApontamentoTfs = response.EhApontamentoTfs(),
                 IdTarefaTfs = response.ObterIdDaTarefaTfs(),
                 Tipo = response.ObterTipoDoApontamento(),
