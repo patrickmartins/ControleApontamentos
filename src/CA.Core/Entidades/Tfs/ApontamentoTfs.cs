@@ -5,6 +5,10 @@ namespace CA.Core.Entidades.Tfs
     [XmlType("TimeSheetEntry")]
     public class ApontamentoTfs
     {
+
+        [XmlAttribute("Id")]
+        public string? Id { get; set; }
+
         [XmlIgnore]
         public DateTime? DataApropriacao { get; set; }
 

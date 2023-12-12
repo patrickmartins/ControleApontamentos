@@ -15,20 +15,20 @@ export class ConsolidacaoService {
             let todosApontamentosTfs = apontamentosTfs.obterTodosApontamentos();
 
             for (let apontamentoTfs of todosApontamentosTfs) {
-                let apontamentoChannelTfs = todosApontamentosChannelTfs.find(c => c.hash == apontamentoTfs.hash);
+                let apontamentoChannelTfs = todosApontamentosChannelTfs.find(c => c.idTfs == apontamentoTfs.idTfs);
 
                 if (apontamentoChannelTfs) {
                     if (apontamentoChannelTfs.status == StatusApontamento.Inserido) {
-                        apontamentosChannel.removerApontamentoPorHash(apontamentoChannelTfs.hash);
+                        apontamentosChannel.removerApontamentoPorIdTfs(apontamentoChannelTfs.idTfs);
                     }
 
                     if (apontamentoChannelTfs.status == StatusApontamento.Alterado || apontamentoChannelTfs.status == StatusApontamento.Excluido) {
-                        apontamentosTfs.removerApontamentoPorHash(apontamentoChannelTfs.hash);
+                        apontamentosTfs.removerApontamentoPorIdTfs(apontamentoChannelTfs.idTfs);
                     }
                 }
                 else {
                     if (apontamentoTfs.sincronizadoChannel && (!dataUltimaSincronizacaoChannel || (apontamentoTfs.dataApropriacao && apontamentoTfs.dataApropriacao < dataUltimaSincronizacaoChannel)))
-                        apontamentosTfs.removerApontamentoPorHash(apontamentoTfs.hash);
+                        apontamentosTfs.removerApontamentoPorIdTfs(apontamentoTfs.idTfs);
                 }
             } 
 

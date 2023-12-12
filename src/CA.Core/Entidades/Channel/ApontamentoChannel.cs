@@ -38,7 +38,7 @@ namespace CA.Core.Entidades.Channel
         public int? AtividadeId { get; set; }
         public AtividadeChannel? Atividade { get; set; }
 
-        public string Hash { get; set; }
+        public string IdApontamentoTfs { get; set; }
 
         public Resultado Validar()
         {

@@ -56,8 +56,8 @@ export class Tarefa implements IModel<Tarefa> {
 		this.apontamentos.push(apontamento);
 	}
 
-	public removerApontamentoPorHash(hash: string): boolean {
-		let index = this.apontamentos.findIndex(c => c.hash == hash);
+	public removerApontamentoPorIdTfs(idTfs: string): boolean {
+		let index = this.apontamentos.findIndex(c => c.idTfs == idTfs);
 
 		if(index >= 0)			
 			this.apontamentos.splice(index, 1);
@@ -73,8 +73,8 @@ export class Tarefa implements IModel<Tarefa> {
         return this.apontamentos.filter(c => c.usuario == usuario);
     }
 
-    public obterApontamentoPorHash(hash: string): ApontamentoTfs | undefined {
-        return this.apontamentos.find(c => c.hash == hash);
+    public obterApontamentoPorIdTfs(idTfs: string): ApontamentoTfs | undefined {
+        return this.apontamentos.find(c => c.idTfs == idTfs);
     }
 	
 	public recalcularTempoTotalApontadoSincronizadoChannel(usuario: string): void;

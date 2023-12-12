@@ -104,9 +104,9 @@ export class ApontamentosTfsMes implements IModel<ApontamentosTfsMes>, IColecaoA
 		this.apontamentosDiarios.forEach(c => c.removerTarefasSemApontamentos());
 	}
 
-    public removerApontamentoPorHash(hash: string): void {
+    public removerApontamentoPorIdTfs(idTfs: string): void {
         for(let apontamentosDia of this.apontamentosDiarios) {			
-		    apontamentosDia.removerApontamentoPorHash(hash)
+		    apontamentosDia.removerApontamentoPorIdTfs(idTfs)
 		}
 	}
 }

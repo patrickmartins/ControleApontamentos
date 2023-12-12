@@ -74,7 +74,9 @@ namespace CA.Jobs.Extensions
 
             return new ApontamentoChannel
             {
-                Hash = Sha1Helper.GerarHashPorString($"{response.ObterIdDaTarefaTfs()} - {usuario.NomeUsuario} - {response.ObterComentarioDoApontamentoTfs().Trim().RemoverEspacosDuplicados()} - {DateOnly.FromDateTime(response.Data)} - {response.TempoApontado}"),
+                IdApontamentoTfs = !string.IsNullOrEmpty(response.ObterIdDoApontamentoTfs()) 
+                                            ? response.ObterIdDoApontamentoTfs()
+                                            : Sha1Helper.GerarHashPorString($"{response.ObterIdDaTarefaTfs()} - {usuario.NomeUsuario} - {response.ObterComentarioDoApontamentoTfs().Trim().RemoverEspacosDuplicados()} - {DateOnly.FromDateTime(response.Data)} - {response.TempoApontado}"),                                            
                 ApontamentoTfs = response.EhApontamentoTfs(),
                 IdTarefaTfs = response.ObterIdDaTarefaTfs(),
                 Tipo = response.ObterTipoDoApontamento(),

@@ -139,7 +139,7 @@ namespace CA.Aplicacao.Extensions
                 Comentario = apontamento.Comentario.Trim(),                
                 SincronizadoChannel = apontamento.SincronizadoChannel,
                 DataApropriacao = apontamento.DataApropriacao?.ConverterParaFusoBrasil(),
-                Hash = Sha1Helper.GerarHashPorString($"{idItemTrabalho} - {apontamento.Usuario} - {comentario} - {data} - {tempo}")
+                IdTfs = !string.IsNullOrEmpty(apontamento.Id) ? apontamento.Id : Sha1Helper.GerarHashPorString($"{idItemTrabalho} - {apontamento.Usuario} - {comentario} - {data} - {tempo}")
             };
         }
 
@@ -296,7 +296,7 @@ namespace CA.Aplicacao.Extensions
             return new ApontamentoChannelModel
             {
                 Id = apontamento.Id,
-                Hash = apontamento.Hash,
+                IdTfs = apontamento.IdApontamentoTfs,
                 Status = apontamento.Status,
                 ApontamentoTfs = apontamento.ApontamentoTfs,
                 Usuario = apontamento.Usuario.NomeUsuario,

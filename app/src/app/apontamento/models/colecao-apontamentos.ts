@@ -2,7 +2,7 @@ import { ApontamentoChannel } from "src/app/core/models/apontamento-channel";
 import { ApontamentoTfs } from "src/app/core/models/apontamento-tfs";
 
 export interface IColecaoApontamentos {
-    removerApontamentoPorHash(hash: string): void;
+    removerApontamentoPorIdTfs(idTfs: string): void;
     recalcularTempoTotalApontado(): void;    
 }
 

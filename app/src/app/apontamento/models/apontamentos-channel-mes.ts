@@ -82,9 +82,9 @@ export class ApontamentosChannelMes implements IModel<ApontamentosChannelMes>, I
 		this.apontamentosDiarios.forEach(c => c.removerAtividadesSemApontamentos());
 	}
 
-    public removerApontamentoPorHash(hash: string): void {
+    public removerApontamentoPorIdTfs(idTfs: string): void {
         for (let apontamentosDia of this.apontamentosDiarios) {		
-			apontamentosDia.removerApontamentoPorHash(hash);               
+			apontamentosDia.removerApontamentoPorIdTfs(idTfs);               
 		}
 	}
 }

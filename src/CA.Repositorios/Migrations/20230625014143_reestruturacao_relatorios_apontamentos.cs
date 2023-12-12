@@ -10,19 +10,8 @@ namespace CA.Repositorios.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_UsuarioRoles_Usuario_UserId",
-                table: "UsuarioRoles");
-
-            migrationBuilder.DropForeignKey(
                 name: "FK_UsuarioClaims_Usuario_UserId",
                 table: "UsuarioClaims");
-
-            migrationBuilder.DropTable(
-                name: "Usuario");
-
-            migrationBuilder.DropIndex(
-                name: "IX_UsuarioRoles_RoleId",
-                table: "UsuarioRoles");
 
             migrationBuilder.DropPrimaryKey(
                 name: "PK_UsuarioRoles",

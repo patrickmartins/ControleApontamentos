@@ -67,9 +67,9 @@ export class ApontamentosChannelDia implements IModel<ApontamentosChannelDia>, I
 												&& c.apontamentos.some(a => a.data.getTime() == this.dataReferencia.getTime()));
 	}
 
-    public removerApontamentoPorHash(hash: string): boolean {
+    public removerApontamentoPorIdTfs(idTfs: string): boolean {
         for (let atividade of this.atividades) {			
-			if(atividade.removerApontamentoPorHash(hash))
+			if(atividade.removerApontamentoPorIdTfs(idTfs))
                 return true;;
 		}
 

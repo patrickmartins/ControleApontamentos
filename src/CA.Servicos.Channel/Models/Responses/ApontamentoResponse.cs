@@ -16,7 +16,8 @@ namespace CA.Servicos.Channel.Models.Responses
 
         public bool EhApontamentoTfs()
         {
-            return Regex.Matches(Comentario, "\\[\\d*\\] - \\[.*?\\] - ").Count == 1 && Regex.IsMatch(Comentario, "^\\[\\d*\\] - \\[.*?\\] - ");
+            return Regex.Matches(Comentario, "\\[[0-9A-Fa-f]{8}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{12}\\]\\[\\d*\\] - \\[.*?\\] - ").Count == 1 
+                && Regex.IsMatch(Comentario, "^\\[[0-9A-Fa-f]{8}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{12}\\]\\[\\d*\\] - \\[.*?\\] - ");
         }
 
         public TipoApontamento ObterTipoDoApontamento()
@@ -33,7 +34,7 @@ namespace CA.Servicos.Channel.Models.Responses
             if(!EhApontamentoTfs())
                 return null;
 
-            var resultado = Regex.Match(Comentario, "(?<=^\\[)\\d*(?=\\])").Value;
+            var resultado = Regex.Match(Comentario, "(?<=\\[[0-9A-Fa-f]{8}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{12}\\]\\[)\\d*(?=\\] -)").Value;
 
             if (string.IsNullOrEmpty(resultado))
                 return null;
@@ -41,12 +42,20 @@ namespace CA.Servicos.Channel.Models.Responses
             return int.TryParse(resultado, out var id) ? id : 0;
         }
 
+        public string ObterIdDoApontamentoTfs()
+        {
+            if (!EhApontamentoTfs())
+                return string.Empty;
+
+            return Regex.Match(Comentario, "(?<=^\\[)[0-9A-Fa-f]{8}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{12}(?=\\])").Value;            
+        }
+
         public string ObterComentarioDoApontamentoTfs()
         {
             if (!EhApontamentoTfs())
                 return string.Empty;
 
-            return Regex.Replace(Comentario, "^\\[\\d*\\] - \\[.*\\] - ", string.Empty);
+            return Regex.Replace(Comentario, "^\\[[0-9A-Fa-f]{8}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{12}\\]\\[\\d*\\] - \\[.*?\\] - ", string.Empty);
         }
     }
 }

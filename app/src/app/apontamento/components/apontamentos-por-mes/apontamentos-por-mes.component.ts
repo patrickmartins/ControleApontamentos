@@ -21,6 +21,7 @@ import { TfsService } from 'src/app/core/services/tfs.service';
 import { ChannelService } from '../../../core/services/channel.service';
 import { GraficoResumoMesComponent } from '../grafico-resumo-mes/grafico-resumo-mes.component';
 import { Tarefa } from 'src/app/core/models/tarefa';
+import { ApontamentoTfs } from 'src/app/core/models/apontamento-tfs';
 
 @Component({
 	selector: 'app-apontamentos-por-mes',
@@ -161,14 +162,14 @@ export class ApontamentosPorMesComponent extends BaseComponent implements OnInit
         });
 	}
 
-    public onApontamentoSalvo(tarefa: Tarefa, apontamento: any): void {
+    public onApontamentoSalvo(tarefa: Tarefa, apontamento: ApontamentoTfs): void {
         const apontamentosDia = this.apontamentosTfsMes?.obterApontamentosPorDia(apontamento.data.getDate());
 
         if(apontamentosDia) {
             const tarefaDiaApontado = apontamentosDia.obterTarefaPorId(tarefa.id);
 
             if(tarefaDiaApontado) {
-                if(!tarefaDiaApontado.obterApontamentoPorHash(apontamento.hash)) {
+                if(!tarefaDiaApontado.obterApontamentoPorIdTfs(apontamento.idTfs)) {
                     tarefaDiaApontado.adicionarApontamento(apontamento!);
                 }
             }

@@ -135,7 +135,7 @@ namespace CA.Repositorios.Contexto
                         .IsRequired();
 
             modelBuilder.Entity<ApontamentoChannel>()
-                        .Property(c => c.Hash)
+                        .Property(c => c.IdApontamentoTfs)
                         .IsRequired();
 
             modelBuilder.Entity<ApontamentoChannel>()

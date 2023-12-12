@@ -39,7 +39,7 @@ namespace CA.Jobs.Extensions
             if (apontamento1 is null || apontamento1 is null)
                 return;
 
-            if (apontamento1.Hash != apontamento2.Hash)
+            if (apontamento1.IdApontamentoTfs != apontamento2.IdApontamentoTfs)
                 apontamento1.Status = StatusApontamento.Alterado;
 
             apontamento1.Data = apontamento2.Data;

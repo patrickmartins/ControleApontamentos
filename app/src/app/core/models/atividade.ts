@@ -51,12 +51,12 @@ export class Atividade implements IModel<Atividade> {
 		return this.apontamentos.filter(c => c.apontamentoTfs);
 	}
 
-    public apontamentosTfsExiste(hash: string): boolean {
-        return this.apontamentos.some(c => c.apontamentoTfs && c.hash == hash);
+    public apontamentosTfsExiste(idApontamentoTfs: string): boolean {
+        return this.apontamentos.some(c => c.apontamentoTfs && c.idTfs == idApontamentoTfs);
     }
 
-    public removerApontamentoPorHash(hash: string): boolean {
-		let index = this.apontamentos.findIndex(c => c.hash == hash);
+    public removerApontamentoPorIdTfs(idApontamentoTfs: string): boolean {
+		let index = this.apontamentos.findIndex(c => c.idTfs == idApontamentoTfs);
 
 		if(index >= 0)			
 			this.apontamentos.splice(index, 1);

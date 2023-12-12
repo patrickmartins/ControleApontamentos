@@ -46,7 +46,7 @@ var servico = provider.GetService<IServicoRelatorioApp>();
 //var relatorio = await servico.ObterRelatorioDeApontamentosPorMesAsync(5, 2023, TipoOrdenacaoRelatorio.DiferencaHoras);
 
 //await jobImportacaoUsuarios.ExecutarAsync();
-await jobProjetos.ExecutarAsync();
+//await jobProjetos.ExecutarAsync();
 await jobApontamentos.ExecutarAsync();
 
 Console.WriteLine("Digite qualquer tecla para finalizar...");

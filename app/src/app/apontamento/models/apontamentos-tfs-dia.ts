@@ -82,9 +82,9 @@ export class ApontamentosTfsDia implements IModel<ApontamentosTfsDia>, IColecaoA
 												&& c.apontamentos.some(a => a.usuario == this.usuarioReferencia && a.data.getTime() == this.dataReferencia.getTime()));
 	}
 
-    public removerApontamentoPorHash(hash: string): boolean {
+    public removerApontamentoPorIdTfs(idTfs: string): boolean {
         for(let tarefa of this.tarefas) {			
-			if(tarefa.removerApontamentoPorHash(hash))
+			if(tarefa.removerApontamentoPorIdTfs(idTfs))
                 return true;
 		}
 

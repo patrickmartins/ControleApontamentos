@@ -8,7 +8,7 @@ import { StatusApontamento } from "./status-apontamento";
 export class ApontamentoChannel implements IModel<ApontamentoChannel> {
 
 	public id: number = 0;
-	public hash: string = "";	
+	public idTfs: string = "";	
 	public idTarefaTfs: number = 0;
 	public usuario: string = "";
 	public comentario: string = "";
@@ -27,7 +27,7 @@ export class ApontamentoChannel implements IModel<ApontamentoChannel> {
 
 		if(params) {
 			apontamento.id = params.id as number;
-			apontamento.hash = params.hash;
+			apontamento.idTfs = params.idTfs;
 			apontamento.idTarefaTfs = params.idTarefaTfs as number;
 			apontamento.usuario = params.usuario;
 			apontamento.comentario = params.comentario;

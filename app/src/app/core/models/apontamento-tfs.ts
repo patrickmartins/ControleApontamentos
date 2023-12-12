@@ -5,7 +5,7 @@ import { IModel } from "src/app/common/models/model";
 
 export class ApontamentoTfs implements IModel<ApontamentoTfs> {
 
-	public hash: string = "";
+	public idTfs: string = "";
 	public usuario: string = "";
 	public comentario: string = "";
 	public data: Date = new Date();
@@ -22,7 +22,7 @@ export class ApontamentoTfs implements IModel<ApontamentoTfs> {
 		let apontamento = new ApontamentoTfs();
 
 		if(params) {
-			apontamento.hash = params.hash;
+			apontamento.idTfs = params.idTfs;
 			apontamento.usuario = params.usuario;
 			apontamento.comentario = params.comentario;
 			apontamento.data = moment(params.data).toDate();	

@@ -4,6 +4,7 @@ using CA.Repositorios.Contexto;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CA.Repositorios.Migrations
 {
     [DbContext(typeof(ContextoDadosCA))]
-    partial class ContextoDadosCAModelSnapshot : ModelSnapshot
+    [Migration("20231210220905_atualizacao_coluna_hash")]
+    partial class atualizacao_coluna_hash
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

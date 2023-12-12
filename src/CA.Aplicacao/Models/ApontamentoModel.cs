@@ -26,7 +26,7 @@ namespace CA.Aplicacao.Models
 
     public abstract record ApontamentoModel
     {
-        public string Hash { get; set; }
+        public string IdTfs { get; set; }
         public string Usuario { get; set; } = string.Empty;
         public string Comentario { get; set; } = string.Empty;
         public DateOnly Data { get; set; }
