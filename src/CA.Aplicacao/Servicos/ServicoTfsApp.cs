@@ -27,7 +27,7 @@ namespace CA.Aplicacao.Servicos
 
             var apontamento = apontamentoModel.ViewModelParaApontamento();
 
-            var resultado = await _servico.AdicionarNovoApontamentoAsync(usuario, apontamentoModel.Colecao, apontamentoModel.IdTarefa, apontamentoModel.ViewModelParaApontamento());
+            var resultado = await _servico.AdicionarNovoApontamentoAsync(usuario, apontamentoModel.Colecao, apontamentoModel.IdTarefa, apontamento);
 
             if (!resultado.Sucesso)
                 return Resultado.DeErros<ApontamentoTfsModel>(resultado.Erros);
