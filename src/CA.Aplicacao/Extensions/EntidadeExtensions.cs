@@ -278,6 +278,7 @@ namespace CA.Aplicacao.Extensions
         {
             return new ApontamentoTfs
             {
+                Id = Guid.NewGuid().ToString(),
                 SincronizadoChannel = false,
                 Comentario = viewModel.Comentario,
                 DataApontamento = viewModel.Data.ConverterParaFusoBrasil().ToString("d"),
