@@ -18,6 +18,7 @@ import { forkJoin } from 'rxjs';
 import { Usuario } from 'src/app/core/models/usuario';
 import { SituacaoApontamentos } from '../../models/situacao-apontamentos';
 import { MatExpansionPanel } from '@angular/material/expansion';
+import { MatSelectChange } from '@angular/material/select';
 
 @Component({
     selector: 'relatorio-apontamentos',
@@ -74,7 +75,7 @@ export class RelatorioApontamentosComponent extends BaseComponent implements OnI
         this.form.formGroup.controls['somenteAteDiaAnterior'].setValue(true);
         
         this.anos = this.obterOpcoesFiltroAnos();
-        this.meses = this.obterOpcoesFiltroMeses();
+        this.meses = this.obterOpcoesFiltroMeses(this.anoAtual);
     }
 
     public ngOnInit(): void {
@@ -130,10 +131,6 @@ export class RelatorioApontamentosComponent extends BaseComponent implements OnI
         }
     }
 
-    public exportarRelatorio(): void {
-
-    }
-
     public onFiltrarGrid(): void {
         this.relatorio.filter = JSON.stringify({
             nomeCompleto: this.nomeUsuarioBusca,
@@ -142,6 +139,10 @@ export class RelatorioApontamentosComponent extends BaseComponent implements OnI
             situacao: this.situacaoSelecionada != "0" ? this.situacaoSelecionada : undefined,
             tolerancia: this.tolerancia
         });
+    }
+
+    public onAnoAlterado(evento: MatSelectChange): void {
+        this.meses = this.obterOpcoesFiltroMeses(evento.value);
     }
 
     private filtrarGrid(relatorio: RelatorioApontamentosUsuarioPorMes, filtroJson: string): boolean {
@@ -158,18 +159,18 @@ export class RelatorioApontamentosComponent extends BaseComponent implements OnI
         return Array(this.anoAtual - (this.anoAtual - 10)).fill('').map((v, i) => this.anoAtual - i).sort((n1, n2) => n1 - n2);
     }
 
-    private obterOpcoesFiltroMeses(): any[] {
+    private obterOpcoesFiltroMeses(ano: number): any[] {
         return ([{ mes: 1, nome: "Janeiro" },
-        { mes: 2, nome: "Fevereiro" },
-        { mes: 3, nome: "Março" },
-        { mes: 4, nome: "Abril" },
-        { mes: 5, nome: "Maio" },
-        { mes: 6, nome: "Junho" },
-        { mes: 7, nome: "Julho" },
-        { mes: 8, nome: "Agosto" },
-        { mes: 9, nome: "Setembro" },
-        { mes: 10, nome: "Outubro" },
-        { mes: 11, nome: "Novembro" },
-        { mes: 12, nome: "Dezembro" }]).filter(c => c.mes <= this.mesAtual);
+                { mes: 2, nome: "Fevereiro" },
+                { mes: 3, nome: "Março" },
+                { mes: 4, nome: "Abril" },
+                { mes: 5, nome: "Maio" },
+                { mes: 6, nome: "Junho" },
+                { mes: 7, nome: "Julho" },
+                { mes: 8, nome: "Agosto" },
+                { mes: 9, nome: "Setembro" },
+                { mes: 10, nome: "Outubro" },
+                { mes: 11, nome: "Novembro" },
+                { mes: 12, nome: "Dezembro" }]).filter(c => ano < this.anoAtual || c.mes <= this.mesAtual);
     }
 }

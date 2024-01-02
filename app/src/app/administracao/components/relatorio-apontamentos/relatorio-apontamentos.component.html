@@ -21,7 +21,7 @@
 
                     <mat-form-field appearance="outline">
                         <mat-label>Ano</mat-label>
-                        <mat-select formControlName="ano" id="ano" name="ano">
+                        <mat-select formControlName="ano" id="ano" name="ano" (selectionChange)="onAnoAlterado($event)">
                             <mat-option *ngFor="let ano of anos" [value]="ano">{{ ano }}</mat-option>
                         </mat-select>
                         <mat-error *ngFor="let error of form.errors.ano">{{ error.descricao }}</mat-error>
