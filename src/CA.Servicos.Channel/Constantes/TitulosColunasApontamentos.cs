@@ -6,7 +6,7 @@
         public const string Data = "Data";
         public const string IdColaborador = "id colaborador";
         public const string IdProjeto = "id projeto/id operação";
-        public const string Atividade = "atividade/solicitação";
+        public const string Atividade = "atividade/demanda";
         public const string Comentario = "comentário";
         public const string Duracao = "duração";
     }
