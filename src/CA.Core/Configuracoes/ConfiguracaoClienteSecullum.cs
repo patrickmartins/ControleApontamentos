@@ -4,6 +4,7 @@
     {
         public string UrlAutenticador { get; set; } = string.Empty;
         public string UrlIntegracao { get; set; } = string.Empty;
+        public string UrlSecullum { get; set; } = string.Empty;
         public string Usuario { get; set; } = string.Empty;
         public string Senha { get; set; } = string.Empty;
         public string IdCliente { get; set; } = string.Empty;
@@ -17,6 +18,9 @@
 
             if (string.IsNullOrEmpty(UrlIntegracao))
                 throw new ArgumentException("A url da integração externa do Secullum não foi configurada.");
+
+            if (string.IsNullOrEmpty(UrlSecullum))
+                throw new ArgumentException("A url do sistema Ponto Secullum não foi configurada.");
 
             if (string.IsNullOrEmpty(Usuario))
                 throw new ArgumentException("O usuário não foi configurado.");

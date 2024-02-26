@@ -35,7 +35,7 @@ namespace CA.Servicos.Secullum
 
             var funcionarios = await _policy.ExecuteAsync(() =>
             {
-                return _configuracoes.UrlIntegracao
+                return _configuracoes.UrlSecullum
                                         .AppendPathSegment("Funcionarios")
                                         .WithOAuthBearerToken(token.TokenAcesso)
                                         .OnError(c =>
